@@ -1,0 +1,1484 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>SDS Spot Check by Pantora</title>
+<style>
+  :root{
+    --bg:#f2f5f9;
+    --surface:#ffffff;
+    --surface-2:#f7f9fc;
+    --border:#dde3ec;
+    --text:#1c2733;
+    --text-muted:#5c6b7a;
+    --accent:#0A4D8C;
+    --accent-soft:#e6eef7;
+    --accent-2:#7a3fb8;
+    --accent-2-soft:#f1e8fb;
+    --accent-3:#c97a1f;
+    --accent-3-soft:#fbecd8;
+    --success:#1e7e34;
+    --success-soft:#e5f5e8;
+    --warning:#b8860b;
+    --warning-soft:#fdf3d9;
+    --danger:#c0392b;
+    --danger-soft:#fbe6e3;
+    --shadow:0 1px 2px rgba(20,30,50,.06), 0 4px 14px rgba(20,30,50,.06);
+    --radius:14px;
+  }
+  :root:not([data-theme="light"]) {
+    @media (prefers-color-scheme: dark){
+      --bg:#111722;
+      --surface:#182131;
+      --surface-2:#1e2939;
+      --border:#2b3850;
+      --text:#e7edf6;
+      --text-muted:#93a2b8;
+      --accent:#4f9cea;
+      --accent-soft:#1c2f47;
+      --accent-2:#b48fe0;
+      --accent-2-soft:#2a2140;
+      --accent-3:#e0a75e;
+      --accent-3-soft:#3a2c17;
+      --success:#5cc47c;
+      --success-soft:#173625;
+      --warning:#e0b64a;
+      --warning-soft:#3a2f10;
+      --danger:#e88073;
+      --danger-soft:#3a1f1b;
+      --shadow:0 1px 2px rgba(0,0,0,.3), 0 4px 14px rgba(0,0,0,.35);
+    }
+  }
+  :root[data-theme="dark"]{
+    --bg:#111722;
+    --surface:#182131;
+    --surface-2:#1e2939;
+    --border:#2b3850;
+    --text:#e7edf6;
+    --text-muted:#93a2b8;
+    --accent:#4f9cea;
+    --accent-soft:#1c2f47;
+    --accent-2:#b48fe0;
+    --accent-2-soft:#2a2140;
+    --accent-3:#e0a75e;
+    --accent-3-soft:#3a2c17;
+    --success:#5cc47c;
+    --success-soft:#173625;
+    --warning:#e0b64a;
+    --warning-soft:#3a2f10;
+    --danger:#e88073;
+    --danger-soft:#3a1f1b;
+    --shadow:0 1px 2px rgba(0,0,0,.3), 0 4px 14px rgba(0,0,0,.35);
+  }
+  *{box-sizing:border-box;}
+  html,body{margin:0;padding:0;}
+  body{
+    background:var(--bg);
+    color:var(--text);
+    font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;
+    font-size:14px;
+    line-height:1.5;
+  }
+  a{color:var(--accent);}
+  button{font-family:inherit;}
+
+  /* ---------- Top Nav ---------- */
+  .topnav{
+    position:sticky;top:0;z-index:50;
+    display:flex;align-items:center;gap:14px;
+    background:var(--surface);
+    border-bottom:1px solid var(--border);
+    padding:10px 20px;
+    box-shadow:var(--shadow);
+  }
+  .logo-img{height:34px;width:auto;display:inline-block;}
+  .logo-fallback{
+    display:none;height:34px;padding:0 10px;border-radius:8px;
+    background:var(--accent);color:#fff;font-weight:700;letter-spacing:.5px;
+    align-items:center;justify-content:center;
+  }
+  .brand{display:flex;align-items:baseline;gap:8px;margin-right:auto;}
+  .brand h1{font-size:18px;margin:0;font-weight:700;color:var(--text);}
+  .brand .by{font-size:12px;color:var(--text-muted);font-weight:500;}
+  .iconbtn{
+    background:transparent;border:1px solid transparent;border-radius:10px;
+    width:38px;height:38px;display:flex;align-items:center;justify-content:center;
+    font-size:18px;cursor:pointer;color:var(--text-muted);
+  }
+  .iconbtn:hover{background:var(--surface-2);border-color:var(--border);color:var(--text);}
+
+  /* ---------- Settings panel ---------- */
+  .settings-panel{
+    background:var(--surface);
+    border-bottom:1px solid var(--border);
+    overflow:hidden;max-height:0;transition:max-height .22s ease;
+  }
+  .settings-panel.open{max-height:320px;}
+  .settings-inner{padding:18px 24px;display:grid;grid-template-columns:repeat(3,1fr);gap:20px;}
+  @media (max-width:900px){.settings-inner{grid-template-columns:1fr;}}
+  .settings-row label{display:block;font-size:12px;font-weight:600;color:var(--text-muted);text-transform:uppercase;letter-spacing:.04em;margin-bottom:8px;}
+  .settings-row input[type=text],.settings-row input[type=password]{
+    width:100%;padding:9px 11px;border:1px solid var(--border);border-radius:8px;
+    background:var(--surface-2);color:var(--text);font-size:14px;
+  }
+  .settings-row .hint{font-size:11.5px;color:var(--text-muted);margin-top:6px;}
+  .btn{
+    border:1px solid var(--border);background:var(--surface-2);color:var(--text);
+    padding:8px 14px;border-radius:8px;font-size:13.5px;font-weight:600;cursor:pointer;
+  }
+  .btn:hover{background:var(--border);}
+  .btn-primary{background:var(--accent);border-color:var(--accent);color:#fff;}
+  .btn-primary:hover{filter:brightness(1.08);}
+  .btn-primary:disabled{opacity:.55;cursor:not-allowed;}
+  .btn-sm{padding:6px 10px;font-size:12.5px;}
+  .row-inline{display:flex;gap:8px;align-items:center;margin-top:8px;}
+  .theme-toggle{display:flex;gap:8px;margin-top:2px;}
+  .theme-toggle button{flex:1;}
+  .theme-toggle button.active{background:var(--accent);border-color:var(--accent);color:#fff;}
+
+  /* ---------- Layout ---------- */
+  .app-shell{display:flex;min-height:calc(100vh - 55px);}
+  .sidebar{
+    width:212px;flex-shrink:0;background:var(--surface);
+    border-right:1px solid var(--border);padding:16px 10px;
+  }
+  .nav-item{
+    display:flex;align-items:center;gap:11px;padding:10px 12px;border-radius:10px;
+    color:var(--text-muted);font-weight:600;font-size:13.5px;cursor:pointer;margin-bottom:4px;
+    user-select:none;
+  }
+  .nav-item .ic{font-size:17px;width:20px;text-align:center;}
+  .nav-item:hover{background:var(--surface-2);color:var(--text);}
+  .nav-item.active{background:var(--accent-soft);color:var(--accent);}
+  .main{flex:1;padding:24px;max-width:1200px;}
+  .view{display:none;}
+  .view.active{display:block;}
+  .page-title{font-size:21px;font-weight:700;margin:0 0 4px 0;}
+  .page-sub{color:var(--text-muted);margin:0 0 20px 0;font-size:13.5px;}
+
+  .placeholder-card{
+    background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);
+    padding:60px 24px;text-align:center;color:var(--text-muted);box-shadow:var(--shadow);
+  }
+  .placeholder-card .big{font-size:34px;margin-bottom:10px;}
+
+  /* ---------- Cards ---------- */
+  .card{
+    background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);
+    box-shadow:var(--shadow);margin-bottom:20px;overflow:hidden;
+  }
+  .card-header{display:flex;align-items:center;gap:12px;padding:16px 20px;border-bottom:1px solid var(--border);}
+  .card-icon{
+    width:34px;height:34px;border-radius:10px;display:flex;align-items:center;justify-content:center;
+    font-size:17px;flex-shrink:0;
+  }
+  .card-icon.c1{background:var(--accent-soft);color:var(--accent);}
+  .card-icon.c2{background:var(--accent-2-soft);color:var(--accent-2);}
+  .card-icon.c3{background:var(--accent-3-soft);color:var(--accent-3);}
+  .card-icon.c4{background:var(--success-soft);color:var(--success);}
+  .card-header h2{font-size:15px;margin:0;font-weight:700;}
+  .card-body{padding:20px;}
+  .grid2{display:grid;grid-template-columns:1fr 1fr;gap:16px;}
+  .grid3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:16px;}
+  @media (max-width:800px){.grid2,.grid3{grid-template-columns:1fr;}}
+  .field label{display:block;font-size:12px;font-weight:600;color:var(--text-muted);margin-bottom:6px;}
+  .field input[type=text],.field input[type=date],.field select,.field textarea{
+    width:100%;padding:9px 11px;border:1px solid var(--border);border-radius:8px;
+    background:var(--surface-2);color:var(--text);font-size:13.5px;
+  }
+  .field{margin-bottom:2px;}
+
+  .segmented{display:flex;gap:8px;}
+  .segmented label{
+    flex:1;text-align:center;padding:8px 10px;border:1px solid var(--border);border-radius:8px;
+    background:var(--surface-2);cursor:pointer;font-size:13px;font-weight:600;color:var(--text-muted);
+  }
+  .segmented input{display:none;}
+  .segmented input:checked + span{color:inherit;}
+  .segmented label.checked{background:var(--accent);border-color:var(--accent);color:#fff;}
+
+  .keyword-box{
+    display:flex;align-items:center;gap:14px;background:var(--surface-2);border:1px dashed var(--border);
+    border-radius:10px;padding:14px;margin-top:8px;
+  }
+  .keyword-display{font-size:22px;font-weight:800;color:var(--accent);min-width:120px;}
+  .keyword-display.empty{color:var(--text-muted);font-weight:600;font-size:15px;}
+
+  .amber-box{
+    background:var(--warning-soft);border:1px solid var(--warning);border-radius:10px;padding:14px 16px;margin-top:16px;
+  }
+  .amber-box h3{margin:0 0 8px 0;font-size:13.5px;color:var(--warning);}
+  .amber-box ol{margin:0;padding-left:18px;font-size:13px;color:var(--text);}
+  .amber-box li{margin-bottom:3px;}
+
+  .found-note{
+    background:var(--accent-soft);border:1px solid var(--accent);border-radius:10px;
+    padding:12px 14px;font-size:13px;color:var(--text);margin-top:10px;
+  }
+
+  .doc-grid{display:grid;grid-template-columns:1fr 1fr;gap:20px;}
+  @media (max-width:800px){.doc-grid{grid-template-columns:1fr;}}
+  .dropzone{
+    border:2px dashed var(--border);border-radius:12px;padding:22px 16px;text-align:center;
+    cursor:pointer;background:var(--surface-2);color:var(--text-muted);transition:border-color .15s;
+  }
+  .dropzone:hover{border-color:var(--accent);color:var(--accent);}
+  .dropzone .dz-ic{font-size:26px;margin-bottom:6px;}
+  .dropzone .dz-title{font-weight:700;font-size:13.5px;color:var(--text);}
+  .dropzone .dz-sub{font-size:11.5px;margin-top:4px;}
+
+  .thumbs{display:flex;flex-wrap:wrap;gap:10px;margin-top:12px;}
+  .thumb{position:relative;width:78px;height:78px;border-radius:8px;overflow:hidden;border:1px solid var(--border);}
+  .thumb img{width:100%;height:100%;object-fit:cover;display:block;}
+  .thumb .rm{
+    position:absolute;top:2px;right:2px;background:rgba(0,0,0,.6);color:#fff;border:none;
+    width:20px;height:20px;border-radius:50%;font-size:12px;cursor:pointer;line-height:1;
+  }
+  .pdf-info{margin-top:12px;font-size:12.5px;color:var(--text-muted);background:var(--surface-2);border:1px solid var(--border);border-radius:8px;padding:10px 12px;}
+  .pdf-info .warn{color:var(--warning);font-weight:700;}
+  .doc-note{margin-top:10px;font-size:12.5px;color:var(--text-muted);}
+
+  .action-row{display:flex;gap:12px;margin-top:20px;flex-wrap:wrap;align-items:center;}
+  .valid-msg{color:var(--danger);font-size:12.5px;font-weight:600;}
+
+  /* ---------- Results ---------- */
+  #resultsArea{display:none;}
+  .summary-line{font-size:13px;color:var(--text-muted);margin-bottom:8px;}
+  .status-line{display:flex;gap:10px;align-items:center;flex-wrap:wrap;margin-bottom:10px;}
+  .badge{
+    display:inline-flex;align-items:center;gap:5px;padding:4px 10px;border-radius:999px;
+    font-size:11.5px;font-weight:800;letter-spacing:.03em;
+  }
+  .badge-priority{background:var(--danger);color:#fff;}
+  .badge-version{background:var(--surface-2);border:1px solid var(--border);color:var(--text);}
+  .flag-amber{
+    background:var(--warning-soft);border:1px solid var(--warning);color:var(--warning);
+    border-radius:8px;padding:8px 12px;font-size:12.5px;font-weight:600;margin-bottom:12px;
+  }
+  .verdict-strip{
+    border-radius:10px;padding:12px 16px;font-weight:800;font-size:14px;margin-bottom:16px;
+    display:flex;align-items:center;gap:10px;
+  }
+  .verdict-ok{background:var(--success-soft);color:var(--success);}
+  .verdict-minor{background:var(--warning-soft);color:var(--warning);}
+  .verdict-major{background:var(--danger-soft);color:var(--danger);}
+  .verdict-na{background:var(--surface-2);color:var(--text-muted);}
+
+  table.cmp{width:100%;border-collapse:collapse;font-size:13px;margin-bottom:18px;}
+  table.cmp th,table.cmp td{border:1px solid var(--border);padding:8px 10px;text-align:left;vertical-align:top;}
+  table.cmp th{background:var(--surface-2);font-size:11.5px;text-transform:uppercase;letter-spacing:.03em;color:var(--text-muted);}
+  .zt-tag{background:var(--danger);color:#fff;font-size:10px;font-weight:800;padding:2px 6px;border-radius:5px;margin-left:6px;vertical-align:middle;}
+  .m-ok{color:var(--success);font-weight:700;}
+  .m-mismatch{color:var(--danger);font-weight:700;}
+  .m-na{color:var(--text-muted);font-weight:600;}
+  .m-close{color:var(--warning);font-weight:700;}
+
+  textarea.row-output{
+    width:100%;min-height:90px;font-family:ui-monospace,SFMono-Regular,Consolas,monospace;font-size:12px;
+    padding:10px;border:1px solid var(--border);border-radius:8px;background:var(--surface-2);color:var(--text);resize:vertical;
+  }
+  .copy-status{font-size:12.5px;margin-top:8px;font-weight:600;}
+  .copy-status.ok{color:var(--success);}
+  .copy-status.err{color:var(--danger);}
+
+  .error-box{background:var(--danger-soft);border:1px solid var(--danger);color:var(--danger);border-radius:10px;padding:12px 14px;font-size:13px;margin-bottom:14px;font-weight:600;}
+  .loading-line{display:flex;align-items:center;gap:10px;color:var(--text-muted);font-size:13px;margin-bottom:14px;}
+  .spinner{width:16px;height:16px;border-radius:50%;border:2px solid var(--border);border-top-color:var(--accent);animation:spin .7s linear infinite;}
+  @keyframes spin{to{transform:rotate(360deg);}}
+
+  /* ---------- Dashboard ---------- */
+  .metrics-grid{display:grid;grid-template-columns:repeat(5,1fr);gap:16px;margin-bottom:22px;}
+  @media (max-width:1000px){.metrics-grid{grid-template-columns:repeat(2,1fr);}}
+  .metric-card{
+    background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);
+    padding:18px;box-shadow:var(--shadow);
+  }
+  .metric-card .label{font-size:12px;color:var(--text-muted);font-weight:600;text-transform:uppercase;letter-spacing:.03em;}
+  .metric-card .value{font-size:28px;font-weight:800;margin-top:8px;color:var(--accent);}
+  .coverage-result{margin-top:14px;display:flex;gap:14px;flex-wrap:wrap;}
+  .cov-pill{background:var(--surface-2);border:1px solid var(--border);border-radius:10px;padding:10px 16px;font-size:13px;}
+  .cov-pill b{font-size:17px;display:block;}
+  .note-muted{font-size:12px;color:var(--text-muted);margin-top:14px;}
+</style>
+</head>
+<body>
+
+<div class="topnav">
+  <img class="logo-img" id="navLogo" src="__LOGO__" alt="Netpower logo" onerror="this.style.display='none';document.getElementById('logoFallback').style.display='flex';">
+  <span class="logo-fallback" id="logoFallback">NETPOWER</span>
+  <div class="brand">
+    <h1>SDS Spot Check</h1>
+    <span class="by">by Pantora</span>
+  </div>
+  <button class="iconbtn" id="settingsToggleBtn" title="Settings">⚙️</button>
+</div>
+
+<div class="settings-panel" id="settingsPanel">
+  <div class="settings-inner">
+    <div class="settings-row">
+      <label for="apiKeyInput">Anthropic API key</label>
+      <input type="password" id="apiKeyInput" placeholder="sk-ant-...">
+      <div class="hint">Stored locally in this browser only (localStorage). Never sent anywhere except api.anthropic.com.</div>
+    </div>
+    <div class="settings-row">
+      <label for="operatorNamesInput">Operator names</label>
+      <input type="text" id="operatorNamesInput" placeholder="Wahid, Efaz, Arafat, Jishan">
+      <div class="row-inline"><button class="btn btn-sm" id="saveNamesBtn">Save names</button></div>
+    </div>
+    <div class="settings-row">
+      <label>Appearance</label>
+      <div class="theme-toggle">
+        <button type="button" id="themeLightBtn">☀️ Light</button>
+        <button type="button" id="themeDarkBtn">🌙 Dark</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="app-shell">
+  <div class="sidebar">
+    <div class="nav-item active" data-view="dashboard"><span class="ic">📊</span><span>Dashboard</span></div>
+    <div class="nav-item" data-view="deviation"><span class="ic">⚠️</span><span>Deviation</span></div>
+    <div class="nav-item" data-view="migration"><span class="ic">🔁</span><span>Migration</span></div>
+    <div class="nav-item" data-view="sdstool"><span class="ic">🧪</span><span>SDS Comparison Tool</span></div>
+  </div>
+
+  <div class="main">
+
+    <!-- ================= DASHBOARD ================= -->
+    <div class="view active" id="view-dashboard">
+      <h2 class="page-title">Dashboard</h2>
+      <p class="page-sub">Overview of spot-check activity recorded in this browser.</p>
+
+      <div class="metrics-grid">
+        <div class="metric-card"><div class="label">Quarterly checks</div><div class="value" id="metricQuarterly">0</div></div>
+        <div class="metric-card"><div class="label">Monthly checks</div><div class="value" id="metricMonthly">0</div></div>
+        <div class="metric-card"><div class="label">Time saved</div><div class="value" id="metricTimeSaved">0h</div></div>
+        <div class="metric-card"><div class="label">Total deviations</div><div class="value" id="metricDeviations">0</div></div>
+        <div class="metric-card"><div class="label">Total migrations</div><div class="value" id="metricMigrations">0</div></div>
+      </div>
+
+      <div class="card">
+        <div class="card-header"><div class="card-icon c1">📅</div><h2>Coverage window</h2></div>
+        <div class="card-body">
+          <div class="grid3">
+            <div class="field"><label for="coverageFrom">From</label><input type="date" id="coverageFrom"></div>
+            <div class="field"><label for="coverageTo">To</label><input type="date" id="coverageTo"></div>
+            <div class="field" style="display:flex;align-items:flex-end;"><button class="btn btn-primary" id="coverageBtn">Show coverage</button></div>
+          </div>
+          <div class="coverage-result" id="coverageResult"></div>
+          <div class="note-muted">Counts are local to this browser only — this is not a shared team total.</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ================= DEVIATION ================= -->
+    <div class="view" id="view-deviation">
+      <h2 class="page-title">Deviation</h2>
+      <div class="placeholder-card"><div class="big">⚠️</div>Deviation tracking is not yet implemented.</div>
+    </div>
+
+    <!-- ================= MIGRATION ================= -->
+    <div class="view" id="view-migration">
+      <h2 class="page-title">Migration</h2>
+      <div class="placeholder-card"><div class="big">🔁</div>Migration tracking is not yet implemented.</div>
+    </div>
+
+    <!-- ================= SDS COMPARISON TOOL ================= -->
+    <div class="view" id="view-sdstool">
+      <h2 class="page-title">SDS Comparison Tool</h2>
+      <p class="page-sub">Spot-check SIKT's extracted data against the supplier's source SDS.</p>
+
+      <!-- Card 1 -->
+      <div class="card">
+        <div class="card-header"><div class="card-icon c1">👤</div><h2>Operator &amp; sample</h2></div>
+        <div class="card-body">
+          <div class="grid3">
+            <div class="field">
+              <label for="operatorSelect">Operator</label>
+              <select id="operatorSelect"></select>
+            </div>
+            <div class="field">
+              <label for="supplierSelect">Supplier sheet</label>
+              <select id="supplierSelect">
+                <option>Henkel</option><option>Merck</option><option>Thermo Fisher</option>
+                <option>Bio-Rad</option><option>TCI</option><option>Biltema</option><option>VWR</option>
+              </select>
+            </div>
+            <div class="field">
+              <label for="sampleIdInput">Sample ID</label>
+              <input type="text" id="sampleIdInput" placeholder="BILTEMA-0001">
+            </div>
+          </div>
+          <div class="grid3" style="margin-top:14px;">
+            <div class="field">
+              <label for="dateInput">Date</label>
+              <input type="text" id="dateInput" placeholder="dd.mm.yyyy">
+            </div>
+            <div class="field" style="grid-column:span 2;">
+              <label for="keywordManualInput">Manual keyword override (optional)</label>
+              <input type="text" id="keywordManualInput" placeholder="Leave blank to use generated keyword">
+            </div>
+          </div>
+          <div class="keyword-box">
+            <button class="btn" id="generateKeywordBtn">🎲 Generate keyword</button>
+            <div class="keyword-display empty" id="keywordDisplay">No keyword yet</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Card 2 -->
+      <div class="card">
+        <div class="card-header"><div class="card-icon c2">🔗</div><h2>Links &amp; SIKT status</h2></div>
+        <div class="card-body">
+          <div class="grid2">
+            <div class="field">
+              <label for="supplierUrlInput">Supplier SDS URL</label>
+              <input type="text" id="supplierUrlInput" placeholder="https://...">
+            </div>
+            <div class="field">
+              <label for="siktLinkInput">SIKT product/SDS link or ID</label>
+              <input type="text" id="siktLinkInput" placeholder="SIKT link or ID">
+            </div>
+          </div>
+          <div class="grid2" style="margin-top:14px;">
+            <div class="field">
+              <label>Found in SIKT?</label>
+              <div class="segmented" id="foundGroup">
+                <label class="checked"><input type="radio" name="foundInSikt" value="Yes" checked><span>Yes</span></label>
+                <label><input type="radio" name="foundInSikt" value="No"><span>No</span></label>
+                <label><input type="radio" name="foundInSikt" value="Unclear"><span>Unclear</span></label>
+              </div>
+            </div>
+            <div class="field">
+              <label>Duplicate in SIKT?</label>
+              <div class="segmented" id="dupGroup">
+                <label class="checked"><input type="radio" name="duplicate" value="No" checked><span>No</span></label>
+                <label><input type="radio" name="duplicate" value="Yes"><span>Yes</span></label>
+              </div>
+            </div>
+          </div>
+
+          <div class="amber-box">
+            <h3>⚠️ Before marking "No" — all four steps required</h3>
+            <ol>
+              <li>Article number, regulation filter ON</li>
+              <li>Product name, filter ON</li>
+              <li>Article number, filter OFF</li>
+              <li>Product name, filter OFF</li>
+            </ol>
+          </div>
+
+          <div class="found-note" id="foundNote" style="display:none;">
+            Found in SIKT is not "Yes" — this row will be filled using the not-found rules. The screenshot upload is hidden.
+            The supplier SDS PDF is still required.
+          </div>
+        </div>
+      </div>
+
+      <!-- Card 3 -->
+      <div class="card">
+        <div class="card-header"><div class="card-icon c3">📄</div><h2>Documents</h2></div>
+        <div class="card-body">
+          <div class="doc-grid">
+            <div id="screenshotColumn">
+              <label style="font-size:12px;font-weight:600;color:var(--text-muted);display:block;margin-bottom:8px;">SIKT extraction screenshot(s)</label>
+              <div class="dropzone" id="screenshotDropzone">
+                <div class="dz-ic">🖼️</div>
+                <div class="dz-title">Click to upload screenshots</div>
+                <div class="dz-sub">Multiple images allowed — add as many as needed to cover the full hazard list</div>
+              </div>
+              <input type="file" id="screenshotFileInput" accept="image/*" multiple style="display:none;">
+              <div class="thumbs" id="screenshotThumbs"></div>
+            </div>
+            <div>
+              <label style="font-size:12px;font-weight:600;color:var(--text-muted);display:block;margin-bottom:8px;">Supplier SDS PDF</label>
+              <div class="dropzone" id="pdfDropzone">
+                <div class="dz-ic">📕</div>
+                <div class="dz-title">Click to upload SDS PDF</div>
+                <div class="dz-sub">Text is extracted locally in your browser via pdf.js</div>
+              </div>
+              <input type="file" id="pdfFileInput" accept="application/pdf" style="display:none;">
+              <div class="pdf-info" id="pdfInfo" style="display:none;"></div>
+            </div>
+          </div>
+
+          <div class="action-row">
+            <button class="btn btn-primary" id="compareBtn">Compare &amp; generate row</button>
+            <button class="btn" id="clearBtn">Clear for next check</button>
+            <span class="valid-msg" id="formValidationMsg"></span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Results -->
+      <div class="card" id="resultsArea">
+        <div class="card-header"><div class="card-icon c4">✅</div><h2>Result</h2></div>
+        <div class="card-body" id="resultsBody"></div>
+      </div>
+
+    </div>
+
+  </div>
+</div>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.min.js"></script>
+<script>
+(function(){
+  "use strict";
+
+  /* ============================================================
+     Constants
+  ============================================================ */
+  var SUPPLIERS = ["Henkel","Merck","Thermo Fisher","Bio-Rad","TCI","Biltema","VWR"];
+  var DEFAULT_OPERATORS = ["Wahid","Efaz","Arafat","Jishan"];
+  var KEYWORDS = ["Acetone","Alcohol","Ethanol","Methanol","Isopropanol","Solvent",
+    "Ammonia","Citric Acid","Sulfuric Acid","Hydrochloric Acid","Sodium Hydroxide",
+    "Hydrogen Peroxide","Chlorine","Nitrate","Phosphate","Calcium",
+    "Cleaner","Degreaser","Disinfectant","Soap","Detergent","Spray",
+    "Oil","Grease","Lubricant","Fuel","Diesel","Petrol","Gas",
+    "Paint","Coating","Adhesive","Glue","Sealant","Resin","Epoxy",
+    "Ink","Toner","Glass","Metal","Plastic","Wood","Silicone","Wax",
+    "Automotive","Laboratory","Industrial","Powder","Liquid","Aerosol"];
+
+  var LS_KEYS = {
+    apiKey:"sds_api_key",
+    theme:"sds_theme",
+    operators:"sds_operators",
+    sampleId:"sds_sample_id",
+    log:"sds_activity_log"
+  };
+
+  var ANTHROPIC_URL = "https://api.anthropic.com/v1/messages";
+  var MODEL = "claude-sonnet-5";
+  var PDF_CHAR_LIMIT = 14000;
+
+  var LANGUAGE_MAP = {
+    "norwegian":"NO","norsk":"NO","bokmål":"NO","bokmal":"NO","nynorsk":"NO",
+    "english":"EN","engelsk":"EN","eng":"EN",
+    "swedish":"SV","svenska":"SV",
+    "danish":"DA","dansk":"DA",
+    "german":"DE","deutsch":"DE",
+    "french":"FR","français":"FR","francais":"FR",
+    "finnish":"FI","suomi":"FI"
+  };
+
+  /* ============================================================
+     In-memory state (screenshots / pdf text reset on Clear)
+  ============================================================ */
+  var state = {
+    screenshots: [],   // [{name, base64, mediaType, dataUrl}]
+    pdfText: "",
+    pdfMeta: null,      // {name, pages, chars}
+    lastKeyword: null
+  };
+
+  /* ============================================================
+     localStorage helpers
+  ============================================================ */
+  function lsGet(key, fallback){
+    try{
+      var v = localStorage.getItem(key);
+      return v === null ? fallback : v;
+    }catch(e){ return fallback; }
+  }
+  function lsSet(key, val){
+    try{ localStorage.setItem(key, val); }catch(e){}
+  }
+  function lsGetJSON(key, fallback){
+    try{
+      var v = localStorage.getItem(key);
+      return v === null ? fallback : JSON.parse(v);
+    }catch(e){ return fallback; }
+  }
+  function lsSetJSON(key, val){
+    try{ localStorage.setItem(key, JSON.stringify(val)); }catch(e){}
+  }
+
+  /* ============================================================
+     Small DOM helpers
+  ============================================================ */
+  function $(id){ return document.getElementById(id); }
+  function esc(s){
+    return String(s == null ? "" : s).replace(/[&<>"']/g, function(c){
+      return {"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c];
+    });
+  }
+
+  /* ============================================================
+     Theme
+  ============================================================ */
+  function applyTheme(theme){
+    if (theme === "dark"){
+      document.documentElement.setAttribute("data-theme","dark");
+    } else if (theme === "light"){
+      document.documentElement.setAttribute("data-theme","light");
+    } else {
+      document.documentElement.removeAttribute("data-theme");
+    }
+    $("themeLightBtn").classList.toggle("active", theme === "light");
+    $("themeDarkBtn").classList.toggle("active", theme === "dark");
+  }
+  function initTheme(){
+    var saved = lsGet(LS_KEYS.theme, "light");
+    applyTheme(saved);
+  }
+  $("themeLightBtn").addEventListener("click", function(){ lsSet(LS_KEYS.theme,"light"); applyTheme("light"); });
+  $("themeDarkBtn").addEventListener("click", function(){ lsSet(LS_KEYS.theme,"dark"); applyTheme("dark"); });
+
+  /* ============================================================
+     Settings panel
+  ============================================================ */
+  $("settingsToggleBtn").addEventListener("click", function(){
+    $("settingsPanel").classList.toggle("open");
+  });
+
+  $("apiKeyInput").value = lsGet(LS_KEYS.apiKey, "");
+  $("apiKeyInput").addEventListener("input", function(){
+    lsSet(LS_KEYS.apiKey, $("apiKeyInput").value.trim());
+  });
+
+  function loadOperators(){
+    return lsGetJSON(LS_KEYS.operators, DEFAULT_OPERATORS);
+  }
+  function renderOperatorSelect(){
+    var ops = loadOperators();
+    var sel = $("operatorSelect");
+    var prev = sel.value;
+    sel.innerHTML = "";
+    ops.forEach(function(name){
+      var o = document.createElement("option");
+      o.value = name; o.textContent = name;
+      sel.appendChild(o);
+    });
+    if (ops.indexOf(prev) !== -1) sel.value = prev;
+  }
+  $("operatorNamesInput").value = loadOperators().join(", ");
+  $("saveNamesBtn").addEventListener("click", function(){
+    var raw = $("operatorNamesInput").value;
+    var names = raw.split(",").map(function(s){ return s.trim(); }).filter(Boolean);
+    if (names.length === 0) names = DEFAULT_OPERATORS.slice();
+    lsSetJSON(LS_KEYS.operators, names);
+    renderOperatorSelect();
+  });
+
+  /* ============================================================
+     Sidebar navigation
+  ============================================================ */
+  var navItems = document.querySelectorAll(".nav-item");
+  navItems.forEach(function(el){
+    el.addEventListener("click", function(){
+      navItems.forEach(function(n){ n.classList.remove("active"); });
+      el.classList.add("active");
+      document.querySelectorAll(".view").forEach(function(v){ v.classList.remove("active"); });
+      $("view-" + el.getAttribute("data-view")).classList.add("active");
+      if (el.getAttribute("data-view") === "dashboard") renderDashboard();
+    });
+  });
+
+  /* ============================================================
+     Segmented radio groups (Found in SIKT / Duplicate)
+  ============================================================ */
+  function wireSegmented(groupId){
+    var group = $(groupId);
+    var labels = group.querySelectorAll("label");
+    labels.forEach(function(lab){
+      var input = lab.querySelector("input");
+      input.addEventListener("change", function(){
+        labels.forEach(function(l){ l.classList.remove("checked"); });
+        lab.classList.add("checked");
+        if (groupId === "foundGroup") onFoundChanged();
+      });
+    });
+  }
+  wireSegmented("foundGroup");
+  wireSegmented("dupGroup");
+
+  function getRadioValue(name){
+    var el = document.querySelector('input[name="' + name + '"]:checked');
+    return el ? el.value : "";
+  }
+  function setRadioValue(name, value){
+    var el = document.querySelector('input[name="' + name + '"][value="' + value + '"]');
+    if (el){
+      el.checked = true;
+      el.dispatchEvent(new Event("change"));
+    }
+  }
+
+  function onFoundChanged(){
+    var found = getRadioValue("foundInSikt");
+    var isYes = found === "Yes";
+    $("screenshotColumn").style.display = isYes ? "" : "none";
+    $("foundNote").style.display = isYes ? "none" : "block";
+  }
+
+  /* ============================================================
+     Sample ID / date / keyword
+  ============================================================ */
+  function todayDDMMYYYY(){
+    var d = new Date();
+    var dd = String(d.getDate()).padStart(2,"0");
+    var mm = String(d.getMonth()+1).padStart(2,"0");
+    return dd + "." + mm + "." + d.getFullYear();
+  }
+  $("dateInput").value = todayDDMMYYYY();
+
+  $("sampleIdInput").value = lsGet(LS_KEYS.sampleId, "BILTEMA-0001");
+  $("sampleIdInput").addEventListener("input", function(){
+    lsSet(LS_KEYS.sampleId, $("sampleIdInput").value.trim());
+  });
+
+  function incrementSampleId(id){
+    var m = id.match(/^(.*?)(\d+)$/);
+    if (!m) return id;
+    var prefix = m[1], digits = m[2], width = digits.length;
+    var num = parseInt(digits, 10) + 1;
+    var numStr = String(num);
+    while (numStr.length < width) numStr = "0" + numStr;
+    return prefix + numStr;
+  }
+
+  $("generateKeywordBtn").addEventListener("click", function(){
+    var pick;
+    do {
+      pick = KEYWORDS[Math.floor(Math.random() * KEYWORDS.length)];
+    } while (KEYWORDS.length > 1 && pick === state.lastKeyword);
+    state.lastKeyword = pick;
+    var disp = $("keywordDisplay");
+    disp.textContent = pick;
+    disp.classList.remove("empty");
+  });
+
+  function currentKeyword(){
+    var manual = $("keywordManualInput").value.trim();
+    if (manual) return manual;
+    var disp = $("keywordDisplay");
+    return disp.classList.contains("empty") ? "" : disp.textContent.trim();
+  }
+
+  /* ============================================================
+     Screenshot upload
+  ============================================================ */
+  $("screenshotDropzone").addEventListener("click", function(){ $("screenshotFileInput").click(); });
+  ["dragover"].forEach(function(evt){
+    $("screenshotDropzone").addEventListener(evt, function(e){ e.preventDefault(); });
+  });
+  $("screenshotDropzone").addEventListener("drop", function(e){
+    e.preventDefault();
+    handleScreenshotFiles(e.dataTransfer.files);
+  });
+  $("screenshotFileInput").addEventListener("change", function(){
+    handleScreenshotFiles($("screenshotFileInput").files);
+    $("screenshotFileInput").value = "";
+  });
+
+  function handleScreenshotFiles(fileList){
+    Array.prototype.forEach.call(fileList, function(file){
+      if (!/^image\//.test(file.type)) return;
+      var reader = new FileReader();
+      reader.onload = function(){
+        var dataUrl = reader.result;
+        var base64 = dataUrl.split(",")[1];
+        state.screenshots.push({ name: file.name, base64: base64, mediaType: file.type || "image/png", dataUrl: dataUrl });
+        renderScreenshotThumbs();
+      };
+      reader.readAsDataURL(file);
+    });
+  }
+
+  function renderScreenshotThumbs(){
+    var wrap = $("screenshotThumbs");
+    wrap.innerHTML = "";
+    state.screenshots.forEach(function(shot, idx){
+      var div = document.createElement("div");
+      div.className = "thumb";
+      var img = document.createElement("img");
+      img.src = shot.dataUrl;
+      var rm = document.createElement("button");
+      rm.className = "rm"; rm.textContent = "×"; rm.title = "Remove";
+      rm.addEventListener("click", function(){
+        state.screenshots.splice(idx, 1);
+        renderScreenshotThumbs();
+      });
+      div.appendChild(img); div.appendChild(rm);
+      wrap.appendChild(div);
+    });
+  }
+
+  /* ============================================================
+     PDF upload + pdf.js extraction
+  ============================================================ */
+  if (window.pdfjsLib){
+    pdfjsLib.GlobalWorkerOptions.workerSrc = "https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.worker.min.js";
+  }
+
+  $("pdfDropzone").addEventListener("click", function(){ $("pdfFileInput").click(); });
+  $("pdfDropzone").addEventListener("dragover", function(e){ e.preventDefault(); });
+  $("pdfDropzone").addEventListener("drop", function(e){
+    e.preventDefault();
+    if (e.dataTransfer.files && e.dataTransfer.files[0]) handlePdfFile(e.dataTransfer.files[0]);
+  });
+  $("pdfFileInput").addEventListener("change", function(){
+    if ($("pdfFileInput").files[0]) handlePdfFile($("pdfFileInput").files[0]);
+    $("pdfFileInput").value = "";
+  });
+
+  function handlePdfFile(file){
+    var info = $("pdfInfo");
+    info.style.display = "block";
+    info.innerHTML = "Reading " + esc(file.name) + " …";
+    var reader = new FileReader();
+    reader.onload = function(){
+      var typedArray = new Uint8Array(reader.result);
+      pdfjsLib.getDocument({ data: typedArray }).promise.then(function(pdf){
+        var pageTextPromises = [];
+        for (var i = 1; i <= pdf.numPages; i++){
+          pageTextPromises.push(
+            pdf.getPage(i).then(function(page){
+              return page.getTextContent().then(function(tc){
+                return tc.items.map(function(it){ return it.str; }).join(" ");
+              });
+            })
+          );
+        }
+        Promise.all(pageTextPromises).then(function(pages){
+          var fullText = pages.join("\n\n");
+          state.pdfText = fullText;
+          state.pdfMeta = { name: file.name, pages: pdf.numPages, chars: fullText.trim().length };
+          renderPdfInfo();
+        });
+      }).catch(function(err){
+        info.innerHTML = '<span class="warn">Could not read PDF: ' + esc(err && err.message ? err.message : String(err)) + "</span>";
+        state.pdfText = "";
+        state.pdfMeta = null;
+      });
+    };
+    reader.readAsArrayBuffer(file);
+  }
+
+  function renderPdfInfo(){
+    var info = $("pdfInfo");
+    var meta = state.pdfMeta;
+    if (!meta){ info.style.display = "none"; return; }
+    var html = "<b>" + esc(meta.name) + "</b> — " + meta.pages + " page(s), " + meta.chars + " characters extracted.";
+    if (meta.chars === 0){
+      html += '<br><span class="warn">No extractable text found — this is likely a scanned image PDF. Extraction cannot proceed without OCR.</span>';
+    }
+    info.innerHTML = html;
+    info.style.display = "block";
+  }
+
+  /* ============================================================
+     Language normalisation
+  ============================================================ */
+  function normalizeLanguage(raw){
+    if (!raw) return "";
+    var key = String(raw).trim().toLowerCase();
+    if (LANGUAGE_MAP[key]) return LANGUAGE_MAP[key];
+    var trimmed = String(raw).trim();
+    if (/^[a-zA-Z]{2}$/.test(trimmed)) return trimmed.toUpperCase();
+    return trimmed.toUpperCase();
+  }
+
+  /* ============================================================
+     Date parsing / comparison
+  ============================================================ */
+  function parseDDMMYYYY(str){
+    if (!str) return null;
+    var m = String(str).trim().match(/^(\d{1,2})\.(\d{1,2})\.(\d{4})$/);
+    if (!m) return null;
+    var d = parseInt(m[1],10), mo = parseInt(m[2],10) - 1, y = parseInt(m[3],10);
+    var dt = new Date(y, mo, d);
+    if (dt.getMonth() !== mo || dt.getDate() !== d) return null;
+    return dt;
+  }
+
+  function computeVersionStatus(found, siktDateStr, supplierDateStr){
+    if (found === "No") return "Not found";
+    if (found === "Unclear") return "Unclear";
+    var s = parseDDMMYYYY(siktDateStr), p = parseDDMMYYYY(supplierDateStr);
+    if (!s || !p) return "Unclear";
+    return s.getTime() >= p.getTime() ? "Latest" : "Older version present";
+  }
+
+  /* ============================================================
+     Hazard code validation (malformed detection)
+  ============================================================ */
+  function isValidHPCode(codeRaw){
+    var code = String(codeRaw).trim().toUpperCase();
+    if (!code) return true;
+    if (code.indexOf("+") !== -1){
+      return code.split("+").every(function(c){ return isValidHPCode(c); });
+    }
+    var m = code.match(/^([HP])(\d{3})([A-Z]{0,3})$/);
+    if (!m) return false;
+    var num = parseInt(m[2], 10);
+    if (m[1] === "H") return num >= 200 && num <= 499;
+    return num >= 100 && num <= 599;
+  }
+
+  function detectMalformedCodes(supplierData){
+    var set = {};
+    (supplierData.hazard_codes || []).forEach(function(c){
+      if (c && !isValidHPCode(c)) set[String(c).trim()] = true;
+    });
+    (supplierData.malformed_codes || []).forEach(function(c){
+      if (c) set[String(c).trim()] = true;
+    });
+    return Object.keys(set).filter(Boolean);
+  }
+
+  function normalizeCodeList(arr){
+    if (!Array.isArray(arr)) return [];
+    var seen = {};
+    var out = [];
+    arr.forEach(function(c){
+      var v = String(c).trim().toUpperCase();
+      if (v && !seen[v]){ seen[v] = true; out.push(v); }
+    });
+    return out.sort();
+  }
+
+  function computeHazardCodesMatch(siktCodes, supplierCodes){
+    var a = normalizeCodeList(siktCodes), b = normalizeCodeList(supplierCodes);
+    if (a.length === 0 || b.length === 0) return "N/A";
+    if (a.length !== b.length) return "Mismatch";
+    for (var i = 0; i < a.length; i++) if (a[i] !== b[i]) return "Mismatch";
+    return "OK";
+  }
+
+  function enforceNA(verdict, a, b){
+    var aEmpty = !a || !String(a).trim();
+    var bEmpty = !b || !String(b).trim();
+    if (aEmpty || bEmpty) return "N/A";
+    return verdict || "N/A";
+  }
+  function coerceZeroTolerance(verdict){
+    return verdict === "Close match" ? "Mismatch" : verdict;
+  }
+  function computeHazardTextMatch(modelVerdict, siktText, supplierText){
+    return coerceZeroTolerance(enforceNA(modelVerdict, siktText, supplierText));
+  }
+
+  /* ============================================================
+     Prompt construction
+  ============================================================ */
+  function prepareSupplierText(text){
+    var t = (text || "").replace(/[ \t]+/g, " ").replace(/\n{3,}/g, "\n\n").trim();
+    if (t.length > PDF_CHAR_LIMIT) t = t.slice(0, PDF_CHAR_LIMIT);
+    return t;
+  }
+
+  var RULES_TEXT =
+"You are assisting a chemical-safety QA team at Netpower. They are spot-checking whether their SIKT database correctly " +
+"extracted structured fields from a supplier Safety Data Sheet (SDS). Follow these rules precisely:\n\n" +
+"- Hazard codes (H-codes and P-codes) and the hazard statement text must be read from SECTION 2 of the supplier SDS ONLY. " +
+"Ignore any hazard-looking codes found elsewhere in the document.\n" +
+"- The CAS number must be read from SECTION 1 of the supplier SDS ONLY. If it only appears elsewhere, treat it as not stated (empty string).\n" +
+"- Dates: normalise every date to dd.mm.yyyy and compare as real calendar dates, never as strings. If a SIKT screenshot renders a date as mm/dd/yyyy " +
+"(e.g. 01/30/2024 meaning 30 January 2024), convert it correctly.\n" +
+"- Language must be output as a 2-letter uppercase ISO code only (NO, EN, SV, DA, DE, FR, FI, etc). Never output a full language name.\n" +
+"- If a field is genuinely absent from its source, return an empty string for it. Never guess a value and never copy a value across from the other source.\n" +
+"- Comparison rules: if both sides are present and equivalent, the match is \"OK\". If both are present and genuinely different, it is \"Mismatch\". " +
+"If only one side is present, or neither is present, it is \"N/A\".\n" +
+"- Supplier name comparison: a shortened or partial company name is acceptable (e.g. \"Bio-Rad\" vs \"Bio-Rad Laboratories AS\", or \"Thermo Fisher\" vs " +
+"\"Thermo Fisher (Kandel) GmbH\" is OK). Only a genuinely different company name is a Mismatch.\n" +
+"- Hazard codes and hazard text carry ZERO TOLERANCE: the only allowed values are OK, Mismatch, or N/A — never \"Close match\". A single missing, extra, " +
+"or altered code is a Mismatch. Truncated or incompletely extracted hazard text is a Mismatch. Compare hazard code sets order-independently but with exact membership.\n" +
+"- Other (non zero-tolerance) fields may use \"Close match\" for trivial formatting differences only.\n" +
+"- Also scan the supplier SDS for malformed H/P hazard code syntax. Valid forms: H2xx-H4xx, P1xx-P5xx, or combined codes like P301+P310. Something like " +
+"\"P280.1\" is invalid. List any malformed codes you find in the supplier PDF under malformed_codes. This is a supplier source-document error, not a SIKT " +
+"extraction error.\n" +
+"- Respond with RAW JSON ONLY. No markdown code fences, no explanation before or after the JSON.\n";
+
+  function buildMessageAndPrompt(found, pdfText){
+    var trimmedPdf = prepareSupplierText(pdfText);
+    var isYes = found === "Yes";
+    var schema;
+    if (isYes){
+      schema =
+'{\n' +
+'  "sikt": {\n' +
+'    "product_name": "", "article_no": "", "supplier_name": "", "language": "",\n' +
+'    "revision_date": "", "cas_no": "", "hazard_codes": [], "hazard_text": ""\n' +
+'  },\n' +
+'  "supplier": {\n' +
+'    "product_name": "", "article_no": "", "supplier_name": "", "language": "",\n' +
+'    "revision_date": "", "cas_no": "", "hazard_codes": [], "hazard_text": "", "malformed_codes": []\n' +
+'  },\n' +
+'  "comparison": {\n' +
+'    "name_match": "", "supplier_match": "", "revision_date_match": "", "language_match": "",\n' +
+'    "hazard_codes_match": "", "hazard_text_match": "", "cas_match": ""\n' +
+'  }\n' +
+'}';
+    } else {
+      schema =
+'{\n' +
+'  "supplier": {\n' +
+'    "product_name": "", "article_no": "", "supplier_name": "", "language": "",\n' +
+'    "revision_date": "", "cas_no": "", "hazard_codes": [], "hazard_text": "", "malformed_codes": []\n' +
+'  }\n' +
+'}';
+    }
+
+    var promptText = RULES_TEXT + "\n";
+    if (isYes){
+      promptText += "The attached image(s) are one or more screenshots of the SIKT web UI's extraction for this product " +
+        "(the screenshots may need to be read together — the hazard list often scrolls across multiple screenshots). " +
+        "Extract the SIKT fields from the screenshot(s), extract the supplier fields from the SDS text below, then compare them field by field.\n\n";
+    } else {
+      promptText += "The product was not confidently found in SIKT, so only extract the fields from the supplier SDS text below. Do not fabricate a comparison.\n\n";
+    }
+    promptText += "Respond with exactly this JSON shape (fill in real values, use empty string \"\" or [] when a field is genuinely absent):\n" + schema + "\n\n";
+    promptText += "--- SUPPLIER SDS TEXT (extracted from PDF, may be truncated) ---\n" + trimmedPdf + "\n--- END SUPPLIER SDS TEXT ---\n";
+
+    var content = [];
+    if (isYes){
+      state.screenshots.forEach(function(shot){
+        content.push({ type: "image", source: { type: "base64", media_type: shot.mediaType, data: shot.base64 } });
+      });
+    }
+    content.push({ type: "text", text: promptText });
+    return content;
+  }
+
+  /* ============================================================
+     Defensive JSON parsing
+  ============================================================ */
+  function extractJson(text){
+    var t = (text || "").trim();
+    t = t.replace(/^```(?:json)?/i, "").replace(/```$/, "").trim();
+    var start = t.indexOf("{");
+    var end = t.lastIndexOf("}");
+    if (start === -1 || end === -1 || end < start){
+      throw new Error("No JSON object found in the model's response.");
+    }
+    return JSON.parse(t.slice(start, end + 1));
+  }
+
+  /* ============================================================
+     API call
+  ============================================================ */
+  function callClaude(found, pdfText){
+    var apiKey = lsGet(LS_KEYS.apiKey, "").trim();
+    if (!apiKey) return Promise.reject(new Error("No Anthropic API key set. Open Settings (gear icon) and paste your key."));
+    var content = buildMessageAndPrompt(found, pdfText);
+    var body = {
+      model: MODEL,
+      max_tokens: 3000,
+      messages: [{ role: "user", content: content }]
+    };
+    return fetch(ANTHROPIC_URL, {
+      method: "POST",
+      headers: {
+        "content-type": "application/json",
+        "x-api-key": apiKey,
+        "anthropic-version": "2023-06-01",
+        "anthropic-dangerous-direct-browser-access": "true"
+      },
+      body: JSON.stringify(body)
+    }).then(function(resp){
+      return resp.text().then(function(raw){
+        if (!resp.ok){
+          var msg = "API error " + resp.status + ": ";
+          try{
+            var parsed = JSON.parse(raw);
+            msg += (parsed.error && parsed.error.message) ? parsed.error.message : raw;
+          }catch(e){ msg += raw; }
+          throw new Error(msg);
+        }
+        var json;
+        try{ json = JSON.parse(raw); }catch(e){ throw new Error("Could not parse API response as JSON."); }
+        var textOut = "";
+        (json.content || []).forEach(function(block){
+          if (block.type === "text") textOut += block.text;
+        });
+        return extractJson(textOut);
+      });
+    });
+  }
+
+  /* ============================================================
+     Row building
+  ============================================================ */
+  function buildRow(found, data){
+    var isYes = found === "Yes";
+    var supplier = (data && data.supplier) || {};
+    var sikt = (isYes && data && data.sikt) || {};
+    var cmp = (isYes && data && data.comparison) || {};
+
+    var supplierLang = normalizeLanguage(supplier.language);
+    var siktLang = normalizeLanguage(sikt.language);
+
+    var nameMatch = isYes ? enforceNA(cmp.name_match, sikt.product_name, supplier.product_name) : "N/A";
+    var supplierMatch = isYes ? enforceNA(cmp.supplier_match, sikt.supplier_name, supplier.supplier_name) : "N/A";
+    var revDateMatch = isYes ? enforceNA(cmp.revision_date_match, sikt.revision_date, supplier.revision_date) : "N/A";
+    var langMatch = isYes ? enforceNA(cmp.language_match, siktLang, supplierLang) : "N/A";
+    var hazardCodesMatch = isYes ? computeHazardCodesMatch(sikt.hazard_codes, supplier.hazard_codes) : "N/A";
+    var hazardTextMatch = isYes ? computeHazardTextMatch(cmp.hazard_text_match, sikt.hazard_text, supplier.hazard_text) : "N/A";
+    var casMatch = isYes ? enforceNA(cmp.cas_match, sikt.cas_no, supplier.cas_no) : "N/A";
+    var regulationMatch = isYes ? "OK" : "N/A";
+
+    var versionStatus = computeVersionStatus(found, sikt.revision_date, supplier.revision_date);
+    var malformed = detectMalformedCodes(supplier);
+    var sourceDocError = malformed.length > 0 ? "Yes" : "No";
+    var duplicate = getRadioValue("duplicate");
+
+    var matches = {
+      name: nameMatch, supplier: supplierMatch, revisionDate: revDateMatch,
+      language: langMatch, cas: casMatch, hazardCodes: hazardCodesMatch, hazardText: hazardTextMatch
+    };
+
+    var extractionResult;
+    if (!isYes){
+      extractionResult = "N/A";
+    } else if (hazardCodesMatch === "Mismatch" || hazardTextMatch === "Mismatch"){
+      extractionResult = "Major issue";
+    } else {
+      var otherMismatch = ["name","supplier","revisionDate","language","cas"].some(function(k){ return matches[k] === "Mismatch"; })
+        || duplicate === "Yes" || versionStatus === "Older version present";
+      extractionResult = otherMismatch ? "Minor issue" : "OK";
+    }
+
+    var issues = [];
+    if (found === "No") issues.push("Not found in SIKT(Found in GB)");
+    else if (found === "Unclear") issues.push("Unclear in SIKT");
+    if (versionStatus === "Older version present") issues.push("Old version in SIKT");
+    if (matches.name === "Mismatch") issues.push("Product name mismatch");
+    if (matches.supplier === "Mismatch") issues.push("Supplier mismatch");
+    if (matches.revisionDate === "Mismatch" && versionStatus !== "Older version present") issues.push("Revision date mismatch");
+    if (matches.language === "Mismatch") issues.push("Language mismatch");
+    if (matches.cas === "Mismatch") issues.push("CAS nr mismatch");
+    if (matches.hazardCodes === "Mismatch") issues.push("Hazard codes mismatch");
+    if (matches.hazardText === "Mismatch") issues.push("Hazard text mismatch");
+    if (duplicate === "Yes") issues.push("Duplicate in SIKT");
+    if (sourceDocError === "Yes") issues.push("Malformed hazard code in supplier SDS");
+    if (issues.length === 0) issues.push("None");
+    var issueDescription = issues.join(", ");
+
+    var actionNeeded;
+    if (found === "No") actionNeeded = "Add to crawler list";
+    else if (found === "Unclear") actionNeeded = "Other";
+    else if (duplicate === "Yes") actionNeeded = "Fix duplicate";
+    else if (versionStatus === "Older version present" || matches.revisionDate === "Mismatch") actionNeeded = "Add to crawler list";
+    else {
+      var anyMismatch = Object.keys(matches).some(function(k){ return matches[k] === "Mismatch"; });
+      actionNeeded = anyMismatch ? "Investigate extraction" : "None";
+    }
+
+    var priority;
+    if (extractionResult === "Major issue") priority = "High";
+    else if (found === "No" || found === "Unclear") priority = "Normal";
+    else if (extractionResult === "Minor issue") priority = "Normal";
+    else priority = "None";
+
+    var date = $("dateInput").value.trim();
+    var sampleId = $("sampleIdInput").value.trim();
+    var supplierSheet = $("supplierSelect").value;
+    var operator = $("operatorSelect").value;
+    var keyword = currentKeyword();
+    var url = $("supplierUrlInput").value.trim();
+    var siktLink = $("siktLinkInput").value.trim();
+
+    var cols = [
+      date, sampleId,
+      supplier.supplier_name || supplierSheet,
+      operator, keyword, url,
+      supplier.product_name || "",
+      supplier.article_no || "",
+      supplierLang,
+      supplier.revision_date || "",
+      found, versionStatus,
+      isYes ? siktLink : "",
+      nameMatch, supplierMatch, revDateMatch, langMatch,
+      hazardCodesMatch, hazardTextMatch, regulationMatch, casMatch,
+      sourceDocError, duplicate,
+      isYes ? "" : url,
+      extractionResult, issueDescription, actionNeeded,
+      "Ahmed", "Done", priority
+    ];
+
+    return {
+      cols: cols,
+      tsv: cols.join("\t"),
+      sikt: sikt, supplier: supplier,
+      matches: matches, malformed: malformed,
+      versionStatus: versionStatus, extractionResult: extractionResult,
+      priority: priority, found: found, duplicate: duplicate,
+      siktLang: siktLang, supplierLang: supplierLang
+    };
+  }
+
+  /* ============================================================
+     Results rendering
+  ============================================================ */
+  function matchClass(v){
+    if (v === "OK") return "m-ok";
+    if (v === "Mismatch") return "m-mismatch";
+    if (v === "Close match") return "m-close";
+    return "m-na";
+  }
+
+  function renderResults(row){
+    var isYes = row.found === "Yes";
+    var body = $("resultsBody");
+    var html = "";
+
+    var shotCount = state.screenshots.length;
+    html += '<div class="summary-line">Read ' + (isYes ? (shotCount + " screenshot(s) + 1 PDF") : "1 PDF") +
+      " (" + (state.pdfMeta ? state.pdfMeta.pages + " pages, " + state.pdfMeta.chars + " chars" : "") +
+      "). Hazard codes/text are read from Section 2 only; CAS number from Section 1 only.</div>";
+
+    html += '<div class="status-line">';
+    html += '<span class="badge badge-version">Version status: ' + esc(row.versionStatus) + '</span>';
+    if (row.priority === "High"){
+      html += '<span class="badge badge-priority">PRIORITY: HIGH</span>';
+    }
+    html += '</div>';
+
+    if (row.malformed && row.malformed.length){
+      html += '<div class="flag-amber">⚠ Supplier PDF contains malformed hazard code syntax: ' + esc(row.malformed.join(", ")) + '</div>';
+    }
+
+    var verdictClass = "verdict-na", verdictLabel = "Not compared";
+    if (row.extractionResult === "OK"){ verdictClass = "verdict-ok"; verdictLabel = "OK"; }
+    else if (row.extractionResult === "Minor issue"){ verdictClass = "verdict-minor"; verdictLabel = "Minor issue"; }
+    else if (row.extractionResult === "Major issue"){ verdictClass = "verdict-major"; verdictLabel = "Major issue"; }
+    else { verdictLabel = "N/A — " + (row.found === "No" ? "not found in SIKT" : "unclear result"); }
+    html += '<div class="verdict-strip ' + verdictClass + '">' + esc(verdictLabel) + '</div>';
+
+    if (isYes){
+      var rows = [
+        ["Product / SDS name", row.sikt.product_name, row.supplier.product_name, row.matches.name, false],
+        ["Supplier", row.sikt.supplier_name, row.supplier.supplier_name, row.matches.supplier, false],
+        ["Revision date", row.sikt.revision_date, row.supplier.revision_date, row.matches.revisionDate, false],
+        ["Language", row.siktLang, row.supplierLang, row.matches.language, false],
+        ["Hazard codes", (row.sikt.hazard_codes||[]).join(", "), (row.supplier.hazard_codes||[]).join(", "), row.matches.hazardCodes, true],
+        ["Hazard text", row.sikt.hazard_text, row.supplier.hazard_text, row.matches.hazardText, true],
+        ["CAS number", row.sikt.cas_no, row.supplier.cas_no, row.matches.cas, false],
+        ["Regulation", "-", "-", "OK", false]
+      ];
+      html += '<table class="cmp"><thead><tr><th>Field</th><th>SIKT DB (screenshot)</th><th>Supplier SDS (PDF)</th><th>Match</th></tr></thead><tbody>';
+      rows.forEach(function(r){
+        html += '<tr><td>' + esc(r[0]) + (r[4] ? '<span class="zt-tag">ZERO TOL.</span>' : '') + '</td>' +
+          '<td>' + esc(r[1] || "") + '</td><td>' + esc(r[2] || "") + '</td>' +
+          '<td class="' + matchClass(r[3]) + '">' + esc(r[3]) + '</td></tr>';
+      });
+      html += '</tbody></table>';
+    } else {
+      html += '<table class="cmp"><thead><tr><th>Field</th><th>Supplier SDS (PDF)</th></tr></thead><tbody>';
+      [["Product / SDS name", row.supplier.product_name],["Article / Product no.", row.supplier.article_no],
+       ["Supplier", row.supplier.supplier_name],["Language", row.supplierLang],
+       ["Revision date", row.supplier.revision_date],["CAS number", row.supplier.cas_no],
+       ["Hazard codes", (row.supplier.hazard_codes||[]).join(", ")],["Hazard text", row.supplier.hazard_text]
+      ].forEach(function(r){
+        html += '<tr><td>' + esc(r[0]) + '</td><td>' + esc(r[1] || "") + '</td></tr>';
+      });
+      html += '</tbody></table>';
+    }
+
+    html += '<textarea class="row-output" id="rowOutput" readonly></textarea>';
+    html += '<div class="row-inline"><button class="btn btn-primary" id="copyRowBtn">Copy row</button><span class="copy-status" id="copyStatus"></span></div>';
+
+    body.innerHTML = html;
+    $("rowOutput").value = row.tsv;
+    $("resultsArea").style.display = "block";
+    $("copyRowBtn").addEventListener("click", copyRowToClipboard);
+  }
+
+  function renderError(msg){
+    $("resultsBody").innerHTML = '<div class="error-box">' + esc(msg) + '</div>';
+    $("resultsArea").style.display = "block";
+  }
+
+  function renderLoading(){
+    $("resultsBody").innerHTML = '<div class="loading-line"><span class="spinner"></span> Calling Claude…</div>';
+    $("resultsArea").style.display = "block";
+  }
+
+  /* ============================================================
+     Clipboard (robust, handles async rejection on file://)
+  ============================================================ */
+  function legacyCopy(text){
+    var ta = document.createElement("textarea");
+    ta.value = text;
+    ta.style.position = "fixed";
+    ta.style.top = "-1000px";
+    ta.style.left = "-1000px";
+    document.body.appendChild(ta);
+    ta.focus();
+    ta.select();
+    ta.setSelectionRange(0, text.length);
+    var ok = false;
+    try{ ok = document.execCommand("copy"); }catch(e){ ok = false; }
+    document.body.removeChild(ta);
+    return ok;
+  }
+
+  function copyRowToClipboard(){
+    var el = $("rowOutput");
+    var text = el.value;
+    var statusEl = $("copyStatus");
+    if (!text) return;
+
+    function done(ok){
+      if (ok){
+        statusEl.textContent = "Row copied to clipboard.";
+        statusEl.className = "copy-status ok";
+      } else {
+        el.focus();
+        el.select();
+        el.setSelectionRange(0, text.length);
+        statusEl.textContent = "Automatic copy failed — text is selected, press Ctrl+C to copy manually.";
+        statusEl.className = "copy-status err";
+      }
+    }
+
+    if (navigator.clipboard && navigator.clipboard.writeText){
+      navigator.clipboard.writeText(text).then(function(){ done(true); }).catch(function(){ done(legacyCopy(text)); });
+    } else {
+      done(legacyCopy(text));
+    }
+  }
+
+  /* ============================================================
+     Activity log / dashboard
+  ============================================================ */
+  function logCheck(row){
+    var log = lsGetJSON(LS_KEYS.log, []);
+    log.push({
+      ts: Date.now(),
+      date: $("dateInput").value.trim(),
+      sampleId: $("sampleIdInput").value.trim(),
+      supplier: $("supplierSelect").value,
+      operator: $("operatorSelect").value,
+      keyword: currentKeyword(),
+      foundInSikt: row.found,
+      versionStatus: row.versionStatus,
+      extractionResult: row.extractionResult,
+      priority: row.priority
+    });
+    lsSetJSON(LS_KEYS.log, log);
+  }
+
+  function getQuarter(d){ return Math.floor(d.getMonth() / 3); }
+
+  function renderDashboard(){
+    var log = lsGetJSON(LS_KEYS.log, []);
+    var now = new Date();
+    var qCount = 0, mCount = 0;
+    log.forEach(function(entry){
+      var d = parseDDMMYYYY(entry.date);
+      if (!d) return;
+      if (d.getFullYear() === now.getFullYear() && getQuarter(d) === getQuarter(now)) qCount++;
+      if (d.getFullYear() === now.getFullYear() && d.getMonth() === now.getMonth()) mCount++;
+    });
+    $("metricQuarterly").textContent = qCount;
+    $("metricMonthly").textContent = mCount;
+    var hours = (log.length * 20) / 60;
+    $("metricTimeSaved").textContent = (Math.round(hours * 10) / 10) + "h";
+    $("metricDeviations").textContent = "0";
+    $("metricMigrations").textContent = "0";
+  }
+
+  $("coverageBtn").addEventListener("click", function(){
+    var fromVal = $("coverageFrom").value;
+    var toVal = $("coverageTo").value;
+    var from = fromVal ? new Date(fromVal + "T00:00:00") : null;
+    var to = toVal ? new Date(toVal + "T23:59:59") : null;
+    var log = lsGetJSON(LS_KEYS.log, []);
+    var compared = 0, notFound = 0, unclear = 0;
+    log.forEach(function(entry){
+      var d = parseDDMMYYYY(entry.date);
+      if (!d) return;
+      if (from && d < from) return;
+      if (to && d > to) return;
+      if (entry.foundInSikt === "Yes") compared++;
+      else if (entry.foundInSikt === "No") notFound++;
+      else unclear++;
+    });
+    $("coverageResult").innerHTML =
+      '<div class="cov-pill"><b>' + compared + '</b>Compared</div>' +
+      '<div class="cov-pill"><b>' + notFound + '</b>Not found</div>' +
+      '<div class="cov-pill"><b>' + unclear + '</b>Unclear</div>';
+  });
+
+  /* ============================================================
+     Compare & generate row
+  ============================================================ */
+  function validateForm(){
+    var errors = [];
+    if (!lsGet(LS_KEYS.apiKey, "").trim()) errors.push("Set your Anthropic API key in Settings.");
+    if (!$("operatorSelect").value) errors.push("Choose an operator.");
+    if (!$("supplierSelect").value) errors.push("Choose a supplier.");
+    if (!$("sampleIdInput").value.trim()) errors.push("Sample ID is required.");
+    if (!$("dateInput").value.trim()) errors.push("Date is required.");
+    if (!currentKeyword()) errors.push("Generate or enter a search keyword.");
+    var found = getRadioValue("foundInSikt");
+    if (found === "Yes" && state.screenshots.length === 0) errors.push("Upload at least one SIKT screenshot.");
+    if (!state.pdfMeta) errors.push("Upload the supplier SDS PDF.");
+    else if (state.pdfMeta.chars === 0) errors.push("The uploaded PDF has no extractable text (likely scanned).");
+    return errors;
+  }
+
+  $("compareBtn").addEventListener("click", function(){
+    var errors = validateForm();
+    var msgEl = $("formValidationMsg");
+    if (errors.length){
+      msgEl.textContent = errors[0];
+      return;
+    }
+    msgEl.textContent = "";
+    $("compareBtn").disabled = true;
+    renderLoading();
+
+    var found = getRadioValue("foundInSikt");
+    callClaude(found, state.pdfText).then(function(data){
+      var row = buildRow(found, data);
+      renderResults(row);
+      logCheck(row);
+      $("sampleIdInput").value = incrementSampleId($("sampleIdInput").value.trim());
+      lsSet(LS_KEYS.sampleId, $("sampleIdInput").value);
+    }).catch(function(err){
+      renderError(err && err.message ? err.message : String(err));
+    }).finally(function(){
+      $("compareBtn").disabled = false;
+    });
+  });
+
+  /* ============================================================
+     Clear for next check
+  ============================================================ */
+  $("clearBtn").addEventListener("click", function(){
+    state.screenshots = [];
+    state.pdfText = "";
+    state.pdfMeta = null;
+    $("screenshotFileInput").value = "";
+    $("pdfFileInput").value = "";
+    renderScreenshotThumbs();
+    $("pdfInfo").style.display = "none";
+    $("pdfInfo").innerHTML = "";
+
+    $("supplierUrlInput").value = "";
+    $("siktLinkInput").value = "";
+    setRadioValue("foundInSikt", "Yes");
+    setRadioValue("duplicate", "No");
+
+    $("resultsArea").style.display = "none";
+    $("resultsBody").innerHTML = "";
+    $("formValidationMsg").textContent = "";
+  });
+
+  /* ============================================================
+     Init
+  ============================================================ */
+  initTheme();
+  renderOperatorSelect();
+  onFoundChanged();
+  renderDashboard();
+})();
+</script>
+</body>
+</html>
