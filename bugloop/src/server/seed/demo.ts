@@ -2,7 +2,7 @@
 // on a virtual clock. The result reads like four months of real team activity.
 
 import type { AppContext } from "../context";
-import { ManualClock } from "../context";
+import { ManualClock, nowIso } from "../context";
 import type { UserRow } from "../db/schema";
 import type { Bug } from "../../core/types";
 import { hashPassword } from "../services/auth";
@@ -111,6 +111,8 @@ async function seedOrganisation(ctx: AppContext, opts: { passwords: boolean }) {
       });
     }
     saveSetting(ctx, "workspace_name", "Demo workspace", null);
+    // Marks the database as sample data: the server only offers password-less demo sign-in for it.
+    ctx.store.insert("settings", { key: "demo_data", value: true, updated_at: nowIso(ctx), updated_by_id: null });
   });
   return { ids, teamIds };
 }

@@ -89,8 +89,20 @@ bugloop/
 3. The workflow engine checks role, context (assignee, reporter, separation of duties), the
    current status, and the required inputs.
 4. Inside one transaction the service updates the bug, writes events, creates the regression
-   round, updates watchers and queues notifications.
+   round, updates watchers and queues notifications. Everything one action records shares a
+   single timestamp, so the timeline can group an action with its consequences.
 5. The response returns the updated bug with the actions now available to the caller.
+
+## Building and testing
+
+| Command | What it does |
+|---|---|
+| `npm run dev` | API with reload on :3000 and Vite on :5173 |
+| `npm run build` / `npm start` | Build the web app and server bundle, then serve both on `PORT` |
+| `npm run build:demo` | Single-file demo: `dist/demo/index.html` (open from disk) and `dist/demo/bugloop.html` (artifact-ready: no `<html>`/`<head>`/`<body>`) |
+| `npm test` | Vitest: domain rules, both stores, services over HTTP, seed data, offline assistant |
+| `npm run typecheck` | TypeScript, strict |
+| `npm run e2e` | Playwright end-to-end loop through the UI against the demo build, or `BASE=http://localhost:3000` for a running server |
 
 ## Configuration
 
@@ -99,7 +111,7 @@ bugloop/
 | `PORT` | `3000` | HTTP port |
 | `BUGLOOP_DATA_DIR` | `./data` | SQLite file and uploads |
 | `BUGLOOP_SEED` | `demo` | Seed demo data when the database is empty (`demo` or `none`) |
-| `BUGLOOP_DEMO_LOGIN` | `true` | Show one-click demo accounts on the sign-in page |
+| `BUGLOOP_DEMO_LOGIN` | on for sample data | One-click, password-less demo accounts. Defaults to on only when the database was seeded with sample data; `false` always requires passwords |
 | `ANTHROPIC_API_KEY` | — | Enables Claude for drafting, screenshots, summaries |
 | `BUGLOOP_AI_MODEL` | `claude-opus-5` | Model used by the Anthropic provider |
 | `BUGLOOP_AI_EFFORT` | `medium` | Effort level; drafting is interactive, so latency matters |
@@ -113,5 +125,6 @@ bugloop/
 * Uploaded files are served with `X-Content-Type-Options: nosniff` and a sandboxing
   `Content-Security-Policy`, and non-media files are served as downloads.
 * API keys stay on the server. The demo never asks for one.
-* Demo login is for evaluation. Disable it (`BUGLOOP_DEMO_LOGIN=false`) and change the seeded
-  passwords before real use, or start with `BUGLOOP_SEED=none` and create an admin.
+* Demo login is for evaluation and is only offered for a database seeded with sample data. For
+  real use start with `BUGLOOP_SEED=none` and create the first admin in the browser; if you keep
+  the sample data, set `BUGLOOP_DEMO_LOGIN=false` and change the seeded passwords.

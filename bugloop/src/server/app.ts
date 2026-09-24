@@ -92,6 +92,36 @@ function num(v: string | undefined, fallback: number): number {
   return Number.isFinite(n) ? n : fallback;
 }
 
+const field = z.string().max(40);
+const aiMetaSchema = z.object({
+  provider: z.string().max(40),
+  model: z.string().max(100).nullable(),
+  drafted_fields: z.array(field).max(40),
+  provenance: z.record(field, z.enum(["reporter", "screenshot", "ai_wording", "ai_inferred"])),
+  edited_fields: z.array(field).max(40),
+  confirmed_fields: z.array(field).max(40).optional(),
+  screenshot_observations: z
+    .array(
+      z.object({
+        image: z.number().int().min(1).max(20),
+        kind: z.enum(["error_message", "ui_element", "page", "value", "layout", "validation", "status", "other"]),
+        observation: z.string().max(600),
+        quote: z.string().max(400).nullable(),
+      }),
+    )
+    .max(24),
+  drafted_at: z.string().max(40),
+});
+
+const duplicateCheckSchema = z.object({
+  checked_at: z.string().max(40),
+  candidates: z
+    .array(z.object({ bug_id: z.string().max(80), key: z.string().max(24), score: z.number(), level: z.enum(["high", "medium", "low"]) }))
+    .max(10),
+  decision: z.enum(["none_found", "submitted_anyway"]),
+  note: z.string().max(2000).nullable(),
+});
+
 const createBugSchema = z.object({
   project_id: z.string().min(1, "Choose a project."),
   module_id: z.string().min(1, "Choose a module."),
@@ -113,8 +143,8 @@ const createBugSchema = z.object({
   priority: z.string().nullish(),
   tags: z.array(z.string()).optional(),
   notes: z.string().nullish(),
-  ai_meta: z.any().optional(),
-  duplicate_check: z.any().optional(),
+  ai_meta: aiMetaSchema.nullish(),
+  duplicate_check: duplicateCheckSchema.nullish(),
 });
 
 function parse<T>(schema: z.ZodType<T>, data: unknown): T {

@@ -7,7 +7,7 @@ import { REJECTION_CATEGORIES, ROOT_CAUSES } from "../../core/types";
 import { ACTION_DEFS, checkAction, targetStatus, type ActionKey } from "../../core/workflow";
 import { canBeAssignee } from "../../core/permissions";
 import type { AppContext } from "../context";
-import { nowIso } from "../context";
+import { nowIso, atOneMoment } from "../context";
 import type { UserRow } from "../db/schema";
 import { insertAttachments, withStoredFiles, type IncomingFile, type StoredFile } from "./attachments";
 import { pendingRun, resolveBug, workflowContext } from "./bugs";
@@ -84,6 +84,7 @@ export async function performAction(
   input: ActionInput = {},
   files: IncomingFile[] = [],
 ): Promise<Bug> {
+  ctx = atOneMoment(ctx);
   const bug = typeof bugOrRef === "string" ? resolveBug(ctx, bugOrRef) : bugOrRef;
   if (!(key in ACTION_DEFS)) throw badRequest(`Unknown action ${key}.`);
   const settings = getSettings(ctx);

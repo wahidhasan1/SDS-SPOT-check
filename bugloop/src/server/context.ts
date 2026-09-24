@@ -31,6 +31,16 @@ export class ManualClock implements Clock {
   }
 }
 
+/**
+ * The same context with time stopped at this moment. One user action (a transition, a new report,
+ * a comment) records all of its events, notifications and rows with a single timestamp, so the
+ * timeline can group them however long the work takes.
+ */
+export function atOneMoment(ctx: AppContext): AppContext {
+  const t = ctx.clock.now().getTime();
+  return { ...ctx, clock: { now: () => new Date(t) } };
+}
+
 export interface AppConfig {
   mode: "server" | "demo";
   demoLogin: boolean;

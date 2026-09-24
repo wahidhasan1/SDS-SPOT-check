@@ -1,0 +1,204 @@
+/* Bugloop design tokens. Light is the base; dark redefines tokens only. */
+
+:root {
+  color-scheme: light;
+
+  --font-sans: "IBM Plex Sans", system-ui, -apple-system, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+  --font-mono: "IBM Plex Mono", ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+
+  --bg: #f4f5f8;
+  --surface: #ffffff;
+  --surface-2: #f3f5f8;
+  --surface-3: #e9edf2;
+  --overlay: rgba(15, 22, 33, 0.42);
+  --border: #e2e6ec;
+  --border-strong: #cbd2dc;
+  --text: #111823;
+  --text-2: #465262;
+  --text-3: #778293;
+  --text-inverse: #ffffff;
+
+  --ink: #151d2a;
+  --ink-hover: #26303f;
+  --accent: #2c5ecf;
+  --accent-hover: #2451b6;
+  --accent-soft: #e9effc;
+  --focus: #3b6fe0;
+
+  --positive: #16794a;
+  --positive-soft: #e6f4ec;
+  --warning: #9a5b00;
+  --warning-soft: #fdf3dc;
+  --danger: #c02a2a;
+  --danger-soft: #fcebea;
+
+  /* AI provenance */
+  --prov-reporter: #465262;
+  --prov-screenshot: #0e7a8a;
+  --prov-ai: #6a4bd1;
+  --prov-inferred: #a15c00;
+  --prov-inferred-soft: #fff5e3;
+
+  /* Chart chrome and categorical series (validated, see docs/architecture.md) */
+  --chart-grid: #eceff3;
+  --chart-axis: #cbd2dc;
+  --chart-muted: #b9c1cc;
+  --series-1: #2a78d6;
+  --series-2: #eb6834;
+  --series-3: #1baf7a;
+  --series-4: #eda100;
+  --series-5: #e87ba4;
+  --series-6: #008300;
+  --series-7: #4a3aa7;
+  --series-8: #e34948;
+
+  /* Tint formula used by status, severity and avatar colours */
+  --tone-bg-l: 95.5%;
+  --tone-bg-c: 0.032;
+  --tone-fg-l: 42%;
+  --tone-fg-c: 0.13;
+  --tone-dot-l: 63%;
+  --tone-dot-c: 0.16;
+  --tone-border-l: 88%;
+  --tone-border-c: 0.05;
+
+  --radius-sm: 6px;
+  --radius: 8px;
+  --radius-lg: 12px;
+  --shadow-1: 0 1px 2px rgba(17, 24, 35, 0.05);
+  --shadow-2: 0 4px 16px rgba(17, 24, 35, 0.08), 0 1px 3px rgba(17, 24, 35, 0.06);
+  --shadow-3: 0 18px 48px rgba(17, 24, 35, 0.18), 0 2px 6px rgba(17, 24, 35, 0.08);
+
+  --sidebar-w: 236px;
+  --topbar-h: 56px;
+}
+
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    color-scheme: dark;
+    --bg: #0c1016;
+    --surface: #141a22;
+    --surface-2: #19202a;
+    --surface-3: #222b37;
+    --overlay: rgba(0, 0, 0, 0.6);
+    --border: #262f3b;
+    --border-strong: #354151;
+    --text: #e7ecf2;
+    --text-2: #aeb8c5;
+    --text-3: #7f8a99;
+    --text-inverse: #0c1016;
+    --ink: #e7ecf2;
+    --ink-hover: #ffffff;
+    --accent: #7ea4ff;
+    --accent-hover: #9bb8ff;
+    --accent-soft: #1b2740;
+    --focus: #7ea4ff;
+    --positive: #4cc38a;
+    --positive-soft: #122a1f;
+    --warning: #e9b44c;
+    --warning-soft: #2e2410;
+    --danger: #ff7a73;
+    --danger-soft: #34181a;
+    --prov-reporter: #aeb8c5;
+    --prov-screenshot: #52c6d6;
+    --prov-ai: #ab98ff;
+    --prov-inferred: #f0b35a;
+    --prov-inferred-soft: #2b2112;
+    --chart-grid: #1f2732;
+    --chart-axis: #354151;
+    --chart-muted: #4a5666;
+    --series-1: #3987e5;
+    --series-2: #d95926;
+    --series-3: #199e70;
+    --series-4: #c98500;
+    --series-5: #d55181;
+    --series-6: #008300;
+    --series-7: #9085e9;
+    --series-8: #e66767;
+    --tone-bg-l: 28%;
+    --tone-bg-c: 0.05;
+    --tone-fg-l: 84%;
+    --tone-fg-c: 0.1;
+    --tone-dot-l: 70%;
+    --tone-dot-c: 0.15;
+    --tone-border-l: 36%;
+    --tone-border-c: 0.06;
+    --shadow-1: 0 1px 2px rgba(0, 0, 0, 0.4);
+    --shadow-2: 0 6px 20px rgba(0, 0, 0, 0.45);
+    --shadow-3: 0 18px 48px rgba(0, 0, 0, 0.6);
+  }
+}
+
+:root[data-theme="dark"] {
+  color-scheme: dark;
+  --bg: #0c1016;
+  --surface: #141a22;
+  --surface-2: #19202a;
+  --surface-3: #222b37;
+  --overlay: rgba(0, 0, 0, 0.6);
+  --border: #262f3b;
+  --border-strong: #354151;
+  --text: #e7ecf2;
+  --text-2: #aeb8c5;
+  --text-3: #7f8a99;
+  --text-inverse: #0c1016;
+  --ink: #e7ecf2;
+  --ink-hover: #ffffff;
+  --accent: #7ea4ff;
+  --accent-hover: #9bb8ff;
+  --accent-soft: #1b2740;
+  --focus: #7ea4ff;
+  --positive: #4cc38a;
+  --positive-soft: #122a1f;
+  --warning: #e9b44c;
+  --warning-soft: #2e2410;
+  --danger: #ff7a73;
+  --danger-soft: #34181a;
+  --prov-reporter: #aeb8c5;
+  --prov-screenshot: #52c6d6;
+  --prov-ai: #ab98ff;
+  --prov-inferred: #f0b35a;
+  --prov-inferred-soft: #2b2112;
+  --chart-grid: #1f2732;
+  --chart-axis: #354151;
+  --chart-muted: #4a5666;
+  --series-1: #3987e5;
+  --series-2: #d95926;
+  --series-3: #199e70;
+  --series-4: #c98500;
+  --series-5: #d55181;
+  --series-6: #008300;
+  --series-7: #9085e9;
+  --series-8: #e66767;
+  --tone-bg-l: 28%;
+  --tone-bg-c: 0.05;
+  --tone-fg-l: 84%;
+  --tone-fg-c: 0.1;
+  --tone-dot-l: 70%;
+  --tone-dot-c: 0.15;
+  --tone-border-l: 36%;
+  --tone-border-c: 0.06;
+  --shadow-1: 0 1px 2px rgba(0, 0, 0, 0.4);
+  --shadow-2: 0 6px 20px rgba(0, 0, 0, 0.45);
+  --shadow-3: 0 18px 48px rgba(0, 0, 0, 0.6);
+}
+
+/* Palette hues: each tone sets a hue and a chroma factor; components derive their tints. */
+.tone-red { --h: 25; --k: 1; }
+.tone-rose { --h: 12; --k: 1; }
+.tone-orange { --h: 48; --k: 1; }
+.tone-amber { --h: 72; --k: 1; }
+.tone-yellow { --h: 95; --k: 1; }
+.tone-lime { --h: 128; --k: 1; }
+.tone-green { --h: 148; --k: 0.95; }
+.tone-emerald { --h: 163; --k: 1; }
+.tone-teal { --h: 185; --k: 0.9; }
+.tone-cyan { --h: 212; --k: 0.9; }
+.tone-sky { --h: 232; --k: 0.95; }
+.tone-blue { --h: 258; --k: 1; }
+.tone-indigo { --h: 275; --k: 1; }
+.tone-violet { --h: 292; --k: 1; }
+.tone-purple { --h: 310; --k: 0.95; }
+.tone-pink { --h: 350; --k: 1; }
+.tone-slate { --h: 255; --k: 0.22; }
+.tone-stone { --h: 65; --k: 0.2; }

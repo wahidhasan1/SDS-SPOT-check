@@ -33,7 +33,7 @@ import { ACTION_PRIORITY, actionHints, availableActions, type WorkflowContext } 
 import { SimilarityIndex, type SimilarityInput } from "../../core/similarity";
 import type { BugViewKey, SortKey } from "../../core/views";
 import type { AppContext } from "../context";
-import { nowIso } from "../context";
+import { nowIso, atOneMoment } from "../context";
 import type { UserRow } from "../db/schema";
 import type { Where } from "../db/store";
 import { insertAttachments, toAttachment, withStoredFiles, type IncomingFile } from "./attachments";
@@ -531,6 +531,7 @@ function validateFrequency(f: unknown): Frequency {
 }
 
 export async function createBug(ctx: AppContext, user: UserRow, input: CreateBugInput, files: IncomingFile[] = []): Promise<Bug> {
+  ctx = atOneMoment(ctx);
   if (!user.active) throw forbidden();
   const { project, mod, affectedIds } = validateLocation(ctx, input.project_id, input.module_id, input.feature_id, input.affected_module_ids);
   const title = requireText(input.title, "Title", 200);

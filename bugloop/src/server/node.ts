@@ -1,6 +1,6 @@
 // Node entry point: SQLite + disk uploads + the Hono app + the built web UI.
 
-import { existsSync, mkdirSync, readFileSync } from "node:fs";
+import { existsSync, mkdirSync, readFileSync, statSync } from "node:fs";
 import { dirname, join, resolve } from "node:path";
 import { fileURLToPath } from "node:url";
 import { serve } from "@hono/node-server";
@@ -17,6 +17,15 @@ import { seedDemo } from "./seed/demo";
 
 const here = dirname(fileURLToPath(import.meta.url));
 const env = process.env;
+
+/** "1", "true", "yes", "on" → true; "0", "false", "no", "off" → false; anything else → undefined. */
+function flag(v: string | undefined): boolean | undefined {
+  if (v === undefined) return undefined;
+  const s = v.trim().toLowerCase();
+  if (["1", "true", "yes", "on"].includes(s)) return true;
+  if (["0", "false", "no", "off"].includes(s)) return false;
+  return undefined;
+}
 
 const port = Number(env.PORT ?? 3000);
 const dataDir = resolve(env.BUGLOOP_DATA_DIR ?? "data");
@@ -42,7 +51,7 @@ const ctx: AppContext = {
   clock: new SystemClock(),
   config: {
     mode: "server",
-    demoLogin: env.BUGLOOP_DEMO_LOGIN !== "false",
+    demoLogin: false, // decided below, once we know whether this database holds sample data
     maxUploadBytes: Number(env.BUGLOOP_MAX_UPLOAD_MB ?? 50) * 1_048_576,
     sessionDays: 30,
   },
@@ -54,6 +63,8 @@ if (store.isEmpty() && (env.BUGLOOP_SEED ?? "demo") === "demo") {
   const summary = await seedDemo(ctx);
   console.log(`[bugloop] Seeded ${summary.bugs} bugs, ${summary.users} people, ${summary.projects} projects.`);
 }
+// Password-less "sign in as anyone" is for sample data only, unless explicitly configured.
+ctx.config.demoLogin = flag(env.BUGLOOP_DEMO_LOGIN) ?? !!store.get("settings", "demo_data");
 
 const root = new Hono();
 root.route("/", createApp(ctx));
@@ -61,13 +72,27 @@ root.route("/", createApp(ctx));
 // Serve the built UI when present (npm run build). In development Vite serves it instead.
 const webDir = [resolve(here, "../web"), resolve(here, "../../dist/web")].find((d) => existsSync(join(d, "index.html")));
 if (webDir) {
-  const indexHtml = readFileSync(join(webDir, "index.html"), "utf8");
-  root.use("/assets/*", serveStatic({ root: webDir.replace(process.cwd(), ".") || "." }));
-  root.get("*", (c) => (c.req.path.startsWith("/api/") ? c.notFound() : c.html(indexHtml)));
+  const indexPath = join(webDir, "index.html");
+  let cached = { mtime: 0, html: "" };
+  const indexHtml = () => {
+    const mtime = statSync(indexPath).mtimeMs;
+    if (mtime !== cached.mtime) cached = { mtime, html: readFileSync(indexPath, "utf8") };
+    return cached.html;
+  };
+  root.use(
+    "/assets/*",
+    serveStatic({
+      root: webDir.replace(process.cwd(), ".") || ".",
+      onFound: (_path, c) => c.header("Cache-Control", "public, max-age=31536000, immutable"),
+    }),
+  );
+  root.get("/assets/*", (c) => c.notFound());
+  root.get("*", (c) => (c.req.path.startsWith("/api/") ? c.notFound() : c.html(indexHtml())));
 }
 
 serve({ fetch: root.fetch, port }, (info) => {
   console.log(`[bugloop] API ${webDir ? "and web app " : ""}listening on http://localhost:${info.port}`);
   console.log(`[bugloop] AI: ${ai.status().label}${env.ANTHROPIC_API_KEY ? "" : " — set ANTHROPIC_API_KEY to enable Claude"}`);
+  if (ctx.config.demoLogin) console.log("[bugloop] Demo sign-in is on (sample data). Set BUGLOOP_DEMO_LOGIN=false to require passwords.");
   if (!webDir) console.log("[bugloop] Web UI: run `npm run dev` (Vite on :5173) or `npm run build` first.");
 });

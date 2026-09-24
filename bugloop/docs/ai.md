@@ -18,7 +18,8 @@ person clicks.
 4. The draft fills the form. Each filled field carries a provenance chip. Questions appear inline;
    answering them and clicking **Update draft** runs the assistant again with the answers.
 5. The analyst edits anything and submits. The bug records that it was AI-assisted, which fields
-   the assistant drafted, and whether the analyst edited them afterwards.
+   the assistant drafted, which inferred fields the analyst confirmed, and which fields the
+   analyst edited afterwards. The server validates this metadata; it is not free-form.
 
 ### Provenance labels
 
@@ -27,7 +28,7 @@ person clicks.
 | `reporter` | Provided by QA analyst | Taken from the analyst's text or selected fields |
 | `screenshot` | Observed in screenshot | Plainly visible in an attached image; on-screen text quoted exactly |
 | `ai_wording` | AI-generated wording | Reworded or structured, but only from facts the analyst provided |
-| `ai_inferred` | AI-inferred, please confirm | A reasonable reading of what the analyst implied (typically the expected result). Highlighted until the analyst confirms or edits it. |
+| `ai_inferred` | AI-inferred, please confirm | A reasonable reading of what the analyst implied (typically the expected result, or a "Go to …" first step). Highlighted until the analyst confirms or edits it. On the submitted bug it reads *AI-inferred, confirmed by reporter* or *AI-inferred, not confirmed*, so engineers know how much to trust it. |
 
 ### Rules given to the model
 

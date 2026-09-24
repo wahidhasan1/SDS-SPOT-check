@@ -110,7 +110,7 @@ that change behaviour are configurable.
 ```
 Sidebar                          Top bar
 ─────────────────────            ───────────────────────────────────────────
-[ + Report bug ]                 Search bugs (ID, title, reporter…)   🔔  (user ▾)
+[ + Report bug ]                 Search bugs (ID, title, person…)  /     🔔
 Dashboard
 Needs my action        (count)
 Bugs
@@ -123,15 +123,19 @@ Projects
 Users & teams
 Workflow & fields
 Audit log
-Settings
+Workspace settings
+─────────────────────
+AI assistant status
+(user ▾) profile · theme · switch person (demo) · sign out
 ```
 
 * **Report bug** is the single most important action for QA, so it is a button, not a nav item.
 * **Needs my action** is computed from bug state for the signed-in person, so it cannot go stale.
-* **Bugs** carries saved views: *All open, My bugs, Assigned to me, Needs my regression,
-  Waiting for engineering, Waiting for QA, Recently reopened, Potential duplicates, Unassigned,
-  Deferred, Closed*. Filters: text, ID, project, module, status, severity, priority, reporter,
-  assignee, tag, date range.
+* **Bugs** carries saved views: *My bugs, Assigned to me, Needs my regression, Waiting for
+  engineering, Waiting for QA, Needs attention, Unassigned, Potential duplicates, Disputed,
+  Recently reopened, All open, Deferred, Resolved, All bugs* and (leads and admins) *Archived*.
+  Filters: text or ID, project, module, status, severity, priority, reporter, assignee and tag;
+  the API also takes a date range. Sort by activity, age, severity, priority, waiting time or ID.
 * **Bug detail** is a single page: header (ID, title, status, severity, priority, *waiting on*),
   lifecycle track, report body, evidence, activity timeline and composer; the right rail holds
   the available actions, people (reported by, assigned to, reviewed, fixed, verified), details,
@@ -139,15 +143,18 @@ Settings
 
 ### Page designs in brief
 
-**Report bug.** A two-column form. The top card, *Describe what happened*, takes free text and
-screenshots and drafts the report. Below it are the essentials: project, module, title,
-environment, severity, steps, expected, actual, evidence. *More details* holds feature, browser,
-device, OS, build, URL, frequency, priority, tags, also-affects modules and notes; it opens
-automatically when the assistant fills something there. The right rail shows **Possible
-duplicates** (live) and a **report checklist** (steps, expected vs actual, environment,
-evidence). Submitting with unreviewed high or medium matches opens the duplicate dialog:
-*View existing bug*, *Add my evidence to it instead* (keeps credit as co-reporter), or
-*It's different, submit anyway* (recorded for triage).
+**Report bug.** A two-column form. *Where did it happen?* (project, module, feature) comes
+first, then *Describe what happened*, which takes free text and screenshots and drafts the
+report. Below it are the essentials: title, environment, severity, priority suggestion, steps,
+expected, actual, description and evidence. *More details* holds browser, device, OS, build,
+frequency, tags, page URL, also-affects modules and notes; it opens automatically when the
+assistant fills something there. Every drafted field shows its provenance; AI-inferred fields
+stay highlighted until the analyst confirms or edits them, and the submit bar lists any that are
+still unconfirmed. The right rail shows **Possible duplicates** (live) and a **report
+checklist**. The draft is kept in the browser until it is submitted or discarded. Submitting
+with high or medium matches opens the duplicate dialog: *View existing bug*, *Add my evidence to
+it instead* (keeps credit as co-reporter), or *It's a different problem. Submit* (recorded for
+triage).
 
 **Dashboard.** Personal queue first ("what needs me"), then the lifecycle board: every status
 with its count, grouped by who is waiting (engineering / QA / parked / resolved) instead of
@@ -155,12 +162,15 @@ thirteen loose cards. Then reported-vs-resolved per week, open bugs by module, b
 (average time waiting in each status, oldest waiting bugs) and headline flow metrics (median
 resolution time, reopen rate, valid-report rate).
 
-**Analytics.** *Overview* (team-level), *QA contributions* (bugs reported per person per week;
-hover a line for the week, click a person for totals: reported, fixed, open, not a bug,
-duplicate, reopened, verified, average time to resolution), *Engineering flow* (workload per
-engineer, time to first response, time to fix, regression pass rate) and *Modules* (open bugs,
-reopen rate, recurring areas). A note on the contributions tab states that the numbers exist
-for transparency and workflow analysis, not ranking.
+**Analytics.** The dashboard is the team overview. Analytics adds *QA contributions* (bugs
+reported per person per week; hover for the week, click a name or row to follow one person's
+line and see their totals: reported, fixed, open, not a bug, duplicate, reopened, co-reported,
+regressions run and verified, average time to close; every chart has a table view),
+*Engineering flow* (workload per engineer, time to first response, time to fix, fixes reopened,
+regression pass rate) and *Modules* (open and total bugs, reopen rate, Not a Bug count, time to
+close, recurring themes). A note on the contributions tab states that the numbers exist for
+transparency and workflow analysis, not ranking. QA analysts and engineers see their own
+numbers; leads, PMs and admins see the team.
 
 **Notifications.** In-app, grouped by day, each linking to the bug. Categories:
 *action required* and *decisions* are always on; *progress* and *discussion* can be muted per
@@ -171,14 +181,14 @@ person.
 | Recipient | Event | Example |
 |---|---|---|
 | QA | Fixed / regression required | "BUG-000104 has been marked Fixed. Regression testing required." |
-| QA | Information requested | "Engineer requested more information for BUG-000108." |
-| QA | Not a Bug / Duplicate / Deferred | "BUG-000112 was marked Not a Bug: …" · "BUG-000119 was marked Duplicate of BUG-000102." |
-| QA | Severity changed by someone else | "Severity of BUG-000131 changed from Critical to Major: …" |
+| QA | Information requested | "Imran Hossain requested more information for BUG-000108." |
+| QA | Not a Bug / Duplicate / Deferred | "BUG-000112 was marked Not a Bug." (the reason is in the notification body) · "BUG-000119 was marked Duplicate of BUG-000102." |
+| QA | Severity changed by someone else | "Severity of BUG-000131 changed from Critical to Major." (with the reason) |
 | QA | Original of your duplicate verified | "BUG-000102 (original of your BUG-000119) was verified and closed." |
 | Engineer | Assigned | "New bug BUG-000125 has been assigned to you." |
 | Engineer | Regression failed | "QA reopened BUG-000104 after failed regression." |
 | Engineer | Information provided / evidence added | "QA added additional evidence to BUG-000108." |
-| Engineer | Fix verified | "Wahid Hasan verified your fix for BUG-000104." |
+| Engineer | Fix verified | "Wahid Hasan verified the fix for BUG-000104." |
 | Engineer, QA lead | Decision disputed | "Wahid Hasan disputed the Not a Bug decision on BUG-000112." |
 | QA lead, PM | Repeated reopen | "BUG-000104 has been reopened 2 times." |
 | Anyone | @mention, comment on a watched bug | "Maria Olsen commented on BUG-000087." |

@@ -54,6 +54,10 @@ function mapError(err: unknown): AiProviderError {
       return new AiProviderError("The description is too long. Shorten it and try again.", "failed");
     case "image_rejected":
       return new AiProviderError("One of the screenshots couldn't be sent. Use PNG, JPEG, WebP or GIF under 20 MB.", "failed");
+    case "images_unavailable":
+      return new AiProviderError("Screenshots can't be sent to Claude in this view. Remove them to draft from your description.", "failed");
+    case "upstream_error":
+      return new AiProviderError("Claude had a temporary problem. Try again in a moment.", "failed");
     case "session_expired":
       return new AiProviderError("Your claude.ai session expired. Sign in again.", "unavailable");
     case "cancelled":

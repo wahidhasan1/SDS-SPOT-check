@@ -5,7 +5,7 @@ import type { Bug, Comment } from "../../core/types";
 import { canAlsoSee, canAssign, canBeAssignee, canComment, isQa } from "../../core/permissions";
 import { findMentions } from "../../core/text";
 import type { AppContext } from "../context";
-import { nowIso } from "../context";
+import { nowIso, atOneMoment } from "../context";
 import type { UserRow } from "../db/schema";
 import { insertAttachments, withStoredFiles, type IncomingFile } from "./attachments";
 import { actorOf, resolveBug } from "./bugs";
@@ -20,6 +20,7 @@ function touch(ctx: AppContext, bug: Bug, extra: Partial<Bug> = {}): Bug {
 }
 
 export async function addComment(ctx: AppContext, user: UserRow, bug: Bug, body: string | null, files: IncomingFile[] = []): Promise<Comment> {
+  ctx = atOneMoment(ctx);
   if (!canComment(actorOf(user), bug)) throw forbidden("You can't comment on this bug.");
   const text = cleanText(body, 20000);
   if (!text && !files.length) throw badRequest("Write a comment or attach a file.");
@@ -189,6 +190,7 @@ export function removeLink(ctx: AppContext, user: UserRow, bug: Bug, linkId: str
 }
 
 export async function alsoSeen(ctx: AppContext, user: UserRow, bug: Bug, note: string | null, files: IncomingFile[] = []): Promise<Bug> {
+  ctx = atOneMoment(ctx);
   const already = !!ctx.store.findOne("co_reporters", { bug_id: bug.id, user_id: user.id });
   if (!canAlsoSee(actorOf(user), bug, already)) throw forbidden("You can't add yourself as a co-reporter on this bug.");
   const text = cleanText(note, 5000);

@@ -49,7 +49,24 @@ for (const b of BASE_VERBS) {
 for (const [p, b] of Object.entries(IRREGULAR_PAST)) TO_BASE.set(p, b);
 
 const CONTRAST = /\s*(?:,\s*)?\b(but|however|instead|although|though|yet|whereas|except that)\b\s*,?\s*/i;
-const EXPECT = /\b(should|expected|expect|supposed to|meant to|ought to|i thought it would)\b/i;
+const EXPECT = /\b(expected|expecting|expect|supposed to|meant to|i thought it would)\b/i;
+const SHOULD = /\b(should|ought to)\b/i;
+
+/** "It should keep the new role" states an expectation; "empty boxes where the icons should be" describes a symptom. */
+function isExpectation(s: string): boolean {
+  if (EXPECT.test(s)) return true;
+  if (!SHOULD.test(s)) return false;
+  return !/\b(where|which|that|who)\b[^.]*\b(should|ought to)\b/i.test(s);
+}
+
+/** "click Save it shows Saved" → an action followed by what the analyst saw. */
+const OBSERVED = /^(.+?)\s+(?:and\s+)?((?:it|this|that|the page|the app|the screen|the system)\s+(?:shows|says|displays|looks|appears|reads)\b.*)$/i;
+/** A finite verb outside a relative clause means the piece describes something instead of instructing. */
+const DESCRIBES = /\b(shows|displays|says|is|are|was|were|appears|becomes|returns|looks|gives|throws|keeps|stays|remains|goes)\b/i;
+function describes(piece: string): boolean {
+  const main = piece.split(/\b(?:that|which|who|where|when|whose)\b/i)[0];
+  return DESCRIBES.test(main.replace(/^\S+\s*/, ""));
+}
 const SYMPTOM =
   /\b(not|n't|never|no longer|error|fail|failed|fails|broken|wrong|incorrect|missing|disappear|revert|crash|freez|stuck|blank|empty|old|previous|still|duplicate|twice|overlap|cut off|slow|timeout|denied|cannot|can't|unable)\b/i;
 const LEAD_IN = /^(?:and\s+)?(?:so\s+)?(?:then\s+)?(?:when|whenever|if|after|once|as soon as|while|before)?\s*(?:i|we|you|the user|they)?\s*(?:have\s+|had\s+|just\s+|first\s+|then\s+)*/i;
@@ -80,9 +97,13 @@ function splitTrailingAction(clause: string): { step: string; rest: string } | n
   let rest: string | null = null;
   const again = /^(.*?\b(?:again|back))\b[,\s]+(.+)$/i.exec(body);
   const comma = /^([^,]+),\s*(.+)$/.exec(body);
+  // "reloading the page the old number is back": the action keeps its object ("the page") when a
+  // second noun phrase starts the consequence.
+  const withObject = /^(\w+ing\s+(?:the|a|an|this|that|my|our|its|their)\s+\w+(?:\s+\w+)?)\s+((?:the|a|an|this|that|my|our|its|their|it|nothing|no)\b.+)$/i.exec(body);
   const gerund = /^(\w+ing(?:\s+(?:it|them|again|back|up))*)\s+(.+)$/i.exec(body);
   if (again) [action, rest] = [again[1], again[2]];
   else if (comma) [action, rest] = [comma[1], comma[2]];
+  else if (withObject) [action, rest] = [withObject[1], withObject[2]];
   else if (gerund) [action, rest] = [gerund[1], gerund[2]];
   if (!action || !rest) return null;
   const step = toImperative(action);
@@ -163,18 +184,38 @@ export function heuristicDraft(req: DraftRequest): DraftModelOutput {
   const expected: string[] = [];
   const context: string[] = [];
 
+  const observed: string[] = [];
   for (const sentence of sentences(req.text)) {
     const s = sentence.replace(/\s+/g, " ").trim();
-    if (EXPECT.test(s)) {
+    if (isExpectation(s)) {
       expected.push(s);
       continue;
     }
     const parts = s.split(CONTRAST);
     const before = parts[0] ?? "";
     const after = parts.length > 2 ? parts.slice(2).join(" ") : "";
+    const actualBefore = actual.length;
+    // "After saving, the old role is there": an action and its consequence in one sentence.
+    if (parts.length === 1 && /^(after|when|once|as soon as)\b/i.test(s)) {
+      const split = splitTrailingAction(s.replace(/[.!]+$/, ""));
+      if (split && SYMPTOM.test(split.rest)) {
+        steps.push(R(split.step));
+        actual.push(split.rest);
+        trailingAction = split.step;
+        continue;
+      }
+    }
     for (const piece of splitActions(before)) {
+      const obs = OBSERVED.exec(piece);
+      const obsStep = obs ? toImperative(obs[1]) : null;
+      if (obs && obsStep) {
+        steps.push(R(obsStep));
+        observed.push(obs[2]);
+        continue;
+      }
       const step = toImperative(piece);
-      if (step) steps.push(R(step));
+      if (step && !describes(piece)) steps.push(R(step));
+      else if (step && SYMPTOM.test(piece)) actual.push(piece.trim());
       else if (piece.trim()) context.push(piece.trim());
     }
     if (after) {
@@ -184,9 +225,9 @@ export function heuristicDraft(req: DraftRequest): DraftModelOutput {
         actual.push(split.rest);
         trailingAction = split.step;
       } else actual.push(after);
-    } else if (SYMPTOM.test(s) && !steps.length) {
+    } else if (actual.length === actualBefore && SYMPTOM.test(s) && !steps.length) {
       actual.push(s);
-    } else if (SYMPTOM.test(s) && parts.length === 1 && !splitActions(before).some((p) => toImperative(p))) {
+    } else if (actual.length === actualBefore && SYMPTOM.test(s) && parts.length === 1 && !splitActions(before).some((p) => toImperative(p))) {
       actual.push(s);
     }
   }
@@ -214,15 +255,20 @@ export function heuristicDraft(req: DraftRequest): DraftModelOutput {
     steps.unshift(R(`Go to ${moduleName}${featureName ? ` › ${featureName}` : ""}`, "ai_inferred"));
   }
 
-  const actualText = actualFromAnswer ?? (actual.length ? actual.join(" ") : null);
-  const actualSentence = actualText ? ensurePeriod(capitalize(actualText.replace(/^(then|and|so)\s+/i, ""))) : null;
+  const clean = (x: string) => ensurePeriod(capitalize(x.trim().replace(/^(then|and|so)\s+/i, "")));
+  const symptom = actual.length ? actual[actual.length - 1] : null;
+  const actualSentence = actualFromAnswer
+    ? clean(actualFromAnswer)
+    : actual.length
+      ? [...observed, ...actual].map(clean).join(" ")
+      : null;
   const expectedText = expectedFromAnswer ?? (expected.length ? expected.join(" ") : null);
 
   let title: string | null = null;
   if (!f.title) {
-    const core = actualText ?? context[0] ?? sentences(req.text)[0] ?? "";
+    const core = actualFromAnswer ?? symptom ?? context[0] ?? sentences(req.text)[0] ?? "";
     let cleaned = core.replace(/^(then|and|so|it)\s+/i, "").replace(/^(the|a|an)\s+/i, "").replace(/[.!]+$/, "");
-    if (actualText && trailingAction) cleaned = `${cleaned} after ${gerundPhrase(trailingAction).replace(/^opening it again$/i, "reopening")}`;
+    if (symptom && trailingAction) cleaned = `${cleaned} after ${gerundPhrase(trailingAction).replace(/^opening it again$/i, "reopening")}`;
     if (cleaned) title = truncate(`${moduleName ? `${moduleName}: ` : ""}${capitalize(cleaned)}`, 88);
   }
 

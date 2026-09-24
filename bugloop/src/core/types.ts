@@ -240,6 +240,8 @@ export interface AiMeta {
   drafted_fields: string[];
   provenance: Record<string, Provenance>;
   edited_fields: string[];
+  /** AI-inferred fields the reporter explicitly confirmed before submitting. */
+  confirmed_fields?: string[];
   screenshot_observations: ScreenshotObservation[];
   drafted_at: string;
 }

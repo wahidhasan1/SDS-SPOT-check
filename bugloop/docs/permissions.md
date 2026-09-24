@@ -40,8 +40,8 @@ The UI asks the server which actions are allowed instead of re-implementing the 
 | Force close without verification | | | ✓ | | ✓ |
 | Assign / reassign engineers, collaborators | | ✓ | ✓ | ✓ | ✓ |
 | Reassign regression | | | ✓ | | ✓ |
-| Change severity | ◐ own, before triage | ◐ with reason | ✓ | ◐ with reason | ✓ |
-| Change priority | ◐ own, before triage | ✓ | ✓ | ✓ | ✓ |
+| Change severity | ◐ own, before triage | ◐ with reason, until resolved | ✓ | ◐ with reason | ✓ |
+| Change priority | ◐ own, before triage | ◐ until resolved | ✓ | ✓ | ✓ |
 | Archive a bug | ◐ own, while New and unassigned | | ✓ | | ✓ |
 | Restore an archived bug | | | ✓ | | ✓ |
 | Team analytics (all people) | ◐ self only | ◐ self only | ✓ | ✓ | ✓ |
