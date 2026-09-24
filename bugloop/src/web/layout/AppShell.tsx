@@ -117,7 +117,7 @@ export function AppShell() {
             <button className="demo-banner" onClick={() => setSwitcher(true)} style={{ cursor: "pointer", textAlign: "left" }}>
               <UserCog size={16} />
               <span>
-                <strong>Demo workspace.</strong> Switch person to try the QA, engineering and lead views.
+                <strong>Demo workspace.</strong> People and bugs are fictional sample data. Switch person to try the QA, engineering and lead views.
                 {ws.mode === "demo" && " Changes stay in this browser."}
               </span>
             </button>
