@@ -1,10 +1,12 @@
 import { useState } from "react";
 import { Link, useParams } from "react-router";
-import { Archive, ArchiveRestore, ArrowLeft, FolderKanban, Pencil, Plus, UserMinus, UserPlus } from "lucide-react";
-import type { Feature, Module, Project } from "../../core/types";
-import { ROLE_LABELS } from "../../core/types";
+import { Archive, ArchiveRestore, ArrowLeft, FileUp, FolderKanban, Map as MapIcon, Pencil, Plus, UserMinus, UserPlus } from "lucide-react";
+import type { Feature, Module, Page, PageImportance, Project } from "../../core/types";
+import { PAGE_IMPORTANCE, ROLE_LABELS } from "../../core/types";
 import { useWorkspace } from "../app/context";
-import { useModuleHealth, useMutate } from "../api/hooks";
+import { errorMessage, useModuleHealth, useMutate } from "../api/hooks";
+import { useApi } from "../app/context";
+import { plural } from "../lib/format";
 import { Person } from "../components/badges";
 import { Dialog, Empty, Field } from "../components/ui";
 
@@ -175,6 +177,7 @@ export function ProjectDetailPage() {
               </div>
             </div>
           </section>
+          <ProductMapPanel project={project} />
         </div>
 
         <aside className="bug-rail">
@@ -427,3 +430,288 @@ function AddMemberDialog({ exclude, onClose, onAdd }: { exclude: string[]; onClo
   );
 }
 
+
+// ---------------------------------------------------------------------------
+// Product map
+// ---------------------------------------------------------------------------
+
+const IMPORTANCE_LABEL: Record<PageImportance, string> = { critical: "Critical", high: "High", normal: "Normal", low: "Low" };
+
+function ProductMapPanel({ project }: { project: Project }) {
+  const { ws, lookup } = useWorkspace();
+  const can = ws.capabilities.manage_product_map;
+  const [editing, setEditing] = useState<Page | "new" | null>(null);
+  const [importing, setImporting] = useState(false);
+  const pages = ws.pages.filter((p) => p.project_id === project.id && !p.archived);
+  const modules = lookup.modulesOf(project.id).filter((m) => pages.some((p) => p.module_id === m.id));
+  return (
+    <section className="panel">
+      <div className="panel-head">
+        <h2 className="row" style={{ gap: 8 }}>
+          <MapIcon size={16} /> Product map <span className="chip">{pages.length} pages</span>
+        </h2>
+        {can && (
+          <div className="row-wrap">
+            <button className="btn btn-sm" onClick={() => setImporting(true)}>
+              <FileUp /> Import map
+            </button>
+            <button className="btn btn-sm" onClick={() => setEditing("new")}>
+              <Plus /> Add page
+            </button>
+          </div>
+        )}
+      </div>
+      <div className="panel-body stack">
+        <p className="small secondary">
+          The screens of {project.name}: where each one lives, what is on it and how it must behave. When someone reports a problem, the assistant uses this to name the exact page and element, write the expected result from the rules, and weigh priority by how important the screen is.
+        </p>
+        {!pages.length && <p className="small muted">No pages yet. {can ? "Import your site map or add pages one by one." : "A QA lead, project manager or admin can add them."}</p>}
+        {modules.map((m) => (
+          <div key={m.id} className="stack-sm">
+            <div className="eyebrow">{m.name}</div>
+            <div className="map-pages">
+              {pages
+                .filter((p) => p.module_id === m.id)
+                .map((p) => (
+                  <button key={p.id} className="map-page" onClick={() => can && setEditing(p)} disabled={!can} title={can ? "Edit page" : undefined}>
+                    <span className="row-between">
+                      <strong className="truncate">{p.name}</strong>
+                      <span className={`chip imp-${p.importance}`}>{IMPORTANCE_LABEL[p.importance]}</span>
+                    </span>
+                    {p.path && <span className="mono tiny muted truncate">{p.path}</span>}
+                    <span className="tiny muted">
+                      {plural(p.elements.length, "element")} · {plural(p.rules.length, "rule")}
+                      {p.feature_id ? ` · ${lookup.feature(p.feature_id)?.name}` : ""}
+                    </span>
+                  </button>
+                ))}
+            </div>
+          </div>
+        ))}
+      </div>
+      {editing && <PageDialog project={project} page={editing === "new" ? null : editing} onClose={() => setEditing(null)} />}
+      {importing && <ImportMapDialog project={project} onClose={() => setImporting(false)} />}
+    </section>
+  );
+}
+
+function PageDialog({ project, page, onClose }: { project: Project; page: Page | null; onClose: () => void }) {
+  const { lookup } = useWorkspace();
+  const modules = lookup.modulesOf(project.id);
+  const [form, setForm] = useState({
+    module_id: page?.module_id ?? modules[0]?.id ?? "",
+    feature_id: page?.feature_id ?? "",
+    name: page?.name ?? "",
+    path: page?.path ?? "",
+    description: page?.description ?? "",
+    elements: (page?.elements ?? []).join("\n"),
+    rules: (page?.rules ?? []).join("\n"),
+    keywords: (page?.keywords ?? []).join(", "),
+    importance: page?.importance ?? ("normal" as PageImportance),
+  });
+  const features = lookup.featuresOf(form.module_id);
+  const body = () => ({
+    module_id: form.module_id,
+    feature_id: form.feature_id || null,
+    name: form.name,
+    path: form.path || null,
+    description: form.description || null,
+    elements: form.elements.split("\n"),
+    rules: form.rules.split("\n"),
+    keywords: form.keywords.split(","),
+    importance: form.importance,
+  });
+  const save = useMutate((api) => (page ? api.patch(`/admin/pages/${page.id}`, body()) : api.post("/admin/pages", body())), { success: page ? "Page saved" : "Page added" });
+  const archive = useMutate((api) => api.patch(`/admin/pages/${page!.id}`, { archived: true }), { success: "Page removed from the map" });
+  return (
+    <Dialog
+      title={page ? `Edit ${page.name}` : "Add a page"}
+      onClose={onClose}
+      wide
+      footer={
+        <>
+          {page && (
+            <button className="btn btn-ghost" style={{ marginRight: "auto" }} onClick={() => archive.mutate(undefined, { onSuccess: onClose })}>
+              Remove from map
+            </button>
+          )}
+          <button className="btn" onClick={onClose}>
+            Cancel
+          </button>
+          <button className="btn btn-primary" disabled={save.isPending || !form.name.trim() || !form.module_id} onClick={() => save.mutate(undefined, { onSuccess: onClose })}>
+            Save
+          </button>
+        </>
+      }
+    >
+      <div className="grid-3">
+        <Field label="Module" required htmlFor="pg-mod">
+          <select id="pg-mod" className="select" value={form.module_id} onChange={(e) => setForm({ ...form, module_id: e.target.value, feature_id: "" })}>
+            {modules.map((m) => (
+              <option key={m.id} value={m.id}>
+                {m.name}
+              </option>
+            ))}
+          </select>
+        </Field>
+        <Field label="Feature" htmlFor="pg-feat">
+          <select id="pg-feat" className="select" value={form.feature_id} onChange={(e) => setForm({ ...form, feature_id: e.target.value })}>
+            <option value="">None</option>
+            {features.map((f) => (
+              <option key={f.id} value={f.id}>
+                {f.name}
+              </option>
+            ))}
+          </select>
+        </Field>
+        <Field label="Importance" help="Weighs the priority suggestion." htmlFor="pg-imp">
+          <select id="pg-imp" className="select" value={form.importance} onChange={(e) => setForm({ ...form, importance: e.target.value as PageImportance })}>
+            {PAGE_IMPORTANCE.map((i) => (
+              <option key={i} value={i}>
+                {IMPORTANCE_LABEL[i]}
+              </option>
+            ))}
+          </select>
+        </Field>
+      </div>
+      <div className="grid-2">
+        <Field label="Page name" required htmlFor="pg-name">
+          <input id="pg-name" className="input" value={form.name} onChange={(e) => setForm({ ...form, name: e.target.value })} placeholder="Edit member" />
+        </Field>
+        <Field label="Path or URL" htmlFor="pg-path">
+          <input id="pg-path" className="input mono" value={form.path} onChange={(e) => setForm({ ...form, path: e.target.value })} placeholder="/members/:id/edit" />
+        </Field>
+      </div>
+      <Field label="What the page is for" htmlFor="pg-desc">
+        <textarea id="pg-desc" className="textarea" rows={2} value={form.description} onChange={(e) => setForm({ ...form, description: e.target.value })} />
+      </Field>
+      <div className="grid-2">
+        <Field label="Elements on the page" help="One per line: fields, buttons, tables, messages." htmlFor="pg-el">
+          <textarea id="pg-el" className="textarea" rows={6} value={form.elements} onChange={(e) => setForm({ ...form, elements: e.target.value })} placeholder={"Role dropdown\nSave button"} />
+        </Field>
+        <Field label="How it must behave" help="One rule per line. Used to write the expected result." htmlFor="pg-rules">
+          <textarea id="pg-rules" className="textarea" rows={6} value={form.rules} onChange={(e) => setForm({ ...form, rules: e.target.value })} placeholder="Saving keeps every changed field." />
+        </Field>
+      </div>
+      <Field label="Other names people use" help="Comma separated." htmlFor="pg-kw">
+        <input id="pg-kw" className="input" value={form.keywords} onChange={(e) => setForm({ ...form, keywords: e.target.value })} placeholder="member settings, user profile" />
+      </Field>
+    </Dialog>
+  );
+}
+
+interface ImportResult {
+  modules_created: string[];
+  features_created: string[];
+  pages_created: string[];
+  pages_updated: string[];
+  warnings: string[];
+}
+
+function ImportMapDialog({ project, onClose }: { project: Project; onClose: () => void }) {
+  const api = useApi();
+  const [text, setText] = useState("");
+  const [preview, setPreview] = useState<ImportResult | null>(null);
+  const [error, setError] = useState<string | null>(null);
+  const [busy, setBusy] = useState(false);
+  const run = useMutate((a, dry: boolean) => a.post<ImportResult>(`/admin/projects/${project.id}/product-map`, { map: text, dry_run: dry }), { success: (_r, dry) => (dry ? null : "Product map imported"), silentError: true });
+  const check = async () => {
+    setError(null);
+    setBusy(true);
+    try {
+      setPreview(await run.mutateAsync(true));
+    } catch (e) {
+      setPreview(null);
+      setError(errorMessage(e));
+    } finally {
+      setBusy(false);
+    }
+  };
+  const template = async () => {
+    try {
+      setText(JSON.stringify(await api.get("/product-map/template"), null, 2));
+      setPreview(null);
+    } catch (e) {
+      setError(errorMessage(e));
+    }
+  };
+  const readFile = async (f: File | undefined) => {
+    if (!f) return;
+    setText(await f.text());
+    setPreview(null);
+  };
+  return (
+    <Dialog
+      title={`Import the product map for ${project.name}`}
+      description="Paste or load a JSON map of modules, features and pages. Existing pages with the same name are updated; missing modules and features are created. Nothing is deleted."
+      onClose={onClose}
+      wide
+      footer={
+        <>
+          <button className="btn" onClick={onClose}>
+            Cancel
+          </button>
+          <button className="btn" disabled={busy || !text.trim()} onClick={check}>
+            Preview
+          </button>
+          <button
+            className="btn btn-primary"
+            disabled={busy || !preview}
+            onClick={async () => {
+              setBusy(true);
+              try {
+                await run.mutateAsync(false);
+                onClose();
+              } catch (e) {
+                setError(errorMessage(e));
+              } finally {
+                setBusy(false);
+              }
+            }}
+          >
+            Import
+          </button>
+        </>
+      }
+    >
+      <div className="row-wrap">
+        <button className="btn btn-sm" onClick={template}>
+          Start from the template
+        </button>
+        <label className="btn btn-sm">
+          Load a .json file
+          <input type="file" accept="application/json,.json" hidden onChange={(e) => readFile(e.target.files?.[0])} />
+        </label>
+      </div>
+      <textarea
+        className="textarea mono"
+        rows={14}
+        value={text}
+        onChange={(e) => {
+          setText(e.target.value);
+          setPreview(null);
+        }}
+        placeholder='{ "modules": [ { "name": "Members", "features": [ { "name": "Edit member", "pages": [ { "name": "Edit member", "path": "/members/:id/edit", "elements": ["Role dropdown"], "rules": ["Saving keeps every changed field."], "importance": "high" } ] } ] } ] }'
+        aria-label="Product map JSON"
+      />
+      {error && <div className="callout danger small">{error}</div>}
+      {preview && (
+        <div className="callout info small">
+          <div className="grow stack-sm">
+            <div className="title">Preview: nothing has been saved yet</div>
+            <div>
+              {preview.pages_created.length} new pages, {preview.pages_updated.length} updated, {preview.modules_created.length} new modules, {preview.features_created.length} new features.
+            </div>
+            {preview.modules_created.length > 0 && <div className="muted">New modules: {preview.modules_created.join(", ")}</div>}
+            {preview.pages_created.length > 0 && <div className="muted">New pages: {preview.pages_created.slice(0, 12).join(", ")}{preview.pages_created.length > 12 ? "…" : ""}</div>}
+            {preview.warnings.map((w) => (
+              <div key={w} className="danger-text">
+                {w}
+              </div>
+            ))}
+          </div>
+        </div>
+      )}
+    </Dialog>
+  );
+}

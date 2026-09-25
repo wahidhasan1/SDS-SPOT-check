@@ -22,6 +22,20 @@ export class SqliteStore implements Store {
     this.db.exec("PRAGMA busy_timeout = 5000;");
     this.db.exec("PRAGMA synchronous = NORMAL;");
     this.db.exec(schemaDDL());
+    this.addMissingColumns();
+  }
+
+  /** Databases created by an older version gain new (nullable or JSON) columns in place. */
+  private addMissingColumns(): void {
+    for (const [table, def] of Object.entries(SCHEMA)) {
+      const existing = new Set((this.db.prepare(`PRAGMA table_info("${table}")`).all() as { name: string }[]).map((c) => c.name));
+      for (const [col, c] of Object.entries(def.columns)) {
+        if (existing.has(col)) continue;
+        const type = c.type === "json" || c.type === "text" ? "TEXT" : c.type === "real" ? "REAL" : "INTEGER";
+        const fallback = c.nullable ? "" : c.type === "json" ? " NOT NULL DEFAULT '[]'" : c.type === "text" ? " NOT NULL DEFAULT ''" : " NOT NULL DEFAULT 0";
+        this.db.exec(`ALTER TABLE "${table}" ADD COLUMN "${col}" ${type}${fallback}`);
+      }
+    }
   }
 
   close(): void {

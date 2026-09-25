@@ -2,7 +2,7 @@
 // (prompts.ts); providers only differ in transport.
 
 import type { Sourced } from "../../core/api";
-import type { AiStatus, Frequency, ScreenshotObservation } from "../../core/types";
+import type { AiStatus, Box, Frequency, PageImportance, ScreenshotObservation } from "../../core/types";
 
 export interface DraftImage {
   name: string;
@@ -25,15 +25,42 @@ export interface DraftFields {
   severity?: string;
 }
 
+/** One screen from the product map, as the assistant sees it. */
+export interface DraftPage {
+  id: string;
+  name: string;
+  module: string;
+  feature: string | null;
+  path: string | null;
+  description: string | null;
+  elements: string[];
+  rules: string[];
+  keywords: string[];
+  importance: PageImportance;
+}
+
 export interface DraftContext {
   project: { id: string; name: string } | null;
   module: { id: string; name: string } | null;
   feature: { id: string; name: string } | null;
+  /** The screen the analyst picked, if any. */
+  page: DraftPage | null;
+  /** The product map for the project (narrowed to the module when one is chosen). */
+  pages: DraftPage[];
+  priorities: { key: string; label: string; description: string | null }[];
   environment: { id: string; name: string } | null;
   modules: { id: string; name: string; features: { id: string; name: string }[] }[];
   environments: { id: string; name: string }[];
   severities: { key: string; label: string; description: string | null }[];
   today: string;
+}
+
+export interface DraftLocation {
+  element: string | null;
+  /** 1-based screenshot number the box is drawn on. */
+  image: number | null;
+  box: Box | null;
+  source: Sourced["source"];
 }
 
 export interface DraftRequest {
@@ -61,6 +88,10 @@ export interface DraftModelOutput {
   page_url: Sourced | null;
   frequency: Sourced<Frequency> | null;
   severity_suggestion: { key: string; rationale: string } | null;
+  priority_suggestion: { key: string; rationale: string } | null;
+  /** Page name from the product map. */
+  page: Sourced | null;
+  location: DraftLocation | null;
   screenshot_observations: ScreenshotObservation[];
   missing_information: { field: string; question: string }[];
   notes: string[];

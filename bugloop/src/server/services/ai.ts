@@ -2,15 +2,15 @@
 // maps model output onto real ids, applies the no-invention guardrail and logs usage.
 
 import type { DraftResult, RegressionChecksResult, ReleaseRiskResult, Sourced, SummaryResult } from "../../core/api";
-import type { Bug, StatusKey } from "../../core/types";
+import type { Bug, Page, StatusKey } from "../../core/types";
 import { canViewTeamAnalytics } from "../../core/permissions";
 import { describeEvent, type TimelineLookup } from "../../core/timeline";
 import { waitingOn } from "../../core/statuses";
 import type { AppContext } from "../context";
 import { nowIso } from "../context";
 import type { UserRow } from "../db/schema";
-import { OfflineProvider } from "../ai/heuristic";
-import { AiProviderError, type AiProvider, type BugDigest, type DraftFields, type DraftImage } from "../ai/provider";
+import { OfflineProvider, priorityGuess } from "../ai/heuristic";
+import { AiProviderError, type AiProvider, type BugDigest, type DraftFields, type DraftImage, type DraftPage } from "../ai/provider";
 import type { IncomingFile } from "./attachments";
 import { actorOf, pendingRun } from "./bugs";
 import { releaseFacts } from "./analytics";
@@ -70,6 +70,7 @@ export interface DraftInput {
   project_id?: string | null;
   module_id?: string | null;
   feature_id?: string | null;
+  page_id?: string | null;
   environment_id?: string | null;
   fields?: DraftFields;
   answers?: { question: string; answer: string }[];
@@ -112,6 +113,22 @@ export async function draftReport(ctx: AppContext, user: UserRow, input: DraftIn
   const features = modules.length ? ctx.store.find("features", { where: { module_id: { in: modules.map((m) => m.id) }, archived: false } }) : [];
   const environments = ctx.store.find("environments", { where: { active: true }, orderBy: [{ column: "sort_order" }] });
   const sevs = severities(ctx).filter((s) => s.active);
+  const pris = priorities(ctx).filter((s) => s.active);
+  const allPages = project ? ctx.store.find("pages", { where: { project_id: project.id, archived: false }, orderBy: [{ column: "name" }] }) : [];
+  const toDraftPage = (pg: Page): DraftPage => ({
+    id: pg.id,
+    name: pg.name,
+    module: modules.find((m) => m.id === pg.module_id)?.name ?? "",
+    feature: pg.feature_id ? features.find((f) => f.id === pg.feature_id)?.name ?? null : null,
+    path: pg.path,
+    description: pg.description,
+    elements: pg.elements,
+    rules: pg.rules,
+    keywords: pg.keywords,
+    importance: pg.importance,
+  });
+  const chosenPage = input.page_id ? allPages.find((pg) => pg.id === input.page_id) ?? null : null;
+  const mapPages = allPages.filter((pg) => (!mod || pg.module_id === mod.id) && (!feature || !pg.feature_id || pg.feature_id === feature.id));
 
   const draftImages: DraftImage[] = images.map((f) => ({ name: f.name, mediaType: f.type, blob: f.blob }));
   const provider = pickProvider(ctx, !!input.offline);
@@ -129,6 +146,9 @@ export async function draftReport(ctx: AppContext, user: UserRow, input: DraftIn
         module: mod ? { id: mod.id, name: mod.name } : null,
         feature: feature ? { id: feature.id, name: feature.name } : null,
         environment: env ? { id: env.id, name: env.name } : null,
+        page: chosenPage ? toDraftPage(chosenPage) : null,
+        pages: mapPages.map(toDraftPage),
+        priorities: pris.map((x) => ({ key: x.key, label: x.label, description: x.description })),
         modules: modules.map((m) => ({ id: m.id, name: m.name, features: features.filter((f) => f.module_id === m.id).map((f) => ({ id: f.id, name: f.name })) })),
         environments: environments.map((e) => ({ id: e.id, name: e.name })),
         severities: sevs.map((s) => ({ key: s.key, label: s.label, description: s.description })),
@@ -174,23 +194,59 @@ export async function draftReport(ctx: AppContext, user: UserRow, input: DraftIn
     }
   }
 
+  // The page decides the module and feature when the analyst didn't choose them.
+  let pageOut: Sourced | null = chosenPage ? { value: chosenPage.id, source: "reporter" } : null;
+  let pageRow: Page | null = chosenPage;
+  if (!chosenPage && output.page) {
+    const name = output.page.value.toLowerCase();
+    const found = mapPages.find((pg) => pg.name.toLowerCase() === name) ?? allPages.find((pg) => pg.name.toLowerCase() === name && (!mod || pg.module_id === mod.id));
+    if (found) {
+      pageRow = found;
+      pageOut = { value: found.id, source: output.page.source === "reporter" ? "ai_inferred" : output.page.source };
+    }
+  }
+
   let moduleOut: Sourced | null = null;
-  if (!mod && output.module) {
+  if (!mod && pageRow) moduleOut = { value: pageRow.module_id, source: pageOut?.source ?? "ai_inferred" };
+  else if (!mod && output.module) {
     const m = modules.find((x) => x.name.toLowerCase() === output.module!.value.toLowerCase());
     if (m) moduleOut = { value: m.id, source: output.module.source };
   }
   const moduleForFeature = mod?.id ?? moduleOut?.value ?? null;
   let featureOut: Sourced | null = null;
-  if (!feature && output.feature && moduleForFeature) {
+  if (!feature && pageRow?.feature_id && pageRow.module_id === moduleForFeature) featureOut = { value: pageRow.feature_id, source: pageOut?.source ?? "ai_inferred" };
+  else if (!feature && output.feature && moduleForFeature) {
     const f = features.find((x) => x.module_id === moduleForFeature && x.name.toLowerCase() === output.feature!.value.toLowerCase());
     if (f) featureOut = { value: f.id, source: output.feature.source };
   }
 
   const severity =
     output.severity_suggestion && sevs.some((s) => s.key === output.severity_suggestion!.key) ? output.severity_suggestion : null;
+  const frequencyOut = fields.frequency && fields.frequency !== "unknown" ? { value: fields.frequency, source: "reporter" as const } : output.frequency;
+  const priority =
+    output.priority_suggestion && pris.some((x) => x.key === output.priority_suggestion!.key)
+      ? output.priority_suggestion
+      : priorityGuess(
+          fields.severity ?? severity?.key ?? null,
+          pageRow ? { name: pageRow.name, importance: pageRow.importance } : null,
+          frequencyOut?.value ?? null,
+          pris.map((x) => x.key),
+        );
+
+  // Location: a box only when this provider actually looked at that screenshot.
+  let location: DraftResult["location"] = null;
+  if (output.location) {
+    const l = output.location;
+    const boxOk = !!l.box && l.source === "screenshot" && imagesAnalyzed > 0 && !!l.image && l.image >= 1 && l.image <= imagesAnalyzed;
+    if (l.box && !boxOk) removed.push({ field: "location box", value: "a highlighted area on a screenshot the assistant couldn't see" });
+    const element = l.element ? l.element.slice(0, 300) : null;
+    if (element || boxOk) {
+      location = { element, image: boxOk ? l.image : null, box: boxOk ? l.box : null, source: boxOk ? "screenshot" : l.source === "screenshot" ? "ai_inferred" : l.source };
+    }
+  }
   const observations = imagesAnalyzed ? output.screenshot_observations.filter((o) => o.image >= 1 && o.image <= imagesAnalyzed) : [];
   const notes = [...output.notes];
-  if (images.length && !vision) notes.push("Screenshots are attached as evidence but were not analysed by this assistant.");
+  if (images.length && !vision) notes.push("This assistant can't read screenshots. They're attached as evidence, and you can mark the problem area on them yourself.");
 
   const clamp = (v: Sourced | null, max: number): Sourced | null => (v ? { ...v, value: v.value.slice(0, max) } : null);
   return {
@@ -209,8 +265,11 @@ export async function draftReport(ctx: AppContext, user: UserRow, input: DraftIn
     os,
     app_version: appVersion,
     page_url: pageUrl,
-    frequency: fields.frequency && fields.frequency !== "unknown" ? { value: fields.frequency, source: "reporter" } : output.frequency,
+    frequency: frequencyOut,
     severity_suggestion: severity,
+    priority_suggestion: priority,
+    page_id: pageOut,
+    location,
     screenshot_observations: observations,
     missing_information: missing.slice(0, 6),
     notes: [...new Set(notes)].slice(0, 4),

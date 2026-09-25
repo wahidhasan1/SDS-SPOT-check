@@ -199,6 +199,51 @@ export interface Feature {
   created_at: string;
 }
 
+export const PAGE_IMPORTANCE = ["critical", "high", "normal", "low"] as const;
+export type PageImportance = (typeof PAGE_IMPORTANCE)[number];
+
+/**
+ * One screen of the product, from the product map: where it lives, what is on it and how it must
+ * behave. The assistant uses it to place a report precisely and to phrase the expected result.
+ */
+export interface Page {
+  id: string;
+  project_id: string;
+  module_id: string;
+  feature_id: string | null;
+  name: string;
+  path: string | null;
+  description: string | null;
+  /** Visible parts of the screen: fields, buttons, tables, dialogs. */
+  elements: string[];
+  /** How the screen must behave, in plain sentences. */
+  rules: string[];
+  /** Other words people use for this screen. */
+  keywords: string[];
+  importance: PageImportance;
+  archived: boolean;
+  created_at: string;
+  updated_at: string;
+}
+
+/** A rectangle on a screenshot, as fractions (0–1) of its width and height. */
+export interface Box {
+  x: number;
+  y: number;
+  w: number;
+  h: number;
+}
+
+/** Where on screen the problem is. */
+export interface BugLocation {
+  /** The element, in words, e.g. "Role dropdown in the member form". */
+  element: string | null;
+  /** The report attachment the box is drawn on. */
+  attachment_id: string | null;
+  box: Box | null;
+  source: Provenance;
+}
+
 export interface Environment {
   id: string;
   name: string;
@@ -271,6 +316,9 @@ export interface Bug {
   project_id: string;
   module_id: string;
   feature_id: string | null;
+  /** The screen from the product map, when known. */
+  page_id: string | null;
+  location: BugLocation | null;
   affected_module_ids: string[];
 
   title: string;
@@ -518,6 +566,7 @@ export interface Workspace {
   project_members: ProjectMember[];
   modules: Module[];
   features: Feature[];
+  pages: Page[];
   environments: Environment[];
   severities: Level[];
   priorities: Level[];
@@ -531,6 +580,8 @@ export interface WorkspaceCapabilities {
   report: boolean;
   view_team_analytics: boolean;
   manage_projects: boolean;
+  /** Edit the product map (pages, paths, elements, rules). */
+  manage_product_map: boolean;
   manage_users: boolean;
   manage_config: boolean;
   view_audit: boolean;

@@ -106,7 +106,7 @@ export function jaccard(a: Set<string>, b: Set<string>): number {
 /** Split prose into sentences, keeping list items as separate sentences. */
 export function sentences(text: string): string[] {
   return text
-    .split(/\n+|(?<=[.!?])\s+(?=[A-Z0-9"'(])/)
+    .split(/\n+|(?<=[.!?])(?<!\b(?:e\.g|i\.e|etc|vs)\.)\s+(?=[A-Za-z0-9"'(])/)
     .map((s) => s.replace(/^\s*(?:[-*•]|\d+[.)])\s*/, "").trim())
     .filter((s) => s.length > 0);
 }

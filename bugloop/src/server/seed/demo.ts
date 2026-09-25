@@ -12,6 +12,10 @@ import { createBug, pendingRun, updateBug, type CreateBugInput } from "../servic
 import { reassignRegression } from "../services/regression";
 import { updateUser } from "../services/admin";
 import { saveSetting } from "../services/lookups";
+import { importProductMap } from "../services/pages";
+import { matchElement, matchPage } from "../ai/heuristic";
+import type { DraftPage } from "../ai/provider";
+import { PRODUCT_MAPS } from "./productmap";
 import { newId } from "../services/util";
 import type { IncomingFile } from "../services/attachments";
 import { ensureBaseConfig } from "./base";
@@ -490,6 +494,12 @@ export async function seedDemo(baseCtx: AppContext, opts: { passwords?: boolean;
 
   ensureBaseConfig(ctx);
   const { ids, teamIds } = await seedOrganisation(ctx, { passwords: opts.passwords ?? ctx.config.mode === "server" });
+  // The product map, imported by the administrator exactly as a team would import its own.
+  const admin = ctx.store.get("users", ids.mahmud)!;
+  for (const project of PROJECTS) {
+    const map = PRODUCT_MAPS[project.key];
+    if (map) importProductMap(ctx, admin, ids[`project:${project.key}`], map, { dryRun: false });
+  }
   const envByName = new Map(ctx.store.find("environments").map((e) => [e.name, e.id]));
 
   const showcase = showcaseScenarios(t);
@@ -630,8 +640,31 @@ export async function seedDemo(baseCtx: AppContext, opts: { passwords?: boolean;
     }
   }
 
-  // Older notifications have been read; the last couple of days are still unread.
+  // Place existing sample bugs on their screen from the product map where the match is clear.
   clock.set(now);
+  const pagesByModule = new Map<string, DraftPage[]>();
+  for (const pg of ctx.store.find("pages")) {
+    const modName = ctx.store.get("modules", pg.module_id)?.name ?? "";
+    const featName = pg.feature_id ? ctx.store.get("features", pg.feature_id)?.name ?? null : null;
+    const list = pagesByModule.get(pg.module_id) ?? [];
+    list.push({ id: pg.id, name: pg.name, module: modName, feature: featName, path: pg.path, description: pg.description, elements: pg.elements, rules: pg.rules, keywords: pg.keywords, importance: pg.importance });
+    pagesByModule.set(pg.module_id, list);
+  }
+  ctx.store.transaction(() => {
+    for (const b of ctx.store.find("bugs")) {
+      const candidates = (pagesByModule.get(b.module_id) ?? []).filter((pg) => {
+        const row = ctx.store.get("pages", pg.id)!;
+        return !b.feature_id || !row.feature_id || row.feature_id === b.feature_id;
+      });
+      const text = `${b.title}\n${b.actual_result}\n${b.steps.join("\n")}`;
+      const page = candidates.length === 1 && b.feature_id ? candidates[0] : matchPage(text, candidates);
+      if (!page) continue;
+      const element = matchElement(text, b.actual_result, page);
+      ctx.store.update("bugs", b.id, { page_id: page.id, location: element ? { element, attachment_id: null, box: null, source: "reporter" } : null });
+    }
+  });
+
+  // Older notifications have been read; the last couple of days are still unread.
   const readBefore = now.getTime() - 60 * HOUR;
   ctx.store.transaction(() => {
     for (const n of ctx.store.find("notifications", { where: { read_at: null } })) {

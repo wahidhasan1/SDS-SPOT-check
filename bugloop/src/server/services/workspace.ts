@@ -20,6 +20,7 @@ export function getWorkspace(ctx: AppContext, user: UserRow): Workspace {
     project_members: ctx.store.find("project_members"),
     modules: ctx.store.find("modules", { orderBy: [{ column: "project_id" }, { column: "sort_order" }, { column: "name" }] }),
     features: ctx.store.find("features", { orderBy: [{ column: "module_id" }, { column: "sort_order" }, { column: "name" }] }),
+    pages: ctx.store.find("pages", { orderBy: [{ column: "module_id" }, { column: "name" }] }),
     environments: ctx.store.find("environments", { orderBy: [{ column: "sort_order" }] }),
     severities: severities(ctx),
     priorities: priorities(ctx),

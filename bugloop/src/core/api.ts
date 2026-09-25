@@ -2,6 +2,7 @@
 
 import type {
   Attachment,
+  Box,
   Bug,
   BugListItem,
   BugRef,
@@ -234,6 +235,10 @@ export interface DraftResult {
   page_url: Sourced | null;
   frequency: Sourced<Frequency> | null;
   severity_suggestion: { key: string; rationale: string } | null;
+  priority_suggestion: { key: string; rationale: string } | null;
+  /** Page id from the product map. */
+  page_id: Sourced | null;
+  location: { element: string | null; image: number | null; box: Box | null; source: Provenance } | null;
   screenshot_observations: ScreenshotObservation[];
   missing_information: { field: string; question: string }[];
   notes: string[];

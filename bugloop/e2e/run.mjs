@@ -98,27 +98,43 @@ async function act(label, fields = {}, submit) {
   await page.waitForTimeout(400);
 }
 
-step("Wahid reports a bug with the assistant");
+step("Wahid reports a bug with one sentence and a screenshot");
+const shot = await page.screenshot({ clip: { x: 240, y: 60, width: 800, height: 450 } });
 await page.getByRole("button", { name: /Report bug/ }).first().click();
-await page
-  .locator("textarea[aria-label='Describe the problem in your own words']")
-  .fill("In Members > Edit member, when I change the phone number and click Save it shows Saved, but after reloading the page the old phone number is back. Happens every time on Staging in Chrome.");
-await page.getByLabel("Module").selectOption({ label: "Members" });
-await page.getByRole("button", { name: /Draft report/ }).click();
-await page.waitForSelector(".draft-summary", { timeout: 60_000 });
-expect((await page.locator("#r-title").inputValue()).length > 10, "the assistant drafts a title");
-expect((await page.locator(".steps-editor input").count()) >= 2, "the assistant drafts steps");
-if (!(await page.locator("#r-expected").inputValue())) await page.locator("#r-expected").fill("The new phone number is kept after reloading.");
-await page.getByLabel("Severity").selectOption({ label: "Minor" });
-const confirm = page.getByRole("button", { name: "They're correct" });
-if (await confirm.count()) await confirm.click();
-await page.getByRole("button", { name: "Submit report" }).click();
+await page.getByLabel("What went wrong?").fill("changed the phone number and saved, reopened the member and the old phone number is back. every time on staging");
+await page.locator("input[type=file]").first().setInputFiles({ name: "edit-member.png", mimeType: "image/png", buffer: shot });
+await page.getByRole("button", { name: /Prepare report/ }).click();
+await page.waitForSelector("text=Check the report", { timeout: 60_000 });
+const rowText = async (field) => (await page.locator(`.review-row[data-field="${field}"] .review-value`).textContent()) ?? "";
+expect((await rowText("title")).length > 10, "the assistant drafts a title");
+expect((await rowText("where")).includes("Edit member"), "the product map places the report on the Edit member page");
+expect((await rowText("expected_result")).length > 10, "the expected result comes from the page's rules");
+expect((await page.locator('.review-row[data-field="priority"] .review-meta').textContent()).includes("AI-inferred"), "priority is suggested and labelled as AI-inferred");
+expect((await page.locator(".review-row.unverified").count()) > 0, "assistant values wait for the analyst's check");
+// Correct the assistant: mark the spot on the screenshot and change the priority.
+await page.locator('.review-row[data-field="location"] .icon-btn').click();
+const marker = await page.locator(".marker.editable").boundingBox();
+await page.mouse.move(marker.x + marker.width * 0.2, marker.y + marker.height * 0.2);
+await page.mouse.down();
+await page.mouse.move(marker.x + marker.width * 0.5, marker.y + marker.height * 0.4, { steps: 4 });
+await page.mouse.up();
+await page.locator('.review-row[data-field="location"]').getByRole("button", { name: "Done" }).click();
+await page.locator('.review-row[data-field="priority"] .icon-btn').click();
+await page.locator('.review-row[data-field="priority"]').getByRole("radio", { name: "Low" }).click();
+await page.locator('.review-row[data-field="priority"]').getByRole("button", { name: "Done" }).click();
+await page.locator('.review-row[data-field="severity"] .icon-btn').click();
+await page.locator('.review-row[data-field="severity"]').getByRole("radio", { name: "Minor" }).click();
+await page.locator('.review-row[data-field="severity"]').getByRole("button", { name: "Done" }).click();
+await page.locator(".submit-bar .btn-primary").click();
 await page.waitForTimeout(600);
 if (await page.locator(".dialog").count()) await page.getByRole("button", { name: /different problem/ }).click();
 await page.waitForSelector(".bug-title", { timeout: 10_000 });
 const key = (await page.locator(".bug-key").textContent()).trim();
 expect(/^[A-Z]{2,6}-\d{6}$/.test(key), `the new bug has an ID (${key})`);
 expect((await status()) === "New", "a new report starts as New");
+expect((await page.locator(".where-block").textContent()).includes("Edit member"), "the bug shows its page");
+expect((await page.locator(".where-block .marker-box").count()) === 1, "the bug shows the marked spot on the screenshot");
+expect((await page.locator(".bug-badges").textContent()).includes("Low"), "the analyst's priority correction was kept");
 
 step(`Rafiq, owner of Members, asks a question on ${key}`);
 await switchTo("Rafiq Chowdhury");
@@ -180,6 +196,24 @@ await page.waitForSelector(".notif");
 const rafiqNotes = (await page.locator(".notif-title").allTextContents()).join("\n");
 expect(rafiqNotes.includes(`QA reopened ${key} after failed regression.`), "engineering is told about the reopen");
 expect(rafiqNotes.includes(`New bug ${key} has been assigned to you.`), "the module owner is told about the new bug");
+step("Nusrat (QA lead) imports to the product map");
+await switchTo("Nusrat Jahan");
+await nav(/^Projects/).click();
+await page.locator(".project-card", { hasText: "Supplier Portal" }).click();
+await page.waitForSelector("text=Product map");
+const before = await page.locator(".map-page").count();
+await page.getByRole("button", { name: "Import map" }).click();
+await page.getByLabel("Product map JSON").fill(
+  JSON.stringify({ modules: [{ name: "Product catalogue", pages: [{ name: "Product details", feature: "Product details", path: "/products/:id", elements: ["Download SDS button"], rules: ["The Download SDS button is visible on every screen size."], importance: "high" }] }] }),
+);
+await page.getByRole("button", { name: "Preview", exact: true }).click();
+await page.waitForSelector("text=nothing has been saved yet");
+expect((await page.locator(".map-page").count()) === before, "the preview changes nothing");
+await page.locator(".dialog").getByRole("button", { name: "Import", exact: true }).click();
+await page.waitForSelector(".map-page >> text=Product details");
+expect((await page.locator(".map-page").count()) === before + 1, "the import adds the page to the map");
+await page.screenshot({ path: `${OUT}/product-map.png`, fullPage: true });
+
 expect(errors.length === 0, `no console errors during the lifecycle${errors.length ? `: ${errors.join(" | ")}` : ""}`);
 
 // ---------------------------------------------------------------------------------------------
@@ -215,7 +249,7 @@ await mp.getByLabel("Search bugs").press("Enter");
 await mp.waitForSelector(".bug-title");
 await noOverflow("bug detail");
 await mp.getByRole("button", { name: /Report$/ }).click();
-await mp.waitForSelector("text=Describe what happened");
+await mp.waitForSelector("text=What went wrong?");
 await noOverflow("report bug");
 expect(mErrors.length === 0, `no console errors on phone pages${mErrors.length ? `: ${mErrors.join(" | ")}` : ""}`);
 

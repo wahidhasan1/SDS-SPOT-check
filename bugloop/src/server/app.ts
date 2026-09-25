@@ -35,6 +35,7 @@ import {
   updateUser,
 } from "./services/admin";
 import { draftReport, regressionChecks, releaseRisk, summarizeBug } from "./services/ai";
+import { PRODUCT_MAP_TEMPLATE, importProductMap, savePage, type PageInput } from "./services/pages";
 
 type Env = { Variables: { user: UserRow; token: string } };
 
@@ -143,6 +144,15 @@ const createBugSchema = z.object({
   priority: z.string().nullish(),
   tags: z.array(z.string()).optional(),
   notes: z.string().nullish(),
+  page_id: z.string().nullish(),
+  location: z
+    .object({
+      element: z.string().max(300).nullish(),
+      image: z.number().int().nullish(),
+      box: z.object({ x: z.number(), y: z.number(), w: z.number(), h: z.number() }).nullish(),
+      source: z.enum(["reporter", "screenshot", "ai_wording", "ai_inferred"]).optional(),
+    })
+    .nullish(),
   ai_meta: aiMetaSchema.nullish(),
   duplicate_check: duplicateCheckSchema.nullish(),
 });
@@ -498,6 +508,7 @@ export function createApp(ctx: AppContext) {
       project_id: typeof body.project_id === "string" ? body.project_id : null,
       module_id: typeof body.module_id === "string" ? body.module_id : null,
       feature_id: typeof body.feature_id === "string" ? body.feature_id : null,
+      page_id: typeof body.page_id === "string" ? body.page_id : null,
       environment_id: typeof body.environment_id === "string" ? body.environment_id : null,
       fields: (body.fields ?? {}) as Parameters<typeof draftReport>[2]["fields"],
       answers: Array.isArray(body.answers) ? (body.answers as { question: string; answer: string }[]) : [],
@@ -558,6 +569,19 @@ export function createApp(ctx: AppContext) {
   app.patch("/admin/features/:id", async (c) => {
     const { body } = await readBody(c);
     return c.json(saveFeature(ctx, c.get("user"), c.req.param("id"), body as Parameters<typeof saveFeature>[3]));
+  });
+  app.post("/admin/pages", async (c) => {
+    const { body } = await readBody(c);
+    return c.json(savePage(ctx, c.get("user"), null, body as PageInput), 201);
+  });
+  app.patch("/admin/pages/:id", async (c) => {
+    const { body } = await readBody(c);
+    return c.json(savePage(ctx, c.get("user"), c.req.param("id"), body as PageInput));
+  });
+  app.get("/product-map/template", (c) => c.json(PRODUCT_MAP_TEMPLATE));
+  app.post("/admin/projects/:id/product-map", async (c) => {
+    const { body } = await readBody(c);
+    return c.json(importProductMap(ctx, c.get("user"), c.req.param("id"), body.map, { dryRun: body.dry_run === true }));
   });
   app.post("/admin/environments", async (c) => {
     const { body } = await readBody(c);

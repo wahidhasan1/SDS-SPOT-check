@@ -51,6 +51,25 @@ typed or selected it, it appears in their text, or it is marked as observed in a
 Anything else is dropped and turned into a question. The check is independent of the model and
 runs for every provider.
 
+### Product map and minimal input
+
+The report form asks only for the project, a sentence or two and a screenshot (module, page and
+environment are optional). The project's product map (screens with path, elements, rules,
+keywords and importance) goes into the assistant's context, so it can return:
+
+* **page**, and from it the module and feature, chosen only from the map;
+* **location**: the element involved, and, when a screenshot shows it, a box around the problem
+  area as fractions of the image. A box is kept only if this provider actually looked at that
+  image; the offline assistant never draws one, and the analyst can draw or redraw it;
+* **expected result** based on the page rule that applies, marked AI-inferred;
+* **priority suggestion** weighing severity, frequency and the page's importance, with the
+  reason shown. Without one from the model, a deterministic rule computes it.
+
+Every value is shown in a review list with its source. Assistant values need a **Verify** tick
+(or an edit); the submit button says how many are still unchecked, and the bug records which
+fields were confirmed and which were edited. Page, location and priority can still be corrected
+on the bug afterwards.
+
 ## 2. Screenshot intelligence
 
 With a vision-capable provider, images go to the model with the report (the platform or server

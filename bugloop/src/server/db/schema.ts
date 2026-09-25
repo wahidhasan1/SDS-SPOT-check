@@ -18,6 +18,7 @@ import type {
   StatusConfig,
   Team,
   User,
+  Page,
 } from "../../core/types";
 
 export type ColumnType = "text" | "integer" | "real" | "boolean" | "json";
@@ -89,6 +90,7 @@ export interface Tables {
   project_members: ProjectMember;
   modules: Module;
   features: Feature;
+  pages: Page;
   environments: Environment;
   severity_levels: Level;
   priority_levels: Level;
@@ -208,6 +210,26 @@ export const SCHEMA: Record<TableName, TableDef> = {
     },
     indexes: [{ columns: ["module_id"] }],
   },
+  pages: {
+    pk: "id",
+    columns: {
+      id: text,
+      project_id: ref("projects", false),
+      module_id: ref("modules", false),
+      feature_id: ref("features"),
+      name: text,
+      path: textN,
+      description: textN,
+      elements: json,
+      rules: json,
+      keywords: json,
+      importance: text,
+      archived: bool,
+      created_at: text,
+      updated_at: text,
+    },
+    indexes: [{ columns: ["project_id"] }, { columns: ["module_id"] }],
+  },
   environments: {
     pk: "id",
     columns: {
@@ -242,6 +264,8 @@ export const SCHEMA: Record<TableName, TableDef> = {
       project_id: ref("projects", false),
       module_id: ref("modules", false),
       feature_id: ref("features"),
+      page_id: ref("pages"),
+      location: jsonN,
       affected_module_ids: json,
       title: text,
       description: text,

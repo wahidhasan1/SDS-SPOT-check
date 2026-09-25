@@ -76,6 +76,7 @@ erDiagram
 | State | `status`, `status_changed_at`, `info_return_status`, `info_requested_from_id`, `info_requested_by_id`, `disputed`, `dispute_context` (json), `dispute_locked`, `reopen_count`, `regression_round` |
 | People and credit | `reporter_id`, `assignee_id`, `collaborator_ids` (json), `reviewed_by_id`, `reviewed_at`, `confirmed_by_id`, `confirmed_at`, `first_response_at`, `fixed_by_id`, `fixed_at`, `verified_by_id`, `verified_at`, `closed_by_id`, `closed_at` |
 | Resolution | `fix_version`, `resolution_summary`, `root_cause`, `resolution_reason`, `rejection_category`, `duplicate_of_id`, `deferred_until`, `deferred_target`, `decision_by_id`, `decision_at`, `decision_acknowledged_at`, `close_reason` |
+| Location | `page_id` (screen from the product map), `location` (json: element, report attachment, box as fractions, source) |
 | Assistant and duplicates | `ai_assisted`, `ai_meta` (json: provider, fields drafted, provenance, inferred fields the reporter confirmed, edited-after-draft, screenshot observations), `duplicate_check` (json: candidates shown and the reporter's decision), `potential_duplicate_ids` (json) |
 | Lifecycle | `archived_at`, `archived_by_id`, `archive_reason`, `created_at`, `updated_at`, `last_activity_at` |
 
@@ -117,3 +118,11 @@ Related tables:
 `notifications(user_id, created_at)`, `comments(bug_id)`, `attachments(bug_id)`,
 `regression_runs(bug_id)`, `regression_runs(assignee_id, result)`, `watchers(bug_id)`,
 `watchers(user_id)`, `co_reporters(bug_id)`, `bug_links(bug_id)`, `sessions(token_hash)`.
+
+## Product map
+
+`pages`: one screen of a project. `project_id`, `module_id`, `feature_id` (optional), `name`,
+`path`, `description`, `elements` (json list), `rules` (json list), `keywords` (json list),
+`importance` (critical · high · normal · low), `archived`, timestamps. Maintained by QA leads,
+project managers and admins; bulk import upserts by name within a module and never deletes.
+SQLite databases from earlier versions gain new columns automatically at start-up.

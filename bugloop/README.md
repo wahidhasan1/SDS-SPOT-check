@@ -75,18 +75,22 @@ Password-less demo sign-in is only offered for a database seeded with sample dat
 
 Signed in as **Wahid Hasan** (QA analyst):
 
-1. **Report bug → Try the example** fills in the brief's example ("When I change the role and
-   save it, it looks saved, but when I open the member again the old role is there"). Choose
-   *SDS Manager › Members* and click **Draft report**. Every field shows where it came from:
-   *Provided by QA analyst*, *Observed in screenshot*, *AI-generated wording* or *AI-inferred,
-   please confirm*. The assistant asks for what's missing instead of guessing.
-2. The **Possible duplicates** rail already suggests **BUG-000087 · Member role changes are not
+1. **Report bug** asks for very little: the project, one or two sentences and a screenshot. Click
+   **Try the example**, then **Prepare report**. Using the project's **product map**, the
+   assistant works out the page (*Members › Edit member, /members/:id/edit*), the element (*Role
+   dropdown*), the steps, the expected result (from the page's rules), severity and priority,
+   each with its reasons.
+2. **Check & submit** lists every value with where it came from (*Provided by QA analyst*,
+   *Observed in screenshot*, *AI-generated wording*, *AI-inferred*). Values from the assistant
+   wait for a **Verify** tick; **Edit** fixes anything wrong: the page, the priority, or the
+   problem area, which you can draw as a box on the screenshot. Nothing is sent unchecked.
+3. The **Possible duplicates** rail already suggests **BUG-000087 · Member role changes are not
    saved**. Submitting opens the duplicate dialog: view it, add your evidence to it, or submit
    anyway. The choice is recorded for triage.
-3. **Needs my action** lists what is waiting on Wahid: questions from engineers (BUG-000108),
+4. **Needs my action** lists what is waiting on Wahid: questions from engineers (BUG-000108),
    regressions to run (BUG-000104 is on its second round) and decisions to review (BUG-000112
    was marked Not a Bug, BUG-000119 a duplicate of BUG-000102).
-4. **BUG-000124** shows a complete history from report to automatic close after verification.
+5. **BUG-000124** shows a complete history from report to automatic close after verification.
 
 Then switch person:
 
@@ -97,6 +101,17 @@ Then switch person:
   reporter has left.
 * **Hanne Lie** (PM) and **Mahmud Karim** (admin) see team analytics, the release-readiness
   summary, projects, users, workflow settings and the audit log.
+
+## The product map
+
+Each project can hold a map of its screens: path, what the page is for, the elements on it, the
+rules it must follow ("Saving keeps every changed field…") and how important it is. QA leads,
+project managers and admins edit it under **Projects → project → Product map**, one page at a
+time or by importing JSON (*Import map → Start from the template*, then **Preview** before
+**Import**; existing pages are updated by name, nothing is deleted). The assistant uses it so a
+one-line report comes back placed on the right screen, with an expected result taken from the
+rules and a priority weighted by the screen's importance. The template is also served at
+`GET /api/product-map/template`.
 
 ## Tests
 

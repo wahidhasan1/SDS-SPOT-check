@@ -22,7 +22,7 @@ import { demoLogin, resolveSession } from "../server/services/auth";
 import { DemoPersistence } from "./persist";
 
 /** Bump when the schema or the sample data changes, so saved sandboxes start fresh. */
-const DATA_VERSION = "2026-09-24.1";
+const DATA_VERSION = "2026-09-25.1";
 const TOKEN_KEY = "bugloop.demo.session";
 const BASE = "http://bugloop.local";
 

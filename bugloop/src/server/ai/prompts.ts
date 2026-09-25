@@ -33,6 +33,16 @@ export const DraftSchema = z.object({
   page_url: Sourced.nullable(),
   frequency: z.object({ value: z.enum(FREQUENCIES), source: Source }).nullable(),
   severity_suggestion: z.object({ key: z.string(), rationale: z.string() }).nullable(),
+  priority_suggestion: z.object({ key: z.string(), rationale: z.string() }).nullable(),
+  page: Sourced.nullable(),
+  location: z
+    .object({
+      element: z.string().nullable(),
+      image: z.number().int().nullable(),
+      box: z.object({ x: z.number(), y: z.number(), w: z.number(), h: z.number() }).nullable(),
+      source: Source,
+    })
+    .nullable(),
   screenshot_observations: z.array(
     z.object({
       image: z.number().int(),
@@ -89,7 +99,12 @@ Rules:
 9. module and feature: choose only from the lists provided, using the exact name, and only when the analyst's text or a screenshot clearly points to it. Otherwise null.
 10. environment: choose only from the listed environment names, and only when the analyst said it or it is visible. Otherwise null.
 11. severity_suggestion: suggest one of the listed severity keys only when the impact is clear, with a one-sentence rationale. The analyst decides.
-12. Use null for anything you cannot support, and empty arrays when there is nothing to list. Put caveats for the analyst in notes (at most 3 short sentences).`;
+12. Use null for anything you cannot support, and empty arrays when there is nothing to list. Put caveats for the analyst in notes (at most 3 short sentences).
+13. The product map lists the project's screens with their path, visible elements and the rules they must follow. page: choose one page name from it, exactly as written, when the analyst's words or a screenshot (title, URL, headings, fields) clearly point to it; otherwise null. When the analyst picked a page, keep it. The page decides the module and feature, so give those consistently.
+14. location: where on screen the problem is. element: the UI element involved, using the product map's element name when one fits ("Role dropdown"), otherwise a short description. When a screenshot shows the problem, set image to its number and box to a rectangle around the problem area as fractions of that image's width and height (x and y of the top-left corner, then w and h, each between 0 and 1), with source "screenshot". Draw the box only around something you can actually see; otherwise box and image are null. If nothing points to an element, location is null.
+15. expected_result: when one of the page's rules states the correct behaviour for this problem, base the expected result on that rule and mark it "ai_inferred" unless the analyst said it.
+16. steps: when the page has a path or name, the first step may open it ("Open Members › Edit member"), marked "ai_inferred" unless the analyst said it.
+17. priority_suggestion: one of the listed priority keys with a one-sentence rationale, weighing the impact, how often it happens and the page's importance. The analyst decides.`;
 
 const DRAFT_SHAPE = `Reply with only a JSON object of this shape (no other text):
 {
@@ -108,6 +123,9 @@ const DRAFT_SHAPE = `Reply with only a JSON object of this shape (no other text)
   "page_url": {"value": string, "source": Source} | null,
   "frequency": {"value": "always"|"often"|"sometimes"|"rarely"|"once"|"unknown", "source": Source} | null,
   "severity_suggestion": {"key": string, "rationale": string} | null,
+  "priority_suggestion": {"key": string, "rationale": string} | null,
+  "page": {"value": string, "source": Source} | null,
+  "location": {"element": string | null, "image": number | null, "box": {"x": number, "y": number, "w": number, "h": number} | null, "source": Source} | null,
   "screenshot_observations": [{"image": number, "kind": "error_message"|"ui_element"|"page"|"value"|"layout"|"validation"|"status"|"other", "observation": string, "quote": string | null}],
   "missing_information": [{"field": string, "question": string}],
   "notes": [string]
@@ -135,6 +153,31 @@ function fieldLines(req: DraftRequest): string[] {
   return lines;
 }
 
+/** The product map as compact text, kept within a budget so prompts stay small. */
+export function productMapText(pages: DraftRequest["context"]["pages"], budget = 24000): string {
+  if (!pages.length) return "Product map: none for this project yet.";
+  const lines: string[] = [];
+  let used = 0;
+  let shown = 0;
+  for (const p of pages) {
+    const block = [
+      `- Page "${p.name}" (${p.module}${p.feature ? ` › ${p.feature}` : ""})${p.path ? ` at ${p.path}` : ""}, importance ${p.importance}`,
+      p.description ? `  About: ${p.description}` : null,
+      p.elements.length ? `  Elements: ${p.elements.slice(0, 25).join("; ")}` : null,
+      p.rules.length ? `  Rules: ${p.rules.slice(0, 12).join(" | ")}` : null,
+      p.keywords.length ? `  Also called: ${p.keywords.slice(0, 10).join(", ")}` : null,
+    ]
+      .filter(Boolean)
+      .join("\n");
+    if (used + block.length > budget) break;
+    lines.push(block);
+    used += block.length;
+    shown++;
+  }
+  const more = pages.length - shown;
+  return `Product map (${pages.length} page${pages.length === 1 ? "" : "s"}${more ? `, ${more} not shown for length` : ""}):\n${lines.join("\n")}`;
+}
+
 export function buildDraftPrompt(req: DraftRequest, opts: { includeShape: boolean }): Prompt {
   const c = req.context;
   const parts: string[] = [];
@@ -149,8 +192,13 @@ export function buildDraftPrompt(req: DraftRequest, opts: { includeShape: boolea
         .join("\n")}`,
     );
   }
+  parts.push(`Page selected by the analyst: ${c.page ? c.page.name : "not selected"}`);
+  parts.push(productMapText(c.pages));
   parts.push(`Environments: ${c.environments.map((e) => e.name).join(", ") || "none configured"}`);
   parts.push(`Severity levels:\n${c.severities.map((s) => `- ${s.key}: ${s.label}${s.description ? ` (${s.description})` : ""}`).join("\n")}`);
+  if (c.priorities.length) {
+    parts.push(`Priority levels:\n${c.priorities.map((s) => `- ${s.key}: ${s.label}${s.description ? ` (${s.description})` : ""}`).join("\n")}`);
+  }
   parts.push(`Today's date: ${c.today}`);
   const fields = fieldLines(req);
   parts.push(`Fields the analyst already filled in:\n${fields.length ? fields.join("\n") : "(none)"}`);
@@ -184,6 +232,31 @@ export function normalizeDraft(raw: unknown): DraftModelOutput {
     return { value: s.value as (typeof FREQUENCIES)[number], source: s.source };
   })();
   const sev = r.severity_suggestion as { key?: unknown; rationale?: unknown } | null | undefined;
+  const pri = r.priority_suggestion as { key?: unknown; rationale?: unknown } | null | undefined;
+  const loc = (r.location && typeof r.location === "object" ? r.location : null) as Record<string, unknown> | null;
+  const box = (() => {
+    const b = loc?.box as Record<string, unknown> | null | undefined;
+    if (!b || typeof b !== "object") return null;
+    const n = (v: unknown) => (typeof v === "number" && Number.isFinite(v) ? v : NaN);
+    let [x, y, w, h] = [n(b.x), n(b.y), n(b.w), n(b.h)];
+    if ([x, y, w, h].some(Number.isNaN)) return null;
+    // Some replies use percentages; bring them back to fractions.
+    if (Math.max(x, y, w, h) > 1.5) [x, y, w, h] = [x / 100, y / 100, w / 100, h / 100];
+    x = Math.min(1, Math.max(0, x));
+    y = Math.min(1, Math.max(0, y));
+    w = Math.min(1 - x, Math.max(0, w));
+    h = Math.min(1 - y, Math.max(0, h));
+    return w > 0.005 && h > 0.005 ? { x, y, w, h } : null;
+  })();
+  const locSource = Source.safeParse(loc?.source);
+  const location = loc
+    ? {
+        element: typeof loc.element === "string" && loc.element.trim() ? loc.element.trim().slice(0, 300) : null,
+        image: box && Number.isInteger(loc.image) ? Number(loc.image) : null,
+        box: box && Number.isInteger(loc.image) ? box : null,
+        source: locSource.success ? locSource.data : "ai_inferred",
+      }
+    : null;
   return {
     title: sourced(r.title),
     summary: sourced(r.summary),
@@ -201,6 +274,10 @@ export function normalizeDraft(raw: unknown): DraftModelOutput {
     frequency: freq,
     severity_suggestion:
       sev && typeof sev.key === "string" && typeof sev.rationale === "string" ? { key: sev.key, rationale: sev.rationale } : null,
+    priority_suggestion:
+      pri && typeof pri.key === "string" && typeof pri.rationale === "string" ? { key: pri.key, rationale: pri.rationale } : null,
+    page: sourced(r.page),
+    location: location && (location.element || location.box) ? location : null,
     screenshot_observations: arr(r.screenshot_observations)
       .map((o) => {
         const x = o as Record<string, unknown>;

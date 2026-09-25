@@ -3,12 +3,13 @@
 
 import type { Sourced } from "../../core/api";
 import type { AiStatus, Frequency } from "../../core/types";
-import { capitalize, ensurePeriod, normalizeWhitespace, sentences, stem, truncate } from "../../core/text";
+import { capitalize, concepts, ensurePeriod, normalizeWhitespace, sentences, stem, tokenize, truncate } from "../../core/text";
 import type {
   AiProvider,
   AiResult,
   BugDigest,
   DraftModelOutput,
+  DraftPage,
   DraftRequest,
   RegressionChecksOutput,
   ReleaseRiskOutput,
@@ -161,7 +162,7 @@ function severityGuess(text: string, keys: string[]): { key: string; rationale: 
     const k = pick("critical");
     return k ? { key: k, rationale: "Your description mentions a crash, data loss, access or security problem." } : null;
   }
-  if (/\b(not sav|isn't sav|doesn't sav|revert|wrong data|incorrect|missing data|blocked|can't|cannot|unable|error)\b/i.test(text)) {
+  if (/\b(not sav|isn't sav|doesn't sav|revert|wrong data|incorrect|missing data|blocked|can't|cannot|unable|error|is back|comes back|came back|disappear|lost|old (?:value|role|data|number|version))\b/i.test(text)) {
     const k = pick("major");
     return k ? { key: k, rationale: "Your description mentions changes not being kept, wrong data or a blocked task." } : null;
   }
@@ -170,6 +171,108 @@ function severityGuess(text: string, keys: string[]): { key: string; rationale: 
     return k ? { key: k, rationale: "Your description sounds cosmetic." } : null;
   }
   return null;
+}
+
+// ---------------------------------------------------------------------------
+// Product map matching
+// ---------------------------------------------------------------------------
+
+const stems = (text: string) => new Set(tokenize(text).map((t) => t.stem));
+
+/** Share of the phrase's meaningful words that appear in the text (0–1). */
+function coverage(phrase: string, textStems: Set<string>): number {
+  const ps = [...stems(phrase)];
+  if (!ps.length) return 0;
+  return ps.filter((x) => textStems.has(x)).length / ps.length;
+}
+
+/** The screen the description most plausibly refers to, or null when nothing stands out. */
+export function matchPage(text: string, pages: DraftPage[]): DraftPage | null {
+  const ts = stems(text);
+  const lower = ` ${text.toLowerCase()} `;
+  let best: { page: DraftPage; score: number } | null = null;
+  for (const p of pages) {
+    let score = 0;
+    score += lower.includes(` ${p.name.toLowerCase()}`) ? 5 : 4 * coverage(p.name, ts);
+    for (const k of p.keywords) if (lower.includes(k.toLowerCase())) score += 3;
+    if (p.path) {
+      if (lower.includes(p.path.toLowerCase())) score += 5;
+      else {
+        // A one-word path ("/members") says little; a specific one ("/members/:id/edit") says more.
+        const segs = p.path.split(/[/:_-]+/).filter((x) => x.length > 2);
+        score += (segs.length >= 2 ? 1.5 : 0.75) * coverage(segs.join(" "), ts);
+      }
+    }
+    if (p.feature) score += coverage(p.feature, ts);
+    for (const e of p.elements) {
+      const c = coverage(e, ts);
+      if (c >= 0.5) score += 1.2 * c;
+    }
+    // How the screen is supposed to behave is the strongest hint of where a symptom lives.
+    const tc = new Set(concepts(text));
+    let bestRule = 0;
+    for (const r of p.rules) {
+      const shared = [...stems(r)].filter((x) => ts.has(x)).length + (concepts(r).some((c) => tc.has(c)) ? 2 : 0);
+      bestRule = Math.max(bestRule, shared);
+    }
+    score += 0.8 * bestRule;
+    if (!best || score > best.score) best = { page: p, score };
+  }
+  return best && best.score >= 3 ? best.page : null;
+}
+
+/** The element the problem is about: mentioned in the text, preferring ones in the symptom. */
+export function matchElement(text: string, symptom: string | null, page: DraftPage): string | null {
+  const ts = stems(text);
+  const ss = symptom ? stems(symptom) : new Set<string>();
+  let best: { el: string; score: number } | null = null;
+  for (const e of page.elements) {
+    const c = coverage(e, ts);
+    if (c < 0.5) continue;
+    const score = c + coverage(e, ss);
+    if (!best || score > best.score) best = { el: e, score };
+  }
+  return best?.el ?? null;
+}
+
+/** The page rule that states how this should behave, if one clearly applies. */
+export function matchRule(text: string, page: DraftPage): string | null {
+  const ts = stems(text);
+  const tc = new Set(concepts(text));
+  let best: { rule: string; score: number } | null = null;
+  for (const r of page.rules) {
+    const shared = [...stems(r)].filter((x) => ts.has(x)).length;
+    const conceptBonus = concepts(r).some((c) => tc.has(c)) ? 2 : 0;
+    const score = shared + conceptBonus;
+    if (score >= 3 && (!best || score > best.score)) best = { rule: r, score };
+  }
+  return best?.rule ?? null;
+}
+
+const SEVERITY_WEIGHT: Record<string, number> = { critical: 3, major: 2, minor: 1, trivial: 0 };
+const IMPORTANCE_WEIGHT: Record<string, number> = { critical: 1, high: 0.5, normal: 0, low: -1 };
+
+/**
+ * Priority from severity, how often it happens and how important the screen is. A deterministic
+ * suggestion, shown with its reasons; the analyst (and later the PM) decides.
+ */
+export function priorityGuess(
+  severity: string | null,
+  page: Pick<DraftPage, "name" | "importance"> | null,
+  frequency: Frequency | null,
+  keys: string[],
+): { key: string; rationale: string } | null {
+  if (!severity || !(severity in SEVERITY_WEIGHT)) return null;
+  let score = SEVERITY_WEIGHT[severity] + (page ? IMPORTANCE_WEIGHT[page.importance] ?? 0 : 0);
+  if (frequency === "always" || frequency === "often") score += 0.5;
+  if (frequency === "rarely" || frequency === "once") score -= 0.5;
+  const key = score >= 3.5 ? "urgent" : score >= 2.5 ? "high" : score >= 1.5 ? "medium" : "low";
+  if (!keys.includes(key)) return null;
+  const reasons = [`${capitalize(severity)} impact`];
+  if (page && page.importance !== "normal") reasons.push(`on ${page.importance === "low" ? "a low-importance" : `a ${page.importance}-importance`} screen (${page.name})`);
+  if (frequency === "always" || frequency === "often") reasons.push("and it happens every time");
+  if (frequency === "rarely" || frequency === "once") reasons.push("but it happens rarely");
+  return { key, rationale: `${reasons.join(" ")}.` };
 }
 
 export function heuristicDraft(req: DraftRequest): DraftModelOutput {
@@ -216,6 +319,11 @@ export function heuristicDraft(req: DraftRequest): DraftModelOutput {
       const step = toImperative(piece);
       if (step && !describes(piece)) steps.push(R(step));
       else if (step && SYMPTOM.test(piece)) actual.push(piece.trim());
+      // "…and the old role is back": a consequence, not an action.
+      else if (!step && SYMPTOM.test(piece) && /\b(is|are|was|were|shows?|comes?|goes|stays?|keeps?|disappears?|reverts?|fails?)\b/i.test(piece)) {
+        actual.push(piece.trim());
+        if (steps.length) trailingAction = steps[steps.length - 1].value;
+      }
       else if (piece.trim()) context.push(piece.trim());
     }
     if (after) {
@@ -246,13 +354,17 @@ export function heuristicDraft(req: DraftRequest): DraftModelOutput {
   }
   if (extraSteps.length && !steps.length) for (const s of extraSteps) steps.push(R(capitalize(s.replace(/^\d+[.)]\s*/, ""))));
 
-  const module = req.context.module ? null : matchByName(text, req.context.modules);
+  const pageMatch = req.context.page ?? matchPage(text, req.context.pages);
+  const pageModule = pageMatch ? req.context.modules.find((m) => m.name === pageMatch.module) ?? null : null;
+  const module = req.context.module ? null : pageModule ?? matchByName(text, req.context.modules);
   const moduleName = req.context.module?.name ?? module?.name ?? null;
   const featureList = req.context.modules.find((m) => m.name === moduleName)?.features ?? [];
-  const feature = req.context.feature ? null : matchByName(text, featureList);
+  const pageFeature = pageMatch?.feature ? featureList.find((x) => x.name === pageMatch.feature) ?? null : null;
+  const feature = req.context.feature ? null : pageFeature ?? matchByName(text, featureList);
   const featureName = req.context.feature?.name ?? feature?.name ?? null;
-  if (steps.length && moduleName && !/^(go|open|navigate|visit|log|sign)\b/i.test(steps[0].value)) {
-    steps.unshift(R(`Go to ${moduleName}${featureName ? ` › ${featureName}` : ""}`, "ai_inferred"));
+  if (steps.length && !/^(go|open|navigate|visit|log|sign)\b/i.test(steps[0].value)) {
+    if (pageMatch) steps.unshift(R(`Open ${pageMatch.module} › ${pageMatch.name}${pageMatch.path ? ` (${pageMatch.path})` : ""}`, "ai_inferred"));
+    else if (moduleName) steps.unshift(R(`Go to ${moduleName}${featureName ? ` › ${featureName}` : ""}`, "ai_inferred"));
   }
 
   const clean = (x: string) => ensurePeriod(capitalize(x.trim().replace(/^(then|and|so)\s+/i, "")));
@@ -269,8 +381,11 @@ export function heuristicDraft(req: DraftRequest): DraftModelOutput {
     const core = actualFromAnswer ?? symptom ?? context[0] ?? sentences(req.text)[0] ?? "";
     let cleaned = core.replace(/^(then|and|so|it)\s+/i, "").replace(/^(the|a|an)\s+/i, "").replace(/[.!]+$/, "");
     if (symptom && trailingAction) cleaned = `${cleaned} after ${gerundPhrase(trailingAction).replace(/^opening it again$/i, "reopening")}`;
-    if (cleaned) title = truncate(`${moduleName ? `${moduleName}: ` : ""}${capitalize(cleaned)}`, 88);
+    const where = pageMatch?.name ?? moduleName;
+    if (cleaned) title = truncate(`${where ? `${where}: ` : ""}${capitalize(cleaned)}`, 88);
   }
+  const ruleExpected = pageMatch && !expectedText && !expectedFromAnswer ? matchRule(`${req.text}\n${answersText}`, pageMatch) : null;
+  const element = pageMatch ? matchElement(text, symptom ?? actualFromAnswer, pageMatch) : null;
 
   const env = req.context.environment ? null : matchByName(text, req.context.environments);
   const browser = BROWSERS.exec(text);
@@ -283,7 +398,7 @@ export function heuristicDraft(req: DraftRequest): DraftModelOutput {
   const missing: { field: string; question: string }[] = [];
   const hasSteps = steps.some((s) => s.source === "reporter") || !!f.steps?.length;
   if (!hasSteps) missing.push({ field: "steps", question: "What exactly did you do, step by step, before the problem appeared?" });
-  if (!expectedText && !f.expected_result) missing.push({ field: "expected_result", question: "What did you expect to happen instead?" });
+  if (!expectedText && !ruleExpected && !f.expected_result) missing.push({ field: "expected_result", question: "What did you expect to happen instead?" });
   if (!actualSentence && !f.actual_result) missing.push({ field: "actual_result", question: "What happened instead? Include any message shown on screen." });
   if (!req.context.environment && !env) {
     missing.push({
@@ -296,6 +411,7 @@ export function heuristicDraft(req: DraftRequest): DraftModelOutput {
   const entity = ENTITY.exec(text)?.[1];
   if (entity && !affectedRecord) missing.push({ field: "affected_record", question: `Which ${entity.toLowerCase()} did you use when this happened (name or ID)?` });
 
+  const sevGuess = severityGuess(text, req.context.severities.map((s) => s.key));
   const description = req.text.trim()
     ? ensurePeriod(normalizeWhitespace(req.text)) + (affectedRecord ? ` Affected ${entity ?? "record"}: ${affectedRecord.trim()}.` : "")
     : null;
@@ -304,7 +420,7 @@ export function heuristicDraft(req: DraftRequest): DraftModelOutput {
     title: title ? R(title, "ai_wording") : null,
     summary: description ? R(description) : null,
     steps,
-    expected_result: expectedText ? R(ensurePeriod(capitalize(expectedText))) : null,
+    expected_result: expectedText ? R(ensurePeriod(capitalize(expectedText))) : ruleExpected ? R(ensurePeriod(capitalize(ruleExpected)), "ai_inferred") : null,
     actual_result: actualSentence ? R(actualSentence) : null,
     module: module ? R(module.name) : null,
     feature: feature ? R(feature.name) : null,
@@ -315,12 +431,13 @@ export function heuristicDraft(req: DraftRequest): DraftModelOutput {
     app_version: version ? R(version[1]) : null,
     page_url: url ? R(url[0]) : null,
     frequency: frequency ? { value: frequency, source: "reporter" } : null,
-    severity_suggestion: severityGuess(text, req.context.severities.map((s) => s.key)),
+    severity_suggestion: sevGuess,
+    priority_suggestion: priorityGuess(sevGuess?.key ?? null, pageMatch, frequency ?? (f.frequency && f.frequency !== "unknown" ? f.frequency : null), req.context.priorities.map((p) => p.key)),
+    page: pageMatch ? R(pageMatch.name, req.context.page ? "reporter" : "ai_inferred") : null,
+    location: element ? { element, image: null, box: null, source: "ai_inferred" } : null,
     screenshot_observations: [],
     missing_information: missing.slice(0, 5),
-    notes: req.images.length
-      ? ["Screenshots are attached as evidence. The offline assistant can't read images, so describe anything important on screen."]
-      : [],
+    notes: [],
   };
 }
 

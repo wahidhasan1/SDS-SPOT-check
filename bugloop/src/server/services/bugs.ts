@@ -3,11 +3,14 @@
 import type { BugDetail, BugLinkView, BugListResponse } from "../../core/api";
 import type {
   AiMeta,
+  Box,
   Bug,
   BugListItem,
+  BugLocation,
   BugRef,
   DuplicateCheck,
   Frequency,
+  Provenance,
   PublicSettings,
   RegressionRun,
   SimilarBug,
@@ -480,6 +483,60 @@ export interface CreateBugInput {
   notes?: string | null;
   ai_meta?: AiMeta | null;
   duplicate_check?: DuplicateCheck | null;
+  page_id?: string | null;
+  /** `image` is the 1-based position of the screenshot among the uploaded report images. */
+  location?: LocationInput | null;
+}
+
+export interface LocationInput {
+  element?: string | null;
+  image?: number | null;
+  attachment_id?: string | null;
+  box?: Box | null;
+  source?: Provenance;
+}
+
+const PROVENANCES: Provenance[] = ["reporter", "screenshot", "ai_wording", "ai_inferred"];
+
+function cleanBox(b: unknown): Box | null {
+  if (!b || typeof b !== "object") return null;
+  const o = b as Record<string, unknown>;
+  const n = (v: unknown) => (typeof v === "number" && Number.isFinite(v) ? Math.min(1, Math.max(0, v)) : NaN);
+  const x = n(o.x);
+  const y = n(o.y);
+  let w = n(o.w);
+  let h = n(o.h);
+  if ([x, y, w, h].some(Number.isNaN)) return null;
+  w = Math.min(w, 1 - x);
+  h = Math.min(h, 1 - y);
+  if (w < 0.005 || h < 0.005) return null;
+  const r = (v: number) => Math.round(v * 10000) / 10000;
+  return { x: r(x), y: r(y), w: r(w), h: r(h) };
+}
+
+/** Validates a page against the bug's project and module. */
+function validatePage(ctx: AppContext, pageId: string | null | undefined, projectId: string, moduleId: string): string | null {
+  if (!pageId) return null;
+  const page = ctx.store.get("pages", pageId);
+  if (!page || page.project_id !== projectId) throw badRequest("Choose a page from the selected project.");
+  if (page.module_id !== moduleId) throw badRequest("That page belongs to another module. Change the module or the page.");
+  return page.id;
+}
+
+function cleanLocation(raw: LocationInput | null | undefined, attachmentIds: string[]): BugLocation | null {
+  if (!raw || typeof raw !== "object") return null;
+  const element = cleanText(raw.element, 300);
+  let attachmentId: string | null = null;
+  if (raw.attachment_id && attachmentIds.includes(raw.attachment_id)) attachmentId = raw.attachment_id;
+  else if (Number.isInteger(raw.image) && raw.image! >= 1 && raw.image! <= attachmentIds.length) attachmentId = attachmentIds[raw.image! - 1];
+  const box = attachmentId ? cleanBox(raw.box) : null;
+  if (!element && !box) return null;
+  return {
+    element,
+    attachment_id: box ? attachmentId : null,
+    box,
+    source: raw.source && PROVENANCES.includes(raw.source) ? raw.source : "reporter",
+  };
 }
 
 function cleanSteps(steps: unknown): string[] {
@@ -534,6 +591,7 @@ export async function createBug(ctx: AppContext, user: UserRow, input: CreateBug
   ctx = atOneMoment(ctx);
   if (!user.active) throw forbidden();
   const { project, mod, affectedIds } = validateLocation(ctx, input.project_id, input.module_id, input.feature_id, input.affected_module_ids);
+  const pageId = validatePage(ctx, input.page_id, project.id, mod.id);
   const title = requireText(input.title, "Title", 200);
   const steps = cleanSteps(input.steps);
   if (!steps.length) throw badRequest("Add at least one step to reproduce.");
@@ -565,6 +623,8 @@ export async function createBug(ctx: AppContext, user: UserRow, input: CreateBug
       project_id: project.id,
       module_id: mod.id,
       feature_id: input.feature_id || null,
+      page_id: pageId,
+      location: null,
       affected_module_ids: affectedIds,
       title,
       description: cleanText(input.description) ?? "",
@@ -631,6 +691,14 @@ export async function createBug(ctx: AppContext, user: UserRow, input: CreateBug
     };
     ctx.store.insert("bugs", bug);
     const attachments = insertAttachments(ctx, stored, { bugId: bug.id, uploaderId: user.id, context: "report" });
+    const location = cleanLocation(
+      input.location,
+      attachments.filter((a) => a.mime_type.startsWith("image/")).map((a) => a.id),
+    );
+    if (location) {
+      bug.location = location;
+      ctx.store.update("bugs", bug.id, { location });
+    }
 
     recordEvent(ctx, {
       bugId: bug.id,
@@ -720,9 +788,18 @@ export function updateBug(ctx: AppContext, user: UserRow, bug: Bug, input: Updat
       case "project_id":
       case "module_id":
       case "feature_id":
+      case "page_id":
       case "affected_module_ids":
         value = raw === "" ? null : raw;
         break;
+      case "location": {
+        const reportImages = ctx.store
+          .find("attachments", { where: { bug_id: bug.id, context: "report" }, orderBy: [{ column: "created_at" }, { column: "id" }] })
+          .filter((a) => a.mime_type.startsWith("image/"))
+          .map((a) => a.id);
+        value = cleanLocation(raw as LocationInput | null, reportImages);
+        break;
+      }
       default:
         value = cleanText(raw, key === "notes" ? 20000 : 1000);
     }
@@ -741,6 +818,16 @@ export function updateBug(ctx: AppContext, user: UserRow, bug: Bug, input: Updat
     const v = validateLocation(ctx, projectId, moduleId, featureId, affected);
     patch.feature_id = featureId;
     patch.affected_module_ids = v.affectedIds;
+  }
+  if ("page_id" in patch || "module_id" in patch || "project_id" in patch) {
+    const projectId = (patch.project_id as string | undefined) ?? bug.project_id;
+    const moduleId = (patch.module_id as string | undefined) ?? bug.module_id;
+    if ("page_id" in patch) patch.page_id = validatePage(ctx, patch.page_id as string | null, projectId, moduleId);
+    else if (bug.page_id && ctx.store.get("pages", bug.page_id)?.module_id !== moduleId) {
+      // The screen no longer matches the module; drop it rather than keep a wrong location.
+      patch.page_id = null;
+      changes.page_id = { from: bug.page_id, to: null };
+    }
   }
 
   const reason = cleanText(input.reason, 2000);
