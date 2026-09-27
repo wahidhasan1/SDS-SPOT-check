@@ -28,5 +28,6 @@ export function getWorkspace(ctx: AppContext, user: UserRow): Workspace {
     settings: getSettings(ctx),
     ai: ctx.ai.status(),
     capabilities: workspaceCapabilities(actorOf(user)),
+    recent_project_id: ctx.store.find("bugs", { where: { reporter_id: user.id }, orderBy: [{ column: "created_at", dir: "desc" }], limit: 1 })[0]?.project_id ?? null,
   };
 }

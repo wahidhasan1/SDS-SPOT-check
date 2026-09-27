@@ -27,7 +27,7 @@ function user(id: string, extra: Partial<Tables["users"]> = {}): Tables["users"]
 }
 
 function project(id: string): Tables["projects"] {
-  return { id, key: id.toUpperCase(), name: id, description: null, qa_lead_id: null, pm_id: null, archived: false, created_at: now, updated_at: now };
+  return { id, key: id.toUpperCase(), name: id, description: null, website: null, platforms: null, overview: null, qa_lead_id: null, pm_id: null, archived: false, created_at: now, updated_at: now };
 }
 
 const stores: [string, () => Store][] = [

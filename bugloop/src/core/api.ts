@@ -139,7 +139,14 @@ export interface DashboardResponse {
   by_severity: { severity: string; open: number }[];
   time_in_status: { status: StatusKey; avg_hours: number; count: number }[];
   oldest_waiting: BugListItem[];
+  /** Every bug in scope: still pending, closed (fixed and verified), or rejected as not a bug. */
+  outcomes: { pending: number; closed: number; not_a_bug: number };
+  /** Bugs reported per week for each product (or, within one product, each module). */
+  reported_by_line: { kind: "project" | "module"; weeks: string[]; lines: { id: string; name: string; counts: number[] }[] };
   metrics: {
+    avg_hours_to_first_response: number | null;
+    avg_hours_to_fix: number | null;
+    avg_hours_to_close: number | null;
     median_hours_to_first_response: number | null;
     median_hours_to_fix: number | null;
     median_hours_to_close: number | null;
@@ -183,6 +190,8 @@ export interface EngineeringPerson {
   reopened_after_fix: number;
   median_hours_to_fix: number | null;
   median_hours_to_first_response: number | null;
+  avg_hours_to_fix: number | null;
+  avg_hours_to_first_response: number | null;
 }
 
 export interface EngineeringResponse {

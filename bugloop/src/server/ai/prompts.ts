@@ -182,13 +182,17 @@ export function buildDraftPrompt(req: DraftRequest, opts: { includeShape: boolea
   const c = req.context;
   const parts: string[] = [];
   parts.push(`Project: ${c.project?.name ?? "not selected"}`);
+  if (c.project?.overview) parts.push(`What this software is and does (written by the team):\n${c.project.overview.slice(0, 4000)}`);
+  if (c.project?.website || c.project?.platforms) {
+    parts.push(`Runs on: ${[c.project.platforms, c.project.website].filter(Boolean).join(" · ")}`);
+  }
   parts.push(`Module selected by the analyst: ${c.module?.name ?? "not selected"}`);
   parts.push(`Feature selected by the analyst: ${c.feature?.name ?? "not selected"}`);
   parts.push(`Environment selected by the analyst: ${c.environment?.name ?? "not selected"}`);
   if (c.modules.length) {
     parts.push(
       `Modules and features in this project:\n${c.modules
-        .map((m) => `- ${m.name}${m.features.length ? `: ${m.features.map((f) => f.name).join(", ")}` : ""}`)
+        .map((m) => `- ${m.name}${m.description ? ` (${m.description})` : ""}${m.features.length ? `: ${m.features.map((f) => f.name).join(", ")}` : ""}`)
         .join("\n")}`,
     );
   }

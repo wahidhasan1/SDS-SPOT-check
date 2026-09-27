@@ -17,7 +17,7 @@ export interface FileSpec {
 
 export interface ReportSpec {
   by: Who;
-  project: "sds" | "mob" | "sup";
+  project: "hub" | "sds" | "ehs";
   module: string;
   feature?: string;
   alsoAffects?: string[];

@@ -108,6 +108,22 @@ describe("offline assistant", () => {
     expect(d.page).toEqual({ value: "Member list", source: "reporter" });
   });
 
+  it("places a CRM report on the Edit contact page of HUB ONE", () => {
+    const crm = PRODUCT_MAPS.hub.modules.find((m) => m.name === "CRM")!;
+    const pages: DraftPage[] = crm.features!.flatMap((f) =>
+      (f.pages ?? []).map((p) => ({
+        id: p.name, name: p.name, module: "CRM", feature: f.name, path: p.path ?? null, description: p.description ?? null,
+        elements: p.elements as string[], rules: p.rules as string[], keywords: (p.keywords as string[]) ?? [], importance: (p.importance ?? "normal") as DraftPage["importance"],
+      })),
+    );
+    const hub = { ...context, project: { name: "HUB ONE" }, module: { name: "CRM" }, pages } as DraftRequest["context"];
+    const d = draft("changed the owner of a contact and saved, reopened the contact and the old owner is back. every time", { context: hub });
+    expect(d.page?.value).toBe("Edit contact");
+    expect(d.location?.element).toBe("Owner dropdown");
+    expect(d.expected_result?.value).toBe("Saving keeps every changed field, and reopening the contact shows the new values.");
+    expect(d.priority_suggestion?.key).toBe("high");
+  });
+
   it("treats a plain 'should' sentence as the expected result", () => {
     const d = draft("When I change the role and save it, the old role comes back. It should keep the new role.");
     expect(d.expected_result?.value).toBe("It should keep the new role.");

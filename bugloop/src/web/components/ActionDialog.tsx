@@ -27,7 +27,8 @@ export function useRunAction(detail: BugDetail) {
   );
 }
 
-export function ActionDialog({ detail, action, onClose }: { detail: BugDetail; action: ActionKey; onClose: () => void }) {
+/** An action's form, in a dialog, or inline on the page when `inline` is set. */
+export function ActionDialog({ detail, action, onClose, inline }: { detail: BugDetail; action: ActionKey; onClose: () => void; inline?: boolean }) {
   const def = ACTION_DEFS[action];
   const { ws, lookup } = useWorkspace();
   const run = useRunAction(detail);
@@ -167,23 +168,8 @@ export function ActionDialog({ detail, action, onClose }: { detail: BugDetail; a
 
   const title = useMemo(() => `${def.label} · ${bug.key}`, [def.label, bug.key]);
 
-  return (
-    <Dialog
-      title={title}
-      description={def.description}
-      onClose={onClose}
-      footer={
-        <>
-          <button className="btn" onClick={onClose}>
-            Cancel
-          </button>
-          <button className={buttonClass(action, true)} onClick={submit} disabled={run.isPending}>
-            {run.isPending ? <span className="spinner" /> : null}
-            {def.submitLabel}
-          </button>
-        </>
-      }
-    >
+  const notes = (
+    <>
       {action === "mark_not_a_bug" && (
         <div className="callout info">
           <span>The reporter sees your explanation and can dispute it. Point to the documentation or behaviour that makes this expected.</span>
@@ -201,6 +187,33 @@ export function ActionDialog({ detail, action, onClose }: { detail: BugDetail; a
           </span>
         </div>
       )}
+    </>
+  );
+  const buttons = (
+    <>
+      <button className="btn" onClick={onClose}>
+        Cancel
+      </button>
+      <button className={buttonClass(action, true)} onClick={submit} disabled={run.isPending}>
+        {run.isPending ? <span className="spinner" /> : null}
+        {def.submitLabel}
+      </button>
+    </>
+  );
+
+  if (inline) {
+    return (
+      <div className="inline-action stack" role="group" aria-label={def.label}>
+        {notes}
+        {def.fields.map(renderField)}
+        <div className="row-wrap">{buttons}</div>
+      </div>
+    );
+  }
+
+  return (
+    <Dialog title={title} description={def.description} onClose={onClose} footer={buttons}>
+      {notes}
       {def.fields.map(renderField)}
     </Dialog>
   );

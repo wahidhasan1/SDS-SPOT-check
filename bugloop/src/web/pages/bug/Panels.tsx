@@ -310,7 +310,7 @@ export function DetailsPanel({ detail }: { detail: BugDetail }) {
             <dt>Tags</dt>
             <dd className="row-wrap">
               {b.tags.map((t) => (
-                <Link key={t} to={`/bugs?view=all&tag=${encodeURIComponent(t)}`} className="tag">
+                <Link key={t} to={`/bugs?tag=${encodeURIComponent(t)}`} className="tag">
                   {t}
                 </Link>
               ))}

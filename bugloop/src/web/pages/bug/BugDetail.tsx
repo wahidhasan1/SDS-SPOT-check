@@ -1,6 +1,6 @@
 import { useState } from "react";
-import { Link, useNavigate, useParams } from "react-router";
-import { ArrowLeft, Bell, BellOff, CircleAlert, Copy, Eye, FilePenLine, Info, MessageCircleQuestion, Scale, ShieldAlert, Sparkles, UserPlus } from "lucide-react";
+import { Link, useLocation, useNavigate, useParams } from "react-router";
+import { ArrowLeft, Bell, BellOff, ChevronRight, CircleAlert, Copy, Eye, FilePenLine, Info, MessageCircleQuestion, MoreHorizontal, Scale, ShieldAlert, UserPlus } from "lucide-react";
 import type { BugDetail as Detail } from "../../../core/api";
 import { FREQUENCIES, FREQUENCY_LABELS, REJECTION_CATEGORY_LABELS, type RejectionCategory } from "../../../core/types";
 import { ACTION_DEFS, type ActionKey } from "../../../core/workflow";
@@ -12,7 +12,7 @@ import { FileDrop } from "../../components/Attachments";
 import { LifecycleTrack } from "../../components/LifecycleTrack";
 import { PriorityGlyph, SeverityBadge, StatusPill, WaitingOnChip } from "../../components/badges";
 import { Activity } from "../../components/Timeline";
-import { Dialog, Field, Loading, cx } from "../../components/ui";
+import { Dialog, Field, Loading, Popover, cx } from "../../components/ui";
 import { shortDate } from "../../lib/format";
 import { ReportCard } from "./ReportCard";
 import { ActionsPanel, DetailsPanel, LinksPanel, PeoplePanel, RegressionPanel, SimilarPanel, SummaryPanel } from "./Panels";
@@ -41,6 +41,8 @@ export function BugDetailPage() {
 function BugView({ detail }: { detail: Detail }) {
   const b = detail.bug;
   const toast = useToast();
+  const navigate = useNavigate();
+  const location = useLocation();
   const { lookup } = useWorkspace();
   const [edit, setEdit] = useState(false);
   const [alsoSeen, setAlsoSeen] = useState(false);
@@ -55,39 +57,59 @@ function BugView({ detail }: { detail: Detail }) {
       toast(`Copying isn't available here. Select the ID to copy it: ${b.key}`);
     }
   };
+  const callouts = ContextCallouts({ detail });
+  const comments = detail.comments.length;
+  const links = (detail.duplicate_of ? 1 : 0) + detail.duplicates.length + detail.links.length;
+  const pendingRun = detail.regression_runs.find((r) => r.result === "pending");
 
   return (
-    <div className="bug-page">
+    <div className="bug-page focus">
       <div className="bug-head">
         <div className="row-wrap bug-crumbs" style={{ gap: 6 }}>
-          <Link to="/bugs" className="btn btn-ghost btn-sm" aria-label="Back to bugs">
-            <ArrowLeft /> Bugs
-          </Link>
+          <button className="btn btn-ghost btn-sm" onClick={() => (location.key !== "default" ? navigate(-1) : navigate("/bugs"))} aria-label="Back">
+            <ArrowLeft /> Back
+          </button>
           <span className="muted">/</span>
           <button className="bug-key" onClick={copy} title="Copy bug ID">
             {b.key} <Copy size={13} />
           </button>
           <span className="muted small">
-            {lookup.project(b.project_id)?.name} · {lookup.module(b.module_id)?.name}
+            {lookup.project(b.project_id)?.name} › {lookup.module(b.module_id)?.name}
           </span>
         </div>
         <div className="row-between bug-head-row">
           <h1 className="bug-title">{b.title}</h1>
-          <div className="row-wrap bug-head-actions">
-            {detail.permissions.can_also_see && (
-              <button className="btn btn-sm" onClick={() => setAlsoSeen(true)} title="Add yourself as a co-reporter, with extra evidence">
-                <UserPlus /> I'm seeing this too
-              </button>
-            )}
+          <div className="row bug-head-actions">
             {detail.permissions.editable_fields.length > 0 && (
               <button className="btn btn-sm" onClick={() => setEdit(true)}>
                 <FilePenLine /> Edit report
               </button>
             )}
-            <button className="btn btn-sm" onClick={() => watch.mutate(!detail.is_watching)} aria-pressed={detail.is_watching}>
-              {detail.is_watching ? <BellOff /> : <Bell />}
-              {detail.is_watching ? "Unwatch" : "Watch"}
-            </button>
+            <Popover
+              align="right"
+              width={230}
+              trigger={({ toggle }) => (
+                <button className="icon-btn" onClick={toggle} aria-label="More options" title="More options">
+                  <MoreHorizontal />
+                </button>
+              )}
+            >
+              {(close) => (
+                <div className="menu">
+                  <button className="menu-item" onClick={() => { close(); watch.mutate(!detail.is_watching); }}>
+                    {detail.is_watching ? <BellOff /> : <Bell />} {detail.is_watching ? "Stop watching" : "Watch this bug"}
+                  </button>
+                  {detail.permissions.can_also_see && (
+                    <button className="menu-item" onClick={() => { close(); setAlsoSeen(true); }}>
+                      <UserPlus /> I'm seeing this too
+                    </button>
+                  )}
+                  <button className="menu-item" onClick={() => { close(); void copy(); }}>
+                    <Copy /> Copy bug ID
+                  </button>
+                </div>
+              )}
+            </Popover>
           </div>
         </div>
         <div className="row-wrap bug-badges">
@@ -101,38 +123,69 @@ function BugView({ detail }: { detail: Detail }) {
               <WaitingOnChip waiting={detail.waiting_on} overdue={detail.overdue} hours={detail.hours_in_status} />
             </>
           )}
-          {b.ai_assisted && (
-            <span className="chip ai" title="Drafted with the AI assistant and reviewed by the reporter">
-              <Sparkles /> AI-assisted report
-            </span>
-          )}
           {b.reopen_count > 0 && <span className="chip danger">Reopened {b.reopen_count}×</span>}
-          {b.disputed && <span className="chip warning">Decision disputed</span>}
           {b.archived_at && <span className="chip danger">Archived</span>}
         </div>
       </div>
 
-      <LifecycleTrack bug={b} />
-
-      <div className="bug-grid">
-        <div className="bug-main">
-          <ContextCallouts detail={detail} />
-          <ReportCard detail={detail} />
-          <Activity detail={detail} />
-        </div>
-        <aside className="bug-rail">
-          <ActionsPanel detail={detail} />
-          <PeoplePanel detail={detail} />
-          <DetailsPanel detail={detail} />
-          <RegressionPanel detail={detail} />
-          <LinksPanel detail={detail} />
-          <SimilarPanel detail={detail} />
-          <SummaryPanel detail={detail} />
-        </aside>
+      <div className="task-area">
+        {callouts ?? (detail.actions.length > 0 ? <ActionsPanel detail={detail} /> : null)}
       </div>
+
+      <ReportCard detail={detail} />
+
+      <section className="more" aria-label="More about this bug">
+        <h2 className="more-title">More about this bug</h2>
+        {callouts && detail.actions.length > 0 && (
+          <Fold title="All actions" meta={`${detail.actions.length} available`}>
+            <ActionsPanel detail={detail} />
+          </Fold>
+        )}
+        <Fold title="Discussion and history" meta={comments ? `${comments} comment${comments === 1 ? "" : "s"}` : "Add a comment"}>
+          <Activity detail={detail} />
+        </Fold>
+        <Fold title="People" meta={`Reported by ${lookup.userName(b.reporter_id)}${b.assignee_id ? ` · assigned to ${lookup.userName(b.assignee_id)}` : ""}`}>
+          <PeoplePanel detail={detail} />
+        </Fold>
+        <Fold title="Details" meta="Environment, version, tags">
+          <DetailsPanel detail={detail} />
+        </Fold>
+        <Fold title="Progress" meta={lookup.status(b.status).label}>
+          <LifecycleTrack bug={b} />
+        </Fold>
+        {detail.regression_runs.length > 0 && (
+          <Fold title="Regression rounds" meta={`${detail.regression_runs.length} round${detail.regression_runs.length === 1 ? "" : "s"}${pendingRun ? " · one waiting" : ""}`}>
+            <RegressionPanel detail={detail} />
+          </Fold>
+        )}
+        <Fold title="Linked bugs" meta={links ? String(links) : "None"}>
+          <LinksPanel detail={detail} />
+        </Fold>
+        <Fold title="Similar bugs" meta="Suggestions">
+          <SimilarPanel detail={detail} />
+        </Fold>
+        <Fold title="Catch-up summary" meta="Written by the assistant on request">
+          <SummaryPanel detail={detail} />
+        </Fold>
+      </section>
       {edit && <EditReportDialog detail={detail} onClose={() => setEdit(false)} />}
       {alsoSeen && <AlsoSeenDialog detail={detail} onClose={() => setAlsoSeen(false)} />}
     </div>
+  );
+}
+
+/** A quiet, collapsed section. Its content is only mounted once it has been opened. */
+function Fold({ title, meta, children }: { title: string; meta?: string; children: React.ReactNode }) {
+  const [seen, setSeen] = useState(false);
+  return (
+    <details className="fold" onToggle={(e) => (e.currentTarget as HTMLDetailsElement).open && setSeen(true)}>
+      <summary>
+        <ChevronRight className="fold-chevron" size={15} aria-hidden />
+        <span className="fold-title">{title}</span>
+        {meta && <span className="fold-meta">{meta}</span>}
+      </summary>
+      <div className="fold-body">{seen ? children : null}</div>
+    </details>
   );
 }
 
@@ -140,24 +193,30 @@ function BugView({ detail }: { detail: Detail }) {
 // What's next: the one or two things this person should know or do now
 // ---------------------------------------------------------------------------
 
-function CalloutActions({ detail, keys }: { detail: Detail; keys: ActionKey[] }) {
-  const [open, setOpen] = useState<ActionKey | null>(null);
-  const run = useRunAction(detail);
+function CalloutActions({ detail, keys, openFirst }: { detail: Detail; keys: ActionKey[]; openFirst?: boolean }) {
   const available = keys.filter((k) => detail.actions.includes(k));
+  const first = available[0];
+  const [open, setOpen] = useState<ActionKey | null>(openFirst && first && ACTION_DEFS[first].fields.length ? first : null);
+  const run = useRunAction(detail);
   if (!available.length) return null;
   return (
-    <div className="row-wrap" style={{ marginTop: 10 }}>
-      {available.map((k, i) => (
-        <button
-          key={k}
-          className={buttonClass(k, i === 0) + " btn-sm"}
-          disabled={run.isPending}
-          onClick={() => (ACTION_DEFS[k].fields.length ? setOpen(k) : run.mutate({ action: k, input: {}, files: [] }))}
-        >
-          {ACTION_DEFS[k].label}
-        </button>
-      ))}
-      {open && <ActionDialog detail={detail} action={open} onClose={() => setOpen(null)} />}
+    <div className="stack-sm" style={{ marginTop: 10 }}>
+      {open ? (
+        <ActionDialog detail={detail} action={open} inline onClose={() => setOpen(null)} />
+      ) : (
+        <div className="row-wrap">
+          {available.map((k, i) => (
+            <button
+              key={k}
+              className={buttonClass(k, i === 0) + " btn-sm"}
+              disabled={run.isPending}
+              onClick={() => (ACTION_DEFS[k].fields.length ? setOpen(k) : run.mutate({ action: k, input: {}, files: [] }))}
+            >
+              {ACTION_DEFS[k].label}
+            </button>
+          ))}
+        </div>
+      )}
     </div>
   );
 }
@@ -193,7 +252,7 @@ function ContextCallouts({ detail }: { detail: Detail }) {
             {asked === me ? `${lookup.userName(q?.author_id)} needs more information from you` : `Waiting on ${lookup.userName(asked)} for more information`}
           </div>
           {q && <div className="quote">“{q.body}”</div>}
-          <CalloutActions detail={detail} keys={["provide_info"]} />
+          <CalloutActions detail={detail} keys={["provide_info"]} openFirst={asked === me} />
         </div>
       </div>,
     );

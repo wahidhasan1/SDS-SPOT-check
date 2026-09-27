@@ -261,8 +261,7 @@ export function listBugs(ctx: AppContext, user: UserRow, query: BugQuery): BugLi
 
   // View filters that need related data.
   if (view === "mine") {
-    const co = new Set(ctx.store.find("co_reporters", { where: { user_id: user.id } }).map((c) => c.bug_id));
-    bugs = bugs.filter((b) => b.reporter_id === user.id || co.has(b.id));
+    bugs = bugs.filter((b) => b.reporter_id === user.id);
   } else if (view === "assigned") {
     bugs = bugs.filter((b) => b.assignee_id === user.id || b.collaborator_ids.includes(user.id));
   } else if (view === "my_regression") {

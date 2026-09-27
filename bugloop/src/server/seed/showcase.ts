@@ -4,12 +4,17 @@
 import type { OrgEvent, Scenario, TimeHelpers } from "./script";
 import type { ShotSpec } from "./screenshots";
 
-const SDS_NAV = ["Dashboard", "SDS Hub", "EHS", "Members", "Sites", "Reports", "Settings"];
-const SUP_NAV = ["Documents", "Products", "Account"];
+export const HUB_NAV = ["CRM", "Sales", "Support", "Meetings", "Ledger", "Stride", "Quality"];
+export const SDS_NAV = ["Dashboard", "SDS Hub", "Members", "Sites", "Reports", "Settings"];
+export const EHS_NAV = ["Incidents", "Risk assessments", "Audits"];
+export const SUP_NAV = ["Documents", "Products", "Account"];
 
-const sds = (active: string, rest: Omit<ShotSpec, "app" | "nav" | "active">): ShotSpec => ({ app: "SDS Manager", nav: SDS_NAV, active, ...rest });
-const mob = (rest: Omit<ShotSpec, "app" | "nav" | "active" | "mobile">): ShotSpec => ({ app: "SDS Manager", nav: [], active: "", mobile: true, ...rest });
-const sup = (active: string, rest: Omit<ShotSpec, "app" | "nav" | "active">): ShotSpec => ({ app: "Supplier Portal", nav: SUP_NAV, active, ...rest });
+type Rest = Omit<ShotSpec, "app" | "nav" | "active">;
+const hub = (active: string, rest: Rest): ShotSpec => ({ app: "HUB ONE", nav: HUB_NAV, active, ...rest });
+const sds = (active: string, rest: Rest): ShotSpec => ({ app: "SDS ONE", nav: SDS_NAV, active, ...rest });
+const ehs = (active: string, rest: Rest): ShotSpec => ({ app: "EHS", nav: EHS_NAV, active, ...rest });
+const mob = (rest: Omit<ShotSpec, "app" | "nav" | "active" | "mobile">): ShotSpec => ({ app: "SDS ONE", nav: [], active: "", mobile: true, ...rest });
+const sup = (active: string, rest: Rest): ShotSpec => ({ app: "SDS ONE Supplier portal", nav: SUP_NAV, active, ...rest });
 
 export function orgEvents(t: TimeHelpers): OrgEvent[] {
   return [
@@ -27,7 +32,7 @@ export function showcaseScenarios(t: TimeHelpers): Scenario[] {
       handle: "legacyImporter",
       created: d(70, "09:30"),
       report: {
-        by: "ingrid", project: "sup", module: "upload", feature: "Bulk upload",
+        by: "ingrid", project: "sds", module: "supplier", feature: "Bulk upload",
         title: "Legacy importer crashes on files exported in 2019",
         description: "The legacy importer stops with an error for supplier files exported from the 2019 system.",
         steps: ["Open Documents › Legacy import", "Choose a 2019 export file (products_2019.xml)", "Click Import"],
@@ -47,7 +52,7 @@ export function showcaseScenarios(t: TimeHelpers): Scenario[] {
       handle: "auditTabs",
       created: d(62, "10:30"),
       report: {
-        by: "tanvir", project: "sds", module: "ehs", feature: "Audits",
+        by: "tanvir", project: "ehs", module: "audits", feature: "Audits",
         title: "Audit checklist loses answers when switching between tabs",
         description: "Answers on one tab of an audit checklist are cleared after visiting another tab.",
         steps: ["Start the 'Warehouse storage' audit", "Answer the questions on the Storage tab", "Switch to the Labelling tab", "Switch back to Storage"],
@@ -68,7 +73,7 @@ export function showcaseScenarios(t: TimeHelpers): Scenario[] {
       handle: "resetExpiry",
       created: d(48, "10:00"),
       report: {
-        by: "sadia", project: "mob", module: "login", feature: "Password reset",
+        by: "sadia", project: "sds", module: "mobile", feature: "Password reset",
         title: "Password reset link expires after 15 minutes",
         description: "Reset links stop working after 15 minutes, which is too short for many users.",
         steps: ["Request a password reset in the app", "Open the email 20 minutes later", "Tap the reset link"],
@@ -90,9 +95,9 @@ export function showcaseScenarios(t: TimeHelpers): Scenario[] {
       created: d(45, "10:00"),
       report: {
         by: "wahid", project: "sds", module: "settings", feature: "Language",
-        title: "Audit export uses American dates for Norwegian companies",
-        description: "Exported audit reports show dates as MM/DD/YYYY even when the company language is Norwegian.",
-        steps: ["Set Settings › Language to Norsk", "Open EHS › Audits and export any audit", "Check the dates in the export"],
+        title: "Register export uses American dates for Norwegian companies",
+        description: "The exported chemical register shows dates as MM/DD/YYYY even when the company language is Norwegian.",
+        steps: ["Set Settings › Language to Norsk", "Open Reports › Chemical register and export it", "Check the dates in the export"],
         expected: "Dates use DD.MM.YYYY.",
         actual: "Dates are shown as 08/14/2026.",
         severity: "minor", env: "QA", browser: "Chrome 127", frequency: "always", tags: ["dates", "localization"],
@@ -100,7 +105,7 @@ export function showcaseScenarios(t: TimeHelpers): Scenario[] {
       steps: [
         { at: d(44, "09:30"), as: "lars", assign: "erik" },
         { at: d(43, "14:00"), as: "erik", action: "start_work" },
-        { at: d(40, "11:20"), as: "erik", comment: "The export service formats dates on the server without the company locale. Fix is half done on branch fix/audit-date-locale." },
+        { at: d(40, "11:20"), as: "erik", comment: "The export service formats dates on the server without the company locale. Fix is half done on branch fix/register-date-locale." },
         { at: d(34, "10:05"), as: "lars", assign: "maria" },
         { at: d(34, "10:07"), as: "lars", comment: "Erik moved to the mobile team; Maria is taking over from his branch." },
         { at: d(31, "15:30"), as: "maria", action: "mark_fixed", input: { resolution: "Export service now formats dates with the company locale (finished Erik's branch).", fix_version: "2.13.2", root_cause: "backend" } },
@@ -153,7 +158,7 @@ export function showcaseScenarios(t: TimeHelpers): Scenario[] {
       handle: "syncDupes",
       created: d(33, "13:20"),
       report: {
-        by: "ingrid", project: "mob", module: "offline", feature: "Sync",
+        by: "ingrid", project: "sds", module: "mobile", feature: "Sync",
         title: "Offline stock updates are applied twice after sync",
         description: "A stock change made offline is applied twice when the phone reconnects.",
         steps: ["Turn on airplane mode", "Update stock for 'Aceton 1 L' from 10 to 8", "Turn off airplane mode and wait for sync", "Check the stock on the web"],
@@ -184,7 +189,7 @@ export function showcaseScenarios(t: TimeHelpers): Scenario[] {
       handle: "revisionNumberPdf",
       created: d(30, "14:00"),
       report: {
-        by: "farhan", project: "sds", module: "ehs", feature: "Risk assessments",
+        by: "farhan", project: "ehs", module: "risk", feature: "Risk assessments",
         title: "Risk assessment PDF shows the previous revision number",
         description: "After revising an approved risk assessment, the PDF header still shows the old revision number.",
         steps: ["Open an approved risk assessment", "Click Revise and approve the new revision (revision 3)", "Export it to PDF"],
@@ -201,36 +206,36 @@ export function showcaseScenarios(t: TimeHelpers): Scenario[] {
 
     // BUG-000087: the existing report the brief's duplicate check finds.
     {
-      handle: "roleNotSaved",
+      handle: "ownerNotSaved",
       number: 87,
       created: d(27, "11:20"),
       report: {
-        by: "tanvir", project: "sds", module: "members", feature: "Edit member",
-        title: "Member role changes are not saved",
-        description: "Changing a member's role shows 'Member updated', but the old role is back when the member is opened again.",
-        steps: ["Go to Members", "Open an existing member (for example Kari Nordmann)", "Change Role from Viewer to Editor", "Click Save", "Close the member and open it again"],
-        expected: "The member keeps the Editor role.",
-        actual: "'Member updated' is shown, but the member has the Viewer role again after reopening.",
-        severity: "major", priority: "high", env: "Staging", browser: "Chrome 128", frequency: "always", tags: ["roles"],
+        by: "tanvir", project: "hub", module: "crm", feature: "Contacts",
+        title: "Contact owner changes are not saved",
+        description: "Changing a contact's owner shows 'Contact updated', but the old owner is back when the contact is opened again.",
+        steps: ["Go to CRM › Contacts", "Open an existing contact (for example Karim Ahmed at Delta Traders Ltd)", "Change Owner from Sadia Rahman to Tanvir Ahmed", "Click Save", "Close the contact and open it again"],
+        expected: "The contact keeps Tanvir Ahmed as owner.",
+        actual: "'Contact updated' is shown, but the owner is Sadia Rahman again after reopening.",
+        severity: "major", priority: "high", env: "Staging", browser: "Chrome 128", frequency: "always", tags: ["ownership"],
         files: [
           {
-            kind: "shot", name: "member-role-after-reopen.png",
-            shot: sds("Members", { crumbs: ["Members", "Kari Nordmann"], heading: "Kari Nordmann", fields: [{ label: "Email", value: "kari.nordmann@nordicchem.no" }, { label: "Role", value: "Viewer", mark: true }, { label: "Site placements", value: "Oslo HQ" }], toast: { tone: "success", text: "Member updated" }, note: "Changed to Editor, still Viewer" }),
+            kind: "shot", name: "contact-owner-after-reopen.png",
+            shot: hub("CRM", { crumbs: ["CRM", "Contacts", "Karim Ahmed"], heading: "Karim Ahmed", fields: [{ label: "Company", value: "Delta Traders Ltd" }, { label: "Owner", value: "Sadia Rahman", mark: true }, { label: "Lifecycle stage", value: "Customer" }], toast: { tone: "success", text: "Contact updated" }, note: "Changed to Tanvir, still Sadia" }),
           },
         ],
       },
       steps: [
         { at: d(26, "09:05"), as: "rafiq", action: "start_review" },
-        { at: d(26, "09:40"), as: "rafiq", action: "request_info", input: { question: "Is this for every role change or only Viewer → Editor? Does a hard refresh make a difference?" } },
+        { at: d(26, "09:40"), as: "rafiq", action: "request_info", input: { question: "Is this for every owner change or only between these two people? Does a hard refresh make a difference?" } },
         {
           at: d(26, "13:15"), as: "tanvir", action: "provide_info",
-          input: { answer: "Every change I tried (Viewer → Editor and Editor → Admin). A hard refresh doesn't help. Network log attached." },
-          files: [{ kind: "log", name: "network-log.txt", text: "PATCH /api/members/2231  200  12 ms\nrequest body: {\"name\":\"Kari Nordmann\",\"role\":\"viewer\",\"sites\":[\"oslo-hq\"]}\nGET /api/members/2231  200\nresponse: {\"role\":\"viewer\"}\n" }],
+          input: { answer: "Every change I tried (Sadia → Tanvir and Tanvir → Wahid). A hard refresh doesn't help. Network log attached." },
+          files: [{ kind: "log", name: "network-log.txt", text: "PATCH /api/crm/contacts/2231  200  12 ms\nrequest body: {\"name\":\"Karim Ahmed\",\"owner_id\":\"usr_sadia\",\"company_id\":\"cmp_delta\"}\nGET /api/crm/contacts/2231  200\nresponse: {\"owner_id\":\"usr_sadia\"}\n" }],
         },
         { at: d(25, "10:30"), as: "rafiq", action: "start_work" },
-        { at: d(24, "15:10"), as: "rafiq", comment: "Found it: the role dropdown updates local state, but the PATCH body is built from the original member object (see the log: role is still 'viewer'). The fix depends on the members API change planned for 2.15." },
-        { at: d(12, "10:00"), as: "hanne", priority: "urgent", reason: "Three customer escalations this week." },
-        { at: d(3, "16:20"), as: "sadia", alsoSeen: "Same with site placement roles on the Oslo site." },
+        { at: d(24, "15:10"), as: "rafiq", comment: "Found it: the owner dropdown updates local state, but the PATCH body is built from the original contact object (see the log: owner_id is still Sadia). The fix depends on the contacts API change planned for 4.15." },
+        { at: d(12, "10:00"), as: "jonas", priority: "urgent", reason: "Three sales teams escalated this week: leads are followed up by the wrong person." },
+        { at: d(3, "16:20"), as: "sadia", alsoSeen: "Same with the Account manager field on companies." },
       ],
     },
 
@@ -256,21 +261,22 @@ export function showcaseScenarios(t: TimeHelpers): Scenario[] {
 
     // BUG-000102: the original that BUG-000119 duplicates.
     {
-      handle: "reqEmptyProduct",
+      handle: "leadNoEmail",
       number: 102,
       created: d(20, "10:05"),
       report: {
-        by: "sadia", project: "sds", module: "hub", feature: "Supplier requests",
-        title: "Supplier request form accepts an empty product name",
-        description: "A supplier SDS request can be sent without a product name.",
-        steps: ["Go to SDS Hub › Supplier requests", "Click New request", "Choose a supplier and leave Product name empty", "Click Send"],
-        expected: "Validation asks for a product name.",
-        actual: "The request is sent and the supplier gets an email with a blank product name.",
+        by: "sadia", project: "hub", module: "crm", feature: "Leads",
+        title: "Web-to-lead form accepts leads without an email address",
+        description: "Leads can be created from the website contact form with an empty email, so sales can't follow them up.",
+        steps: ["Open the public contact form (hubone.example.com/contact)", "Fill in name and company, leave Email empty", "Click Send", "Open CRM › Leads"],
+        expected: "The form asks for an email address.",
+        actual: "The lead is created with an empty email and assigned to a sales rep.",
         severity: "major", env: "QA", browser: "Chrome 128", frequency: "always", tags: ["validation"],
       },
       steps: [
-        { at: d(19, "09:30"), as: "maria", action: "start_work" },
-        { at: d(9, "11:00"), as: "maria", comment: "Server-side validation is missing too. Adding both, plus a test." },
+        { at: d(19, "09:10"), as: "rafiq", assign: "tahmid" },
+        { at: d(19, "09:30"), as: "tahmid", action: "start_work" },
+        { at: d(9, "11:00"), as: "tahmid", comment: "Server-side validation is missing too. Adding both, plus a test." },
       ],
     },
 
@@ -279,7 +285,7 @@ export function showcaseScenarios(t: TimeHelpers): Scenario[] {
       handle: "sessionIncident",
       created: d(19, "11:30"),
       report: {
-        by: "tanvir", project: "sds", module: "ehs", feature: "Incident reports",
+        by: "tanvir", project: "ehs", module: "incidents", feature: "Incident reports",
         title: "Session expires while filling in a long incident report",
         description: "Long incident reports are lost because the session expires without warning.",
         steps: ["Start a new incident report", "Spend about 40 minutes filling in the form", "Click Submit"],
@@ -291,7 +297,7 @@ export function showcaseScenarios(t: TimeHelpers): Scenario[] {
         { at: d(18, "10:00"), as: "imran", action: "start_review" },
         {
           at: d(15, "14:00"), as: "wahid", alsoSeen: "Same for risk assessments: I lost 20 minutes of work today.",
-          files: [{ kind: "shot", name: "session-expired.png", shot: sds("EHS", { crumbs: ["EHS", "Risk assessments", "New"], heading: "Session expired", banner: { tone: "warning", text: "Your session has expired. Please log in again." }, note: "Form content lost" }) }],
+          files: [{ kind: "shot", name: "session-expired.png", shot: ehs("Risk assessments", { crumbs: ["Risk assessments", "New"], heading: "Session expired", banner: { tone: "warning", text: "Your session has expired. Please log in again." }, note: "Form content lost" }) }],
         },
         { at: d(14, "09:15"), as: "imran", action: "start_work" },
       ],
@@ -299,47 +305,48 @@ export function showcaseScenarios(t: TimeHelpers): Scenario[] {
 
     // BUG-000104: failed regression once, fixed again, regression required now.
     {
-      handle: "revisionDate",
+      handle: "lastActivity",
       number: 104,
       created: d(18, "13:45"),
       report: {
-        by: "wahid", project: "sds", module: "hub", feature: "Revision tracking",
-        title: "Revision date not updated after uploading a new SDS version",
-        description: "Uploading a new revision of an SDS keeps the old revision date on the detail page.",
-        steps: ["Open an SDS in SDS Hub (for example 'Rødsprit 5 L')", "Click Upload new revision", "Upload the supplier's revised PDF (revision date 02.09.2026)", "Look at Revision date on the SDS page"],
-        expected: "Revision date shows 02.09.2026 from the new PDF.",
-        actual: "Revision date still shows 14.03.2024.",
-        severity: "major", priority: "high", env: "Staging", browser: "Chrome 128", frequency: "always", tags: ["revisions", "compliance"],
-        files: [{ kind: "shot", name: "revision-date.png", shot: sds("SDS Hub", { crumbs: ["SDS Hub", "Rødsprit 5 L"], heading: "Rødsprit 5 L", fields: [{ label: "Supplier", value: "Kemetyl Norge AS" }, { label: "Revision date", value: "14.03.2024", mark: true }, { label: "Version", value: "4" }], toast: { tone: "success", text: "New revision uploaded" } }) }],
+        by: "wahid", project: "hub", module: "crm", feature: "Activities",
+        title: "Last activity date not updated after logging a call",
+        description: "Logging a call on a contact keeps the old 'Last activity' date on the contact.",
+        steps: ["Open a contact in CRM (for example 'Nabila Chowdhury')", "Click Log activity › Call", "Save the call with today's date (02.09.2026)", "Look at Last activity on the contact"],
+        expected: "Last activity shows 02.09.2026.",
+        actual: "Last activity still shows 14.03.2026.",
+        severity: "major", priority: "high", env: "Staging", browser: "Chrome 128", frequency: "always", tags: ["activities"],
+        files: [{ kind: "shot", name: "last-activity.png", shot: hub("CRM", { crumbs: ["CRM", "Contacts", "Nabila Chowdhury"], heading: "Nabila Chowdhury", fields: [{ label: "Company", value: "Rupali Foods" }, { label: "Last activity", value: "14.03.2026", mark: true }, { label: "Owner", value: "Wahid Hasan" }], toast: { tone: "success", text: "Call logged" } }) }],
       },
       steps: [
-        { at: d(17, "10:10"), as: "maria", action: "start_work" },
-        { at: d(11, "15:30"), as: "maria", action: "mark_fixed", input: { resolution: "The revision date is re-extracted from the new PDF on upload.", fix_version: "2.14.1", root_cause: "backend" } },
+        { at: d(17, "10:00"), as: "rafiq", assign: "sabrina" },
+        { at: d(17, "10:10"), as: "sabrina", action: "start_work" },
+        { at: d(11, "15:30"), as: "sabrina", action: "mark_fixed", input: { resolution: "Logging a call now updates the contact's last activity date.", fix_version: "4.14.1", root_cause: "backend" } },
         { at: d(10, "11:20"), as: "wahid", action: "start_regression" },
         {
           at: d(10, "14:05"), as: "wahid", action: "fail_regression",
-          input: { details: "Works for PDFs uploaded on the SDS page, but revisions that arrive through a supplier request still keep the old date.", build: "2.14.1" },
-          files: [{ kind: "shot", name: "revision-date-supplier-request.png", shot: sds("SDS Hub", { crumbs: ["SDS Hub", "Supplier requests", "REQ-4471"], heading: "Rødsprit 5 L", fields: [{ label: "Uploaded by supplier", value: "02.09.2026" }, { label: "Revision date", value: "14.03.2024", mark: true }] }) }],
+          input: { details: "Works for calls logged on the contact page, but meetings booked through Meetings still leave the old date.", build: "4.14.1" },
+          files: [{ kind: "shot", name: "last-activity-meeting.png", shot: hub("Meetings", { crumbs: ["Meetings", "Intro call – Rupali Foods"], heading: "Nabila Chowdhury", fields: [{ label: "Meeting held", value: "02.09.2026" }, { label: "Last activity (CRM)", value: "14.03.2026", mark: true }] }) }],
         },
-        { at: d(9, "09:15"), as: "maria", action: "start_work" },
-        { at: d(1, "15:40"), as: "maria", action: "mark_fixed", input: { resolution: "Supplier-request uploads now go through the same extraction step as manual uploads.", fix_version: "2.14.2", root_cause: "backend" } },
+        { at: d(9, "09:15"), as: "sabrina", action: "start_work" },
+        { at: d(1, "15:40"), as: "sabrina", action: "mark_fixed", input: { resolution: "Meetings now update the contact's last activity through the same event as calls.", fix_version: "4.14.2", root_cause: "backend" } },
       ],
     },
 
     // BUG-000108: AI-assisted report; engineer waiting for information from QA.
     {
-      handle: "incidentPhotos",
+      handle: "noteAttachments",
       number: 108,
       created: d(16, "09:50"),
       report: {
-        by: "wahid", project: "sds", module: "ehs", feature: "Incident reports",
-        title: "Photos disappear from an incident report saved as a draft",
-        description: "Photos added to a new incident report are gone after saving it as a draft and opening it again.",
-        steps: ["Go to EHS › Incident reports", "Click New incident", "Add two photos under Evidence", "Click Save as draft", "Open the draft again from the list"],
-        expected: "The two photos are still attached to the draft.",
-        actual: "The draft opens with 'No photos added', although 'Draft saved' was shown.",
+        by: "wahid", project: "hub", module: "crm", feature: "Companies",
+        title: "Attachments disappear from a company note saved as a draft",
+        description: "Files added to a new note on a company are gone after saving the note as a draft and opening it again.",
+        steps: ["Go to CRM › Companies", "Open 'Delta Traders Ltd' and click Add note", "Attach two files (contract.pdf and price-list.xlsx)", "Click Save as draft", "Open the draft note again"],
+        expected: "The two files are still attached to the draft.",
+        actual: "The draft opens with 'No attachments', although 'Draft saved' was shown.",
         severity: "major", env: "QA", browser: "Edge 128", frequency: "always",
-        files: [{ kind: "shot", name: "draft-photos.png", shot: sds("EHS", { crumbs: ["EHS", "Incident reports", "Draft #318"], heading: "Forklift collision in Lager B", fields: [{ label: "Incident date", value: "08.09.2026" }, { label: "Evidence", value: "No photos added", mark: true }], toast: { tone: "success", text: "Draft saved" } }) }],
+        files: [{ kind: "shot", name: "draft-attachments.png", shot: hub("CRM", { crumbs: ["CRM", "Companies", "Delta Traders Ltd", "Draft note"], heading: "Renewal terms 2027", fields: [{ label: "Company", value: "Delta Traders Ltd" }, { label: "Attachments", value: "No attachments", mark: true }], toast: { tone: "success", text: "Draft saved" } }) }],
         ai: {
           provider: "anthropic",
           model: "claude-opus-5",
@@ -348,14 +355,15 @@ export function showcaseScenarios(t: TimeHelpers): Scenario[] {
           edited_fields: ["expected_result"],
           screenshot_observations: [
             { image: 1, kind: "status", observation: "A green message in the top right reads 'Draft saved'.", quote: "Draft saved" },
-            { image: 1, kind: "ui_element", observation: "The Evidence field says no photos are attached.", quote: "No photos added" },
+            { image: 1, kind: "ui_element", observation: "The Attachments field says no files are attached.", quote: "No attachments" },
           ],
         },
       },
       steps: [
-        { at: d(15, "10:20"), as: "imran", action: "start_review" },
-        { at: d(4, "09:30"), as: "imran", action: "start_work" },
-        { at: d(1, "11:05"), as: "imran", action: "request_info", input: { question: "Which browser were you using, and were the photos added before or after the first autosave (it runs every 30 seconds)?" } },
+        { at: d(15, "10:00"), as: "rafiq", assign: "maria" },
+        { at: d(15, "10:20"), as: "maria", action: "start_review" },
+        { at: d(4, "09:30"), as: "maria", action: "start_work" },
+        { at: d(1, "11:05"), as: "maria", action: "request_info", input: { question: "Which browser were you using, and were the files attached before or after the first autosave (it runs every 30 seconds)?" } },
       ],
     },
 
@@ -364,7 +372,7 @@ export function showcaseScenarios(t: TimeHelpers): Scenario[] {
       handle: "inventoryTotals",
       created: d(14, "09:15"),
       report: {
-        by: "ingrid", project: "mob", module: "inventory", feature: "Inventory list",
+        by: "ingrid", project: "sds", module: "mobile", feature: "Inventory list",
         title: "Inventory totals differ between the web app and the mobile app",
         description: "The same location shows different totals on web and mobile.",
         steps: ["Open the inventory for 'Bergen Lab' on the web", "Open the same location in the mobile app", "Compare the total for 'Etanol 96%'"],
@@ -384,23 +392,23 @@ export function showcaseScenarios(t: TimeHelpers): Scenario[] {
 
     // BUG-000112: Not a Bug, waiting for the reporter to review the decision.
     {
-      handle: "archivedSites",
+      handle: "archivedCompanies",
       number: 112,
       created: d(13, "14:30"),
       report: {
-        by: "wahid", project: "sds", module: "sites", feature: "Location picker",
-        title: "Archived sites are missing from the location picker",
-        description: "After archiving a site, it can no longer be chosen as a product location.",
-        steps: ["Archive the site 'Drammen Lager' in Sites", "Open any product", "Click Change location"],
-        expected: "All sites, including Drammen Lager, can be selected.",
-        actual: "Drammen Lager is not listed.",
+        by: "wahid", project: "hub", module: "crm", feature: "Companies",
+        title: "Archived companies are missing from the company picker",
+        description: "After archiving a company, it can no longer be chosen for a new contact.",
+        steps: ["Archive the company 'Padma Logistics' in CRM › Companies", "Go to CRM › Contacts and click New contact", "Open the Company picker"],
+        expected: "All companies, including Padma Logistics, can be selected.",
+        actual: "Padma Logistics is not listed.",
         severity: "minor", env: "Staging", browser: "Chrome 128", frequency: "always",
       },
       steps: [
         { at: d(12, "10:00"), as: "rafiq", action: "start_review" },
         {
           at: d(2, "13:40"), as: "rafiq", action: "mark_not_a_bug",
-          input: { category: "works_as_designed", reason: "Archived sites are hidden from pickers on purpose so products can't be moved to closed sites. Unarchive the site first, or use the 'Include archived' filter on the Sites page." },
+          input: { category: "works_as_designed", reason: "Archived companies are hidden from pickers on purpose, so new contacts aren't linked to closed accounts. Unarchive the company first, or use the 'Include archived' filter on the Companies page." },
         },
       ],
     },
@@ -410,7 +418,7 @@ export function showcaseScenarios(t: TimeHelpers): Scenario[] {
       handle: "curvedLabels",
       created: d(12, "10:40"),
       report: {
-        by: "sadia", project: "mob", module: "scanner", feature: "Barcode scan",
+        by: "sadia", project: "sds", module: "mobile", feature: "Barcode scan",
         title: "Scanner can't read DataMatrix codes on curved containers",
         description: "GS1 DataMatrix codes printed on round bottles are never recognised.",
         steps: ["Open Scan", "Point the camera at the DataMatrix code on a 1 L round bottle"],
@@ -426,21 +434,21 @@ export function showcaseScenarios(t: TimeHelpers): Scenario[] {
 
     // BUG-000119: Duplicate of BUG-000102; the reporter keeps credit on the original.
     {
-      handle: "reqNoName",
+      handle: "leadNoEmailAgain",
       number: 119,
       created: d(10, "15:15"),
       report: {
-        by: "wahid", project: "sds", module: "hub", feature: "Supplier requests",
-        title: "Can send a supplier SDS request without a product name",
-        description: "The supplier request form doesn't require a product name.",
-        steps: ["Open SDS Hub › Supplier requests", "Create a request and leave the product name blank", "Send it"],
-        expected: "The form doesn't allow sending without a product name.",
-        actual: "The request is sent; the supplier's email says 'Product:' followed by nothing.",
+        by: "wahid", project: "hub", module: "crm", feature: "Leads",
+        title: "Can create a lead without an email address",
+        description: "The New lead form doesn't require an email address.",
+        steps: ["Open CRM › Leads", "Click New lead and leave Email blank", "Click Save"],
+        expected: "The form doesn't allow saving without an email address.",
+        actual: "The lead is saved; the Email column shows a dash.",
         severity: "minor", env: "QA", browser: "Firefox 130", frequency: "always",
-        duplicateCheck: { decision: "submitted_anyway", note: "Might be the same as the empty product name bug, but I saw it in the supplier's email.", candidates: ["reqEmptyProduct"] },
+        duplicateCheck: { decision: "submitted_anyway", note: "Might be the same as the web form bug, but this is the New lead form inside CRM.", candidates: ["leadNoEmail"] },
       },
       steps: [
-        { at: d(1, "10:25"), as: "maria", action: "mark_duplicate", input: { duplicate_of: "{key:reqEmptyProduct}", note: "Same missing validation as {key:reqEmptyProduct}. Fixing both in one change." } },
+        { at: d(1, "10:25"), as: "tahmid", action: "mark_duplicate", input: { duplicate_of: "{key:leadNoEmail}", note: "Same missing validation as {key:leadNoEmail}. Fixing both in one change." } },
       ],
     },
 
@@ -470,10 +478,10 @@ export function showcaseScenarios(t: TimeHelpers): Scenario[] {
       handle: "dateFormat",
       created: d(8, "13:10"),
       report: {
-        by: "sadia", project: "sds", module: "settings", feature: "Language", alsoAffects: ["ehs", "reports"],
+        by: "sadia", project: "sds", module: "settings", feature: "Language", alsoAffects: ["reports"],
         title: "Date pickers read typed dates in US format for Norwegian users",
         description: "Typing a date in Norwegian format is interpreted as month.day in several modules.",
-        steps: ["Set Settings › Language to Norsk", "Open any date picker (incident date, report period)", "Type 03.09.2026"],
+        steps: ["Set Settings › Language to Norsk", "Open any date picker (member start date, report period)", "Type 03.09.2026"],
         expected: "The date is read as 3 September 2026.",
         actual: "The date is read as 9 March 2026.",
         severity: "minor", env: "QA", browser: "Chrome 128", frequency: "always", tags: ["dates", "localization"],
@@ -506,45 +514,45 @@ export function showcaseScenarios(t: TimeHelpers): Scenario[] {
 
     // BUG-000124: the brief's detail-page timeline, from report to close.
     {
-      handle: "pictograms",
+      handle: "exportLetters",
       number: 124,
       created: d(4, "10:32"),
       report: {
-        by: "wahid", project: "sds", module: "reports", feature: "Chemical register export",
-        title: "Hazard pictograms missing from the chemical register PDF",
-        description: "The chemical register PDF export shows empty boxes where the GHS hazard pictograms should be.",
-        steps: ["Go to Reports › Chemical register", "Select the site 'Oslo HQ'", "Click Export › PDF", "Open the PDF"],
-        expected: "Each product row shows its GHS pictograms (for example the GHS02 flame for ethanol).",
-        actual: "The Pictograms column shows empty boxes for every product.",
-        severity: "major", priority: "high", env: "Staging", browser: "Chrome 128", frequency: "always", tags: ["pdf", "compliance"],
+        by: "wahid", project: "hub", module: "crm", feature: "Import & export",
+        title: "Exported contact list shows garbled letters in names",
+        description: "The contact list exported to CSV shows broken characters where names contain letters such as ø, é or Bangla script.",
+        steps: ["Go to CRM › Contacts", "Filter by owner 'Wahid Hasan'", "Click Export › CSV", "Open the file in Excel"],
+        expected: "Names appear exactly as in CRM (for example 'Søren Ødegård' and 'রহিম উদ্দিন').",
+        actual: "Names show garbled characters such as 'SÃ¸ren Ã˜degÃ¥rd'.",
+        severity: "major", priority: "high", env: "Staging", browser: "Chrome 128", frequency: "always", tags: ["export"],
       },
       steps: [
-        { at: d(4, "11:15"), as: "lars", assign: "maria" },
-        { at: d(4, "13:20"), as: "maria", action: "request_info", input: { question: "Does it happen for every site or only Oslo HQ? And is it only the PDF, or the Excel export too?" } },
+        { at: d(4, "11:15"), as: "rafiq", assign: "maria" },
+        { at: d(4, "13:20"), as: "maria", action: "request_info", input: { question: "Does it happen for every export or only CSV? And only for some contacts?" } },
         {
-          at: d(4, "14:10"), as: "wahid", action: "provide_info", input: { answer: "Every site I tried (Oslo HQ and Bergen). Excel is fine; only the PDF. Screenshot of the PDF attached." },
-          files: [{ kind: "shot", name: "register-pdf-pictograms.png", shot: sds("Reports", { crumbs: ["Reports", "Chemical register", "PDF preview"], heading: "Chemical register – Oslo HQ", table: { columns: ["Product", "Supplier", "Pictograms"], rows: [["Etanol 96%", "Kemetyl", "[ ]  [ ]"], ["Aceton", "VWR", "[ ]"], ["Natronlut 25%", "Merck", "[ ]  [ ]"]], markRow: 0 }, note: "Pictograms render as empty boxes" }) }],
+          at: d(4, "14:10"), as: "wahid", action: "provide_info", input: { answer: "Every CSV export I tried. The Excel (.xlsx) export is fine. Screenshot of the file attached." },
+          files: [{ kind: "shot", name: "contacts-csv.png", shot: hub("CRM", { crumbs: ["CRM", "Contacts", "Export"], heading: "contacts.csv in Excel", table: { columns: ["Name", "Company", "Owner"], rows: [["SÃ¸ren Ã˜degÃ¥rd", "Nordlys AS", "Wahid Hasan"], ["Karim Ahmed", "Delta Traders Ltd", "Wahid Hasan"], ["à¦°à¦¹à¦¿à¦®", "Rupali Foods", "Wahid Hasan"]], markRow: 0 }, note: "Should read Søren Ødegård" }) }],
         },
         { at: d(3, "09:15"), as: "maria", action: "start_work" },
-        { at: d(3, "10:30"), as: "maria", action: "mark_fixed", input: { resolution: "The PDF renderer couldn't load the SVG pictograms; they are now embedded as PNG images.", fix_version: "2.14.2", root_cause: "backend", available_now: false } },
-        { at: d(3, "11:00"), as: "maria", action: "ready_for_regression", input: { build: "2.14.2" } },
+        { at: d(3, "10:30"), as: "maria", action: "mark_fixed", input: { resolution: "The CSV export now writes UTF-8 with a byte-order mark, so Excel reads the letters correctly.", fix_version: "4.14.2", root_cause: "backend", available_now: false } },
+        { at: d(3, "11:00"), as: "maria", action: "ready_for_regression", input: { build: "4.14.2" } },
         { at: d(3, "11:50"), as: "wahid", action: "start_regression" },
-        { at: d(3, "12:15"), as: "wahid", action: "pass_regression", input: { notes: "Checked Oslo HQ and Bergen: every pictogram renders in the PDF. Excel export unchanged.", build: "2.14.2" } },
+        { at: d(3, "12:15"), as: "wahid", action: "pass_regression", input: { notes: "Exported 40 contacts with Norwegian and Bangla names; correct in Excel and Google Sheets. The .xlsx export is unchanged.", build: "4.14.2" } },
       ],
     },
 
     // BUG-000125: new, auto-assigned to the module owner, untouched (needs attention).
     {
-      handle: "invitePlaceholder",
+      handle: "welcomePlaceholder",
       number: 125,
       created: d(3, "14:05"),
       report: {
-        by: "ingrid", project: "sds", module: "members", feature: "Invite member",
-        title: "Invitation email shows the raw placeholder {{company_name}}",
-        description: "Invitation emails contain an unreplaced template placeholder instead of the company name.",
-        steps: ["Go to Members › Invite member", "Invite a new person", "Open the invitation email"],
-        expected: "The email says 'You've been invited to join Nordic Chem AS'.",
-        actual: "The email says 'You've been invited to join {{company_name}}'.",
+        by: "ingrid", project: "hub", module: "crm", feature: "Contacts",
+        title: "Welcome email shows the raw placeholder {{company_name}}",
+        description: "Welcome emails sent to new contacts contain an unreplaced template placeholder instead of the company name.",
+        steps: ["Go to CRM › Contacts › New contact", "Tick 'Send welcome email' and save", "Open the welcome email"],
+        expected: "The email says 'Welcome to Delta Traders Ltd'.",
+        actual: "The email says 'Welcome to {{company_name}}'.",
         severity: "minor", env: "Production", browser: "Firefox 130", frequency: "always", tags: ["email"],
       },
       steps: [],
@@ -555,7 +563,7 @@ export function showcaseScenarios(t: TimeHelpers): Scenario[] {
       handle: "bulkRowsReview",
       created: d(2, "10:15"),
       report: {
-        by: "tanvir", project: "sup", module: "upload", feature: "Validation",
+        by: "tanvir", project: "sds", module: "supplier", feature: "Validation",
         title: "Bulk upload validation reports row numbers one lower than the sheet",
         description: "Errors in the product sheet point to the wrong row.",
         steps: ["Download the product sheet template", "Put an invalid UFI code in row 5", "Upload the sheet"],
@@ -602,7 +610,7 @@ export function showcaseScenarios(t: TimeHelpers): Scenario[] {
       handle: "vatAmpersand",
       created: t.hoursAgo(3),
       report: {
-        by: "ingrid", project: "sup", module: "account", feature: "Registration",
+        by: "ingrid", project: "sds", module: "supplier", feature: "Registration",
         title: "Supplier registration fails with a server error for company names with '&'",
         description: "Suppliers whose company name contains '&' can't register.",
         steps: ["Open supplier registration on the production portal", "Enter company name 'Berg & Sønn AS' and fill in the other fields", "Click Register"],

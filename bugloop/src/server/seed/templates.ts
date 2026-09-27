@@ -5,7 +5,7 @@ import type { Frequency } from "../../core/types";
 
 export interface BugTemplate {
   id: string;
-  project: "sds" | "mob" | "sup";
+  project: "hub" | "sds" | "ehs";
   module: string;
   feature?: string;
   title: string;
@@ -30,10 +30,10 @@ export interface BugTemplate {
 }
 
 export const TEMPLATES: BugTemplate[] = [
-  // ------------------------------------------------------------------ SDS Manager · EHS
+  // ------------------------------------------------------------------ EHS
   {
     id: "ehs-incident-date-utc",
-    project: "sds", module: "ehs", feature: "Incident reports",
+    project: "ehs", module: "incidents", feature: "Incident reports",
     title: "Incident date defaults to the next day after 22:00",
     description: "New incidents created late in the evening get tomorrow's date by default.",
     steps: ["Go to EHS › Incident reports", "Click New incident after 22:00 local time", "Leave the date field on its default"],
@@ -44,7 +44,7 @@ export const TEMPLATES: BugTemplate[] = [
   },
   {
     id: "ehs-risk-matrix-colours",
-    project: "sds", module: "ehs", feature: "Risk assessments",
+    project: "ehs", module: "risk", feature: "Risk assessments",
     title: "Risk matrix colours don't match the configured risk levels",
     description: "A likelihood 4 × consequence 3 cell is green although the company configured it as High.",
     steps: ["Go to Settings › Risk levels and set L4×C3 to High", "Open EHS › Risk assessments", "Open any assessment and look at the matrix"],
@@ -55,7 +55,7 @@ export const TEMPLATES: BugTemplate[] = [
   },
   {
     id: "ehs-audit-percentage",
-    project: "sds", module: "ehs", feature: "Audits",
+    project: "ehs", module: "audits", feature: "Audits",
     title: "Audit score goes above 100% when optional questions are answered",
     description: "Answering optional questions adds to the score but not to the maximum.",
     steps: ["Start the 'Warehouse storage' audit template", "Answer all required and optional questions with Yes", "Finish the audit"],
@@ -66,7 +66,7 @@ export const TEMPLATES: BugTemplate[] = [
   },
   {
     id: "ehs-incident-pdf-cutoff",
-    project: "sds", module: "ehs", feature: "Incident reports",
+    project: "ehs", module: "incidents", feature: "Incident reports",
     title: "Incident PDF cuts off witness statements after 1,000 characters",
     description: "Long witness statements are truncated in the exported PDF without any indication.",
     steps: ["Open an incident with a witness statement longer than 1,000 characters", "Click Export PDF", "Open the PDF"],
@@ -77,7 +77,7 @@ export const TEMPLATES: BugTemplate[] = [
   },
   {
     id: "ehs-remove-injured-person",
-    project: "sds", module: "ehs", feature: "Incident reports",
+    project: "ehs", module: "incidents", feature: "Incident reports",
     title: "Can't remove an injured person from an incident once added",
     description: "The remove icon next to an injured person does nothing.",
     steps: ["Open an incident in draft", "Add an injured person", "Click the remove icon next to the person"],
@@ -88,7 +88,7 @@ export const TEMPLATES: BugTemplate[] = [
   },
   {
     id: "ehs-copy-keeps-approval",
-    project: "sds", module: "ehs", feature: "Risk assessments",
+    project: "ehs", module: "risk", feature: "Risk assessments",
     title: "Copied risk assessment keeps the original's Approved status",
     description: "Copies should start as drafts but show Approved with the original approver's name.",
     steps: ["Open an approved risk assessment", "Click Copy", "Open the new copy"],
@@ -99,7 +99,7 @@ export const TEMPLATES: BugTemplate[] = [
   },
   {
     id: "ehs-audit-reminders-twice",
-    project: "sds", module: "ehs", feature: "Audits",
+    project: "ehs", module: "audits", feature: "Audits",
     title: "Audit due-date reminder emails are sent twice",
     description: "Auditors receive two identical reminder emails a few seconds apart.",
     steps: ["Schedule an audit due tomorrow", "Wait for the 07:00 reminder run", "Check the auditor's inbox"],
@@ -110,7 +110,7 @@ export const TEMPLATES: BugTemplate[] = [
   },
   {
     id: "ehs-my-site-filter",
-    project: "sds", module: "ehs", feature: "Incident reports",
+    project: "ehs", module: "incidents", feature: "Incident reports",
     title: "Incident list filter 'My site' shows incidents from all sites",
     description: "The My site filter is ignored for members placed at more than one site.",
     steps: ["Log in as a member placed at two sites", "Go to EHS › Incident reports", "Choose the My site filter"],
@@ -121,7 +121,7 @@ export const TEMPLATES: BugTemplate[] = [
   },
   {
     id: "ehs-heic-upload",
-    project: "sds", module: "ehs", feature: "Audits",
+    project: "ehs", module: "audits", feature: "Audits",
     title: "Audit photo upload fails for HEIC images from iPhone",
     description: "Uploading photos taken on an iPhone shows a generic error.",
     steps: ["Open an audit question with photo evidence", "Upload a .heic photo from an iPhone", "Wait for the upload to finish"],
@@ -132,7 +132,7 @@ export const TEMPLATES: BugTemplate[] = [
   },
   {
     id: "ehs-signature-date",
-    project: "sds", module: "ehs", feature: "Risk assessments",
+    project: "ehs", module: "risk", feature: "Risk assessments",
     title: "Risk assessment signature date uses US format",
     description: "Signature dates show as MM/DD/YYYY for Norwegian companies.",
     steps: ["Sign a risk assessment", "Look at the signature block"],
@@ -142,7 +142,7 @@ export const TEMPLATES: BugTemplate[] = [
     fix: "Signature block now formats dates with the company locale.", rootCause: "frontend",
   },
 
-  // ------------------------------------------------------------------ SDS Manager · SDS Hub
+  // ------------------------------------------------------------------ SDS ONE · SDS Hub
   {
     id: "hub-cas-leading-zeros",
     project: "sds", module: "hub", feature: "SDS search",
@@ -265,7 +265,7 @@ export const TEMPLATES: BugTemplate[] = [
     fix: "Comparison ignores whitespace-only differences.", rootCause: "backend",
   },
 
-  // ------------------------------------------------------------------ SDS Manager · Members
+  // ------------------------------------------------------------------ SDS ONE · Members
   {
     id: "members-sort-last-login",
     project: "sds", module: "members",
@@ -345,7 +345,7 @@ export const TEMPLATES: BugTemplate[] = [
     fix: "Empty values are rendered as a dash.", rootCause: "frontend",
   },
 
-  // ------------------------------------------------------------------ SDS Manager · Sites
+  // ------------------------------------------------------------------ SDS ONE · Sites
   {
     id: "sites-move-building-address",
     project: "sds", module: "sites", feature: "Site hierarchy",
@@ -413,7 +413,7 @@ export const TEMPLATES: BugTemplate[] = [
     fix: "Country is passed to the address lookup.", rootCause: "third_party",
   },
 
-  // ------------------------------------------------------------------ SDS Manager · Settings
+  // ------------------------------------------------------------------ SDS ONE · Settings
   {
     id: "settings-transparent-logo",
     project: "sds", module: "settings", feature: "Company profile",
@@ -470,7 +470,7 @@ export const TEMPLATES: BugTemplate[] = [
     fix: "Page handles members without email.", rootCause: "backend",
   },
 
-  // ------------------------------------------------------------------ SDS Manager · Reports
+  // ------------------------------------------------------------------ SDS ONE · Reports
   {
     id: "reports-empty-supplier",
     project: "sds", module: "reports", feature: "Chemical register export",
@@ -538,7 +538,7 @@ export const TEMPLATES: BugTemplate[] = [
     fix: "Export runs as a background job and is streamed.", rootCause: "backend",
   },
 
-  // ------------------------------------------------------------------ SDS Manager · Dashboard
+  // ------------------------------------------------------------------ SDS ONE · Dashboard
   {
     id: "dash-expiring-archived",
     project: "sds", module: "dashboard", feature: "Widgets",
@@ -607,10 +607,10 @@ export const TEMPLATES: BugTemplate[] = [
     dupOf: "dash-stale-numbers",
   },
 
-  // ------------------------------------------------------------------ Mobile · Scanner
+  // ------------------------------------------------------------------ SDS ONE · Mobile app · Scanner
   {
     id: "mob-camera-denied-crash",
-    project: "mob", module: "scanner", feature: "Barcode scan",
+    project: "sds", module: "mobile", feature: "Barcode scan",
     title: "App crashes when camera permission is denied",
     description: "Denying camera access on first use closes the app.",
     steps: ["Install the app fresh", "Open Scan", "Tap Don't allow on the camera prompt"],
@@ -621,7 +621,7 @@ export const TEMPLATES: BugTemplate[] = [
   },
   {
     id: "mob-ocr-o-slash",
-    project: "mob", module: "scanner", feature: "Label OCR",
+    project: "sds", module: "mobile", feature: "Label OCR",
     title: "Label OCR reads 'ø' as 'o' in product names",
     description: "Norwegian product names are misread, so the product isn't matched.",
     steps: ["Scan the label of 'Rødsprit' with Label OCR"],
@@ -632,7 +632,7 @@ export const TEMPLATES: BugTemplate[] = [
   },
   {
     id: "mob-torch-stays-on",
-    project: "mob", module: "scanner", feature: "Barcode scan",
+    project: "sds", module: "mobile", feature: "Barcode scan",
     title: "Torch stays on after leaving the scanner",
     description: "The phone's torch keeps shining after closing the scanner.",
     steps: ["Open Scan", "Turn on the torch", "Go back to Home"],
@@ -643,7 +643,7 @@ export const TEMPLATES: BugTemplate[] = [
   },
   {
     id: "mob-unknown-barcode-blank",
-    project: "mob", module: "scanner", feature: "Barcode scan",
+    project: "sds", module: "mobile", feature: "Barcode scan",
     title: "Scanning an unknown barcode shows a blank screen",
     description: "Barcodes that don't match a product lead to an empty white screen.",
     steps: ["Scan a barcode that isn't registered (e.g. a book)"],
@@ -654,7 +654,7 @@ export const TEMPLATES: BugTemplate[] = [
   },
   {
     id: "mob-small-label-focus",
-    project: "mob", module: "scanner", feature: "Barcode scan",
+    project: "sds", module: "mobile", feature: "Barcode scan",
     title: "Scanner doesn't focus on small labels on iPhone 13 mini",
     description: "Small labels stay blurry and never scan on the mini model.",
     steps: ["Use an iPhone 13 mini", "Scan a 2 cm barcode label"],
@@ -666,7 +666,7 @@ export const TEMPLATES: BugTemplate[] = [
   },
   {
     id: "mob-double-scan",
-    project: "mob", module: "scanner", feature: "Barcode scan",
+    project: "sds", module: "mobile", feature: "Barcode scan",
     title: "Scanning quickly adds the same product twice",
     description: "When the barcode stays in view, the product is added to the stock count twice.",
     steps: ["Start a stock count", "Scan a barcode and keep it in view for a second"],
@@ -676,10 +676,10 @@ export const TEMPLATES: BugTemplate[] = [
     fix: "Debounce identical scans within two seconds.", rootCause: "frontend",
   },
 
-  // ------------------------------------------------------------------ Mobile · Offline mode
+  // ------------------------------------------------------------------ SDS ONE · Mobile app · Offline mode
   {
     id: "mob-cache-empty-after-update",
-    project: "mob", module: "offline", feature: "Cached SDS",
+    project: "sds", module: "mobile", feature: "Cached SDS",
     title: "Cached SDS list is empty after an app update",
     description: "After updating the app, offline SDS are gone until a manual sync.",
     steps: ["Cache SDS for offline use", "Update the app", "Open Offline documents without network"],
@@ -690,7 +690,7 @@ export const TEMPLATES: BugTemplate[] = [
   },
   {
     id: "mob-sync-99",
-    project: "mob", module: "offline", feature: "Sync",
+    project: "sds", module: "mobile", feature: "Sync",
     title: "Sync progress stops at 99% for accounts with 2,000+ products",
     description: "Large accounts never see sync complete.",
     steps: ["Log in to an account with more than 2,000 products", "Start a full sync"],
@@ -701,7 +701,7 @@ export const TEMPLATES: BugTemplate[] = [
   },
   {
     id: "mob-offline-edits-lost",
-    project: "mob", module: "offline", feature: "Sync",
+    project: "sds", module: "mobile", feature: "Sync",
     title: "Offline stock edits are lost if the app is closed during sync",
     description: "Edits made offline disappear when the app is killed while syncing.",
     steps: ["Go offline and update stock for three products", "Go online and start sync", "Force-close the app during sync"],
@@ -712,7 +712,7 @@ export const TEMPLATES: BugTemplate[] = [
   },
   {
     id: "mob-cache-after-logout",
-    project: "mob", module: "offline", feature: "Cached SDS",
+    project: "sds", module: "mobile", feature: "Cached SDS",
     title: "Cached SDS files aren't deleted after logout",
     description: "Documents from the previous user remain on the device after logging out.",
     steps: ["Cache SDS for offline use", "Log out", "Inspect the app's storage"],
@@ -722,10 +722,10 @@ export const TEMPLATES: BugTemplate[] = [
     fix: "Logout clears the document cache.", rootCause: "frontend",
   },
 
-  // ------------------------------------------------------------------ Mobile · Chemical inventory
+  // ------------------------------------------------------------------ SDS ONE · Mobile app · Chemical inventory
   {
     id: "mob-negative-stock",
-    project: "mob", module: "inventory", feature: "Stock updates",
+    project: "sds", module: "mobile", feature: "Stock updates",
     title: "Stock quantity accepts negative numbers",
     description: "Typing a minus sign lets you save a negative stock amount.",
     steps: ["Open a product in the inventory", "Tap Update stock", "Enter -5 and save"],
@@ -736,7 +736,7 @@ export const TEMPLATES: BugTemplate[] = [
   },
   {
     id: "mob-units-grams",
-    project: "mob", module: "inventory", feature: "Inventory list",
+    project: "sds", module: "mobile", feature: "Inventory list",
     title: "Inventory shows grams for products registered in litres",
     description: "Liquid products are listed with the wrong unit.",
     steps: ["Register a product with the unit litres on the web", "Open the inventory list in the app"],
@@ -747,7 +747,7 @@ export const TEMPLATES: BugTemplate[] = [
   },
   {
     id: "mob-refresh-filter",
-    project: "mob", module: "inventory", feature: "Inventory list",
+    project: "sds", module: "mobile", feature: "Inventory list",
     title: "Pull-to-refresh resets the location filter",
     description: "Refreshing the list shows all locations again.",
     steps: ["Filter the inventory by a storage location", "Pull down to refresh"],
@@ -758,7 +758,7 @@ export const TEMPLATES: BugTemplate[] = [
   },
   {
     id: "mob-saved-toast-offline",
-    project: "mob", module: "inventory", feature: "Stock updates",
+    project: "sds", module: "mobile", feature: "Stock updates",
     title: "Stock update says 'Saved' when the request failed",
     description: "With a weak connection the app shows success although the update failed.",
     steps: ["Throttle the network", "Update a stock amount", "Check the web app"],
@@ -769,7 +769,7 @@ export const TEMPLATES: BugTemplate[] = [
   },
   {
     id: "mob-expiry-sort",
-    project: "mob", module: "inventory", feature: "Inventory list",
+    project: "sds", module: "mobile", feature: "Inventory list",
     title: "Sorting by expiry date puts products without expiry at the top",
     description: "Products with no expiry date are listed first.",
     steps: ["Sort the inventory by Expiry date"],
@@ -779,10 +779,10 @@ export const TEMPLATES: BugTemplate[] = [
     fix: "Empty expiry dates sort last.", rootCause: "frontend",
   },
 
-  // ------------------------------------------------------------------ Mobile · Login
+  // ------------------------------------------------------------------ SDS ONE · Mobile app · Login
   {
     id: "mob-sso-loop",
-    project: "mob", module: "login", feature: "SSO",
+    project: "sds", module: "mobile", feature: "SSO",
     title: "SSO login loops back to the login screen on Android 14",
     description: "Microsoft SSO completes but the app returns to the login screen.",
     steps: ["Open the app on Android 14", "Tap Sign in with Microsoft", "Complete the Microsoft login"],
@@ -793,7 +793,7 @@ export const TEMPLATES: BugTemplate[] = [
   },
   {
     id: "mob-reset-opens-web",
-    project: "mob", module: "login", feature: "Password reset",
+    project: "sds", module: "mobile", feature: "Password reset",
     title: "Password reset link opens the web app instead of the mobile app",
     description: "Links in the reset email open the browser on phones with the app installed.",
     steps: ["Request a password reset in the app", "Open the email on the same phone", "Tap the link"],
@@ -804,7 +804,7 @@ export const TEMPLATES: BugTemplate[] = [
   },
   {
     id: "mob-onboarding-norwegian",
-    project: "mob", module: "login",
+    project: "sds", module: "mobile",
     title: "Onboarding text is cut off in Norwegian",
     description: "Long Norwegian words overflow the onboarding cards.",
     steps: ["Set the phone language to Norwegian", "Install and open the app"],
@@ -815,7 +815,7 @@ export const TEMPLATES: BugTemplate[] = [
   },
   {
     id: "mob-biometric-twice",
-    project: "mob", module: "login",
+    project: "sds", module: "mobile",
     title: "Face ID prompt appears twice after unlocking the phone",
     description: "Returning to the app shows the biometric prompt twice in a row.",
     steps: ["Enable Face ID login", "Lock the phone with the app open", "Unlock and return to the app"],
@@ -825,10 +825,10 @@ export const TEMPLATES: BugTemplate[] = [
     fix: "Prompt is triggered only on the first foreground event.", rootCause: "frontend",
   },
 
-  // ------------------------------------------------------------------ Supplier Portal · Document upload
+  // ------------------------------------------------------------------ SDS ONE · Supplier portal · Document upload
   {
     id: "sup-bulk-stops",
-    project: "sup", module: "upload", feature: "Bulk upload",
+    project: "sds", module: "supplier", feature: "Bulk upload",
     title: "Bulk upload stops at the first file with an invalid name",
     description: "One bad file name aborts the rest of the batch.",
     steps: ["Select 20 SDS files where the third has a '#' in its name", "Start the bulk upload"],
@@ -839,7 +839,7 @@ export const TEMPLATES: BugTemplate[] = [
   },
   {
     id: "sup-future-revision",
-    project: "sup", module: "upload", feature: "Validation",
+    project: "sds", module: "supplier", feature: "Validation",
     title: "Validation accepts SDS with a revision date in the future",
     description: "Files dated next year pass validation.",
     steps: ["Upload an SDS whose revision date is 2027-01-15"],
@@ -851,7 +851,7 @@ export const TEMPLATES: BugTemplate[] = [
   },
   {
     id: "sup-progress-100",
-    project: "sup", module: "upload", feature: "Bulk upload",
+    project: "sds", module: "supplier", feature: "Bulk upload",
     title: "Upload progress shows 100% before processing is finished",
     description: "Suppliers leave the page thinking the upload is done while extraction is still running.",
     steps: ["Upload a large SDS", "Watch the progress bar"],
@@ -862,7 +862,7 @@ export const TEMPLATES: BugTemplate[] = [
   },
   {
     id: "sup-zip-nested",
-    project: "sup", module: "upload", feature: "Bulk upload",
+    project: "sds", module: "supplier", feature: "Bulk upload",
     title: "ZIP files with nested folders import no documents",
     description: "Only files at the top level of the ZIP are imported.",
     steps: ["Upload a ZIP with SDS files inside sub-folders"],
@@ -873,7 +873,7 @@ export const TEMPLATES: BugTemplate[] = [
   },
   {
     id: "sup-validation-english",
-    project: "sup", module: "upload", feature: "Validation",
+    project: "sds", module: "supplier", feature: "Validation",
     title: "Validation messages are only in English",
     description: "Suppliers using the portal in German see English validation messages.",
     steps: ["Switch the portal language to Deutsch", "Upload a file with a missing product name"],
@@ -884,10 +884,10 @@ export const TEMPLATES: BugTemplate[] = [
   },
 
 
-  // ------------------------------------------------------------------ Supplier Portal · Product catalogue
+  // ------------------------------------------------------------------ SDS ONE · Supplier portal · Product catalogue
   {
     id: "sup-variants-separate",
-    project: "sup", module: "catalogue", feature: "Product search",
+    project: "sds", module: "supplier", feature: "Product search",
     title: "Product search lists variants as separate products",
     description: "Each packaging variant shows up as its own product in search.",
     steps: ["Search for a product with three packaging variants"],
@@ -898,7 +898,7 @@ export const TEMPLATES: BugTemplate[] = [
   },
   {
     id: "sup-ufi-variant",
-    project: "sup", module: "catalogue", feature: "Product details",
+    project: "sds", module: "supplier", feature: "Product details",
     title: "Product details show the wrong UFI code for variants",
     description: "All variants show the UFI of the first variant.",
     steps: ["Open a product with variants that have different UFI codes", "Switch between variants"],
@@ -909,7 +909,7 @@ export const TEMPLATES: BugTemplate[] = [
   },
   {
     id: "sup-csv-commas",
-    project: "sup", module: "catalogue",
+    project: "sds", module: "supplier",
     title: "Catalogue CSV export breaks on product names with commas",
     description: "Names like 'Cleaner, 5 L' shift the remaining columns.",
     steps: ["Export the catalogue to CSV", "Open it in Excel"],
@@ -920,7 +920,7 @@ export const TEMPLATES: BugTemplate[] = [
   },
   {
     id: "sup-stretched-images",
-    project: "sup", module: "catalogue", feature: "Product details",
+    project: "sds", module: "supplier", feature: "Product details",
     title: "Product images are stretched on the details page",
     description: "Portrait images are distorted to fit a square box.",
     steps: ["Open a product with a portrait-oriented image"],
@@ -931,7 +931,7 @@ export const TEMPLATES: BugTemplate[] = [
   },
   {
     id: "sup-download-hidden-mobile",
-    project: "sup", module: "catalogue", feature: "Product details",
+    project: "sds", module: "supplier", feature: "Product details",
     title: "'Download SDS' button is hidden on small screens",
     description: "On phones the button is pushed off-screen.",
     steps: ["Open a product on a 375px-wide screen"],
@@ -941,10 +941,10 @@ export const TEMPLATES: BugTemplate[] = [
     fix: "Action bar wraps on small screens.", rootCause: "frontend",
   },
 
-  // ------------------------------------------------------------------ Supplier Portal · Account
+  // ------------------------------------------------------------------ SDS ONE · Supplier portal · Account
   {
     id: "sup-vat-format",
-    project: "sup", module: "account", feature: "Registration",
+    project: "sds", module: "supplier", feature: "Registration",
     title: "Registration accepts invalid VAT numbers",
     description: "Any text is accepted in the VAT number field.",
     steps: ["Open supplier registration", "Enter 'ABC' as VAT number and submit"],
@@ -955,7 +955,7 @@ export const TEMPLATES: BugTemplate[] = [
   },
   {
     id: "sup-admin-remove-self",
-    project: "sup", module: "account", feature: "Company users",
+    project: "sds", module: "supplier", feature: "Company users",
     title: "The only company admin can remove themselves",
     description: "Removing the last admin locks the supplier out of user management.",
     steps: ["Log in as the only admin of a supplier company", "Go to Company users", "Remove yourself"],
@@ -966,7 +966,7 @@ export const TEMPLATES: BugTemplate[] = [
   },
   {
     id: "sup-pending-invites",
-    project: "sup", module: "account", feature: "Company users",
+    project: "sds", module: "supplier", feature: "Company users",
     title: "Company users list doesn't show pending invitations",
     description: "Invited users don't appear until they accept.",
     steps: ["Invite a colleague", "Open Company users"],
@@ -977,7 +977,7 @@ export const TEMPLATES: BugTemplate[] = [
   },
   {
     id: "sup-confirmation-spam",
-    project: "sup", module: "account", feature: "Registration",
+    project: "sds", module: "supplier", feature: "Registration",
     title: "Registration confirmation email lands in spam",
     description: "Confirmation emails from the staging portal go to spam in Gmail.",
     steps: ["Register a new supplier on staging with a Gmail address", "Check the inbox"],
@@ -989,7 +989,7 @@ export const TEMPLATES: BugTemplate[] = [
   },
   {
     id: "sup-session-5min",
-    project: "sup", module: "account",
+    project: "sds", module: "supplier",
     title: "Supplier Portal logs users out after 5 minutes",
     description: "Suppliers filling in product data are logged out quickly.",
     steps: ["Log in to the Supplier Portal", "Leave the product form open for 6 minutes", "Click Save"],
@@ -1000,7 +1000,7 @@ export const TEMPLATES: BugTemplate[] = [
   },
   {
     id: "sup-session-short",
-    project: "sup", module: "account",
+    project: "sds", module: "supplier",
     title: "Logged out of the Supplier Portal while editing a product",
     description: "Work is lost because the session ends while editing.",
     steps: ["Edit a product for a few minutes", "Save"],
@@ -1024,7 +1024,7 @@ export const TEMPLATES: BugTemplate[] = [
   },
   {
     id: "mob-sync-lost-edits",
-    project: "mob", module: "offline", feature: "Sync",
+    project: "sds", module: "mobile", feature: "Sync",
     title: "Stock changes made offline disappear after going online",
     description: "Some offline stock updates never show up on the web.",
     steps: ["Update stock offline", "Go online and open the app briefly", "Check the web app"],

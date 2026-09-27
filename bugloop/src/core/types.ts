@@ -163,6 +163,12 @@ export interface Project {
   key: string;
   name: string;
   description: string | null;
+  /** Where the software runs, for example its web address or app store name. */
+  website: string | null;
+  /** Web app, iOS and Android, desktop… */
+  platforms: string | null;
+  /** What the software is for and its main functions, in plain words. The assistant reads it. */
+  overview: string | null;
   qa_lead_id: string | null;
   pm_id: string | null;
   archived: boolean;
@@ -574,6 +580,8 @@ export interface Workspace {
   settings: PublicSettings;
   ai: AiStatus;
   capabilities: WorkspaceCapabilities;
+  /** The project this person last reported a bug in, used as the report form's default. */
+  recent_project_id: string | null;
 }
 
 export interface WorkspaceCapabilities {

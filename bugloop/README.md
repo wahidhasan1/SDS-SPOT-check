@@ -29,9 +29,10 @@ npm run build
 npm start              # http://localhost:3000
 ```
 
-The first start seeds a sample workspace (3 projects, 17 people, ~130 bugs with realistic
-histories). On the sign-in page, click any person to sign in as them, or use their email and the
-password `demo1234` (for example `wahid.hasan@bugloop.test`).
+The first start seeds a sample workspace: three products (EHS, HUB ONE and SDS ONE), 19 people and
+about 130 bugs with realistic histories, most of them in HUB ONE's CRM. On the sign-in page, click any
+person to sign in as them, or use their email and the password `demo1234` (for example
+`wahid.hasan@bugloop.test`).
 
 For development, `npm run dev` runs the API with reload on :3000 and the Vite dev server on :5173.
 
@@ -75,36 +76,32 @@ Password-less demo sign-in is only offered for a database seeded with sample dat
 
 Signed in as **Wahid Hasan** (QA analyst):
 
-1. **Report bug** asks for very little: the project, one or two sentences and a screenshot. Click
-   **Try the example**, then **Prepare report**. Using the project's **product map**, the
-   assistant works out the page (*Members › Edit member, /members/:id/edit*), the element (*Role
-   dropdown*), the steps, the expected result (from the page's rules), severity and priority,
-   each with its reasons.
-2. **Check & submit** lists every value with where it came from (*Provided by QA analyst*,
-   *Observed in screenshot*, *AI-generated wording*, *AI-inferred*). Values from the assistant
-   wait for a **Verify** tick; **Edit** fixes anything wrong: the page, the priority, or the
-   problem area, which you can draw as a box on the screenshot. Nothing is sent unchecked.
-3. The **Possible duplicates** rail already suggests **BUG-000087 · Member role changes are not
-   saved**. Submitting opens the duplicate dialog: view it, add your evidence to it, or submit
-   anyway. The choice is recorded for triage.
-4. **Needs my action** lists what is waiting on Wahid: questions from engineers (BUG-000108),
-   regressions to run (BUG-000104 is on its second round) and decisions to review (BUG-000112
-   was marked Not a Bug, BUG-000119 a duplicate of BUG-000102).
-5. **BUG-000124** shows a complete history from report to automatic close after verification.
+1. The **Dashboard** shows where every open bug is, a pie of pending, closed and not-a-bug reports, a
+   weekly line per product (a line heading down means that product is getting ready to launch), and
+   average engineer response, fix and close times with reopen and valid-report rates.
+2. **Report bug** asks for very little: the product, one or two sentences and a screenshot. Click
+   **Try the example**, then **Prepare report**. Using HUB ONE's **product map**, the assistant works
+   out the page (*CRM › Edit contact, /crm/contacts/:id/edit*), the element (*Owner dropdown*), the
+   steps, the expected result (from the page's rules), severity and priority, each with its reasons.
+3. **Check & submit** lists every value with where it came from. Values from the assistant wait for a
+   **Verify** tick; **Edit** fixes anything wrong, including the problem area, which you can draw on
+   the screenshot. The duplicate check suggests **BUG-000087 · Contact owner changes are not saved**.
+4. **Needs my action** lists what is waiting on Wahid. Opening an item shows the task first (for
+   BUG-000108 the answer box is already open), then the report; people, details, history, linked and
+   similar bugs are folded away underneath.
+5. **Bugs** is one list with filters; **My bugs** shows only Wahid's own reports; **My insights**
+   shows only his own numbers. Notifications live in the bell at the top right.
+6. **Projects → HUB ONE** describes what the software does and its modules. The assistant reads this
+   together with the product map.
 
-Then switch person:
-
-* **Rafiq Chowdhury** (engineer, owner of Members) has **BUG-000125** waiting for triage: start
-  work, ask a question, mark it Not a Bug or a duplicate, defer it, or mark it fixed. Engineers
-  can't close fixed bugs; QA verifies them.
-* **Nusrat Jahan** (QA lead) settles disputes (*Bugs → Disputed*) and picks up regressions whose
-  reporter has left.
-* **Hanne Lie** (PM) and **Mahmud Karim** (admin) see team analytics, the release-readiness
-  summary, projects, users, workflow settings and the audit log.
+Then switch person: **Rafiq Chowdhury** (engineer, owner of CRM) has **BUG-000125** waiting for
+triage; **Nusrat Jahan** (QA lead) settles disputes; **Mahmud Karim** (admin) manages people, projects
+and workflow.
 
 ## The product map
 
-Each project can hold a map of its screens: path, what the page is for, the elements on it, the
+Each project has an **About this software** section (website, platforms and a plain-words overview of
+what it does) and a map of its screens: path, what the page is for, the elements on it, the
 rules it must follow ("Saving keeps every changed field…") and how important it is. QA leads,
 project managers and admins edit it under **Projects → project → Product map**, one page at a
 time or by importing JSON (*Import map → Start from the template*, then **Preview** before

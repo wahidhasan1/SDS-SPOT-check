@@ -16,16 +16,24 @@ describe("demo seed", async () => {
     expect(summary.bugs).toBeGreaterThan(125);
   });
 
+  it("has the three projects, with HUB ONE CRM as the busiest module", () => {
+    expect(ctx.store.find("projects").map((p) => p.name).sort()).toEqual(["EHS", "HUB ONE", "SDS ONE"]);
+    const counts = new Map<string, number>();
+    for (const b of ctx.store.find("bugs")) counts.set(b.module_id, (counts.get(b.module_id) ?? 0) + 1);
+    const busiest = [...counts.entries()].sort((a, b) => b[1] - a[1])[0][0];
+    expect(ctx.store.get("modules", busiest)!.name).toBe("CRM");
+  });
+
   it("places the brief's example bugs at their exact numbers", () => {
     const expectations: [number, string, string][] = [
-      [87, "in_progress", "Member role changes are not saved"],
-      [102, "in_progress", "Supplier request form accepts an empty product name"],
-      [104, "regression_required", "Revision date not updated after uploading a new SDS version"],
-      [108, "need_info", "Photos disappear from an incident report saved as a draft"],
-      [112, "not_a_bug", "Archived sites are missing from the location picker"],
-      [119, "duplicate", "Can send a supplier SDS request without a product name"],
-      [124, "closed", "Hazard pictograms missing from the chemical register PDF"],
-      [125, "new", "Invitation email shows the raw placeholder {{company_name}}"],
+      [87, "in_progress", "Contact owner changes are not saved"],
+      [102, "in_progress", "Web-to-lead form accepts leads without an email address"],
+      [104, "regression_required", "Last activity date not updated after logging a call"],
+      [108, "need_info", "Attachments disappear from a company note saved as a draft"],
+      [112, "not_a_bug", "Archived companies are missing from the company picker"],
+      [119, "duplicate", "Can create a lead without an email address"],
+      [124, "closed", "Exported contact list shows garbled letters in names"],
+      [125, "new", "Welcome email shows the raw placeholder {{company_name}}"],
     ];
     for (const [n, status, title] of expectations) {
       const bug = resolveBug(ctx, String(n));
@@ -49,7 +57,7 @@ describe("demo seed", async () => {
     const wahid = user("Wahid Hasan");
     const titles = listNotifications(ctx, wahid).items.map((n) => n.title);
     expect(titles).toContain("BUG-000104 has been marked Fixed. Regression testing required.");
-    expect(titles).toContain("Imran Hossain requested more information for BUG-000108.");
+    expect(titles).toContain("Maria Olsen requested more information for BUG-000108.");
     expect(titles).toContain("BUG-000112 was marked Not a Bug.");
     expect(titles).toContain("BUG-000119 was marked Duplicate of BUG-000102.");
     const kinds = actionItems(ctx, wahid).items.map((i) => i.kind);
@@ -77,8 +85,10 @@ describe("demo seed", async () => {
     expect(dash.open_total).toBeGreaterThan(30);
     expect(dash.weekly.some((w) => w.reported > 0 && w.resolved > 0)).toBe(true);
     expect(dash.metrics.reopen_rate).toBeGreaterThan(0);
-    const contrib = contributions(ctx, lead, { projectId: null, weeks: 12 });
-    const wahid = contrib.people.find((p) => p.user_id === user("Wahid Hasan").id)!;
-    expect(wahid.reported).toBeGreaterThan(10);
+    expect(dash.reported_by_line.lines.map((l) => l.name)).toEqual(["EHS", "HUB ONE", "SDS ONE"]);
+    expect(dash.outcomes.pending + dash.outcomes.closed + dash.outcomes.not_a_bug).toBe(Object.values(dash.status_counts).reduce((a, b) => a + b, 0));
+    const contrib = contributions(ctx, user("Wahid Hasan"), { projectId: null, weeks: 12 });
+    expect(contrib.people).toHaveLength(1);
+    expect(contrib.people[0].reported).toBeGreaterThan(10);
   });
 });

@@ -316,3 +316,90 @@ export function ChartOrTable({ chart, table, label }: { chart: ReactNode; table:
     </div>
   );
 }
+
+// ---------------------------------------------------------------------------
+// Donut: parts of one whole, at most four slices, each labelled beside the ring
+// ---------------------------------------------------------------------------
+
+export interface DonutSlice {
+  id: string;
+  label: string;
+  value: number;
+  color: string;
+  note?: string;
+  onClick?: () => void;
+}
+
+export function Donut({ slices, size = 168, centerLabel, ariaLabel }: { slices: DonutSlice[]; size?: number; centerLabel: string; ariaLabel: string }) {
+  const [hover, setHover] = useState<string | null>(null);
+  const total = slices.reduce((a, s) => a + s.value, 0);
+  const r = size / 2 - 4;
+  const inner = r - 22;
+  const cx0 = size / 2;
+  const arcs = useMemo(() => {
+    let a0 = -Math.PI / 2;
+    const gap = total > 0 && slices.filter((s) => s.value > 0).length > 1 ? 0.018 : 0;
+    return slices.map((s) => {
+      const sweep = total ? (s.value / total) * Math.PI * 2 : 0;
+      const start = a0 + gap / 2;
+      const end = a0 + sweep - gap / 2;
+      a0 += sweep;
+      if (sweep <= gap) return { s, d: "" };
+      const large = end - start > Math.PI ? 1 : 0;
+      const p = (rad: number, a: number) => `${(cx0 + rad * Math.cos(a)).toFixed(2)},${(cx0 + rad * Math.sin(a)).toFixed(2)}`;
+      // A full circle can't be drawn as one arc; split it in two.
+      if (end - start >= Math.PI * 2 - 0.001) {
+        const mid = start + Math.PI;
+        return { s, d: `M${p(r, start)}A${r},${r} 0 1 1 ${p(r, mid)}A${r},${r} 0 1 1 ${p(r, start)}M${p(inner, start)}A${inner},${inner} 0 1 0 ${p(inner, mid)}A${inner},${inner} 0 1 0 ${p(inner, start)}Z` };
+      }
+      return { s, d: `M${p(r, start)}A${r},${r} 0 ${large} 1 ${p(r, end)}L${p(inner, end)}A${inner},${inner} 0 ${large} 0 ${p(inner, start)}Z` };
+    });
+  }, [slices, total, r, inner, cx0]);
+  const shown = hover ? slices.find((s) => s.id === hover) : null;
+  const pct = (v: number) => (total ? `${Math.round((v / total) * 100)}%` : "–");
+  return (
+    <div className="donut">
+      <svg width={size} height={size} role="img" aria-label={ariaLabel} className="donut-ring" onPointerLeave={() => setHover(null)}>
+        {total === 0 && <circle cx={cx0} cy={cx0} r={(r + inner) / 2} fill="none" stroke="var(--chart-muted)" strokeWidth={r - inner} />}
+        {arcs.map(({ s, d }) =>
+          d ? (
+            <path
+              key={s.id}
+              d={d}
+              fill={s.color}
+              fillRule="evenodd"
+              opacity={hover && hover !== s.id ? 0.35 : 1}
+              onPointerEnter={() => setHover(s.id)}
+              onClick={s.onClick}
+              style={{ cursor: s.onClick ? "pointer" : undefined }}
+            />
+          ) : null,
+        )}
+        <text x={cx0} y={cx0 - 4} textAnchor="middle" className="donut-value">
+          {shown ? shown.value : total}
+        </text>
+        <text x={cx0} y={cx0 + 16} textAnchor="middle" className="donut-caption">
+          {shown ? `${shown.label} · ${pct(shown.value)}` : centerLabel}
+        </text>
+      </svg>
+      <ul className="donut-legend">
+        {slices.map((s) => {
+          const Tag = s.onClick ? "button" : "div";
+          return (
+            <li key={s.id}>
+              <Tag className={cx("donut-key", s.onClick && "clickable", hover === s.id && "on")} onClick={s.onClick} onPointerEnter={() => setHover(s.id)} onPointerLeave={() => setHover(null)}>
+                <span className="swatch" style={{ background: s.color }} />
+                <span className="grow">
+                  <span className="donut-key-label">{s.label}</span>
+                  {s.note && <span className="tiny muted block">{s.note}</span>}
+                </span>
+                <strong className="num">{s.value}</strong>
+                <span className="num muted small donut-pct">{pct(s.value)}</span>
+              </Tag>
+            </li>
+          );
+        })}
+      </ul>
+    </div>
+  );
+}

@@ -74,8 +74,6 @@ export function AppShell() {
     return () => document.removeEventListener("keydown", onKey);
   }, [navigate, caps.report]);
 
-  const inView = (view: string) => (path: string, search: string) => path === "/bugs" && new URLSearchParams(search).get("view") === view;
-
   return (
     <div className={cx("shell", navOpen && "nav-open")}>
       {navOpen && <div className="nav-scrim" onClick={() => setNavOpen(false)} />}
@@ -95,15 +93,14 @@ export function AppShell() {
         <nav className="nav">
           <NavItem to="/" icon={LayoutDashboard} label="Dashboard" />
           <NavItem to="/action" icon={Inbox} label="Needs my action" count={c?.action_items} hot={!!c?.action_items} />
-          <NavItem to="/bugs" icon={Bug} label="Bugs" match={(p, s) => p === "/bugs" && !["mine", "assigned"].includes(new URLSearchParams(s).get("view") ?? "")} />
+          <NavItem to="/bugs" icon={Bug} label="Bugs" match={(p) => p === "/bugs"} />
           {isEngineer ? (
-            <NavItem to="/bugs?view=assigned" icon={ListChecks} label="Assigned to me" count={c?.assigned} match={inView("assigned")} />
+            <NavItem to="/assigned" icon={ListChecks} label="Assigned to me" count={c?.assigned} />
           ) : (
-            <NavItem to="/bugs?view=mine" icon={ListChecks} label="My bugs" count={c?.mine_open} match={inView("mine")} />
+            <NavItem to="/my-bugs" icon={ListChecks} label="My bugs" count={c?.mine_open} />
           )}
           {(caps.qa || ws.me.role === "project_manager") && <NavItem to="/regression" icon={ClipboardCheck} label="Regression" count={c?.my_regression} hot={!!c?.my_regression} />}
-          <NavItem to="/notifications" icon={Bell} label="Notifications" count={c?.unread_notifications} />
-          <NavItem to="/analytics" icon={BarChart3} label="Analytics" />
+          <NavItem to="/analytics" icon={BarChart3} label="My insights" />
           <NavItem to="/projects" icon={FolderKanban} label="Projects" />
           {(caps.manage_users || caps.manage_config || caps.view_audit) && <div className="nav-label eyebrow">Admin</div>}
           {caps.manage_users && <NavItem to="/admin/users" icon={Users} label="Users & teams" />}
@@ -300,7 +297,7 @@ function GlobalSearch() {
               if (items[active]) go(items[active].key);
               else if (q.trim()) {
                 setOpen(false);
-                navigate(`/bugs?view=all&q=${encodeURIComponent(q.trim())}`);
+                navigate(`/bugs?q=${encodeURIComponent(q.trim())}`);
               }
             } else if (e.key === "Escape") setOpen(false);
           }}
@@ -319,7 +316,7 @@ function GlobalSearch() {
             </button>
           ))}
           {items.length > 0 && (
-            <button className="menu-item" onMouseDown={(e) => e.preventDefault()} onClick={() => { setOpen(false); navigate(`/bugs?view=all&q=${encodeURIComponent(debounced)}`); }}>
+            <button className="menu-item" onMouseDown={(e) => e.preventDefault()} onClick={() => { setOpen(false); navigate(`/bugs?q=${encodeURIComponent(debounced)}`); }}>
               <Search /> See all results for “{debounced}”
             </button>
           )}
@@ -400,9 +397,9 @@ export function NotificationLink({ n, onGo, compact }: { n: import("../../core/t
 
 const PERSONA_HINTS: Record<string, string> = {
   "Wahid Hasan": "Reports bugs. Has questions to answer, a regression to run and decisions to review.",
-  "Rafiq Chowdhury": "Engineer for Members and Sites. Has a new bug waiting for triage.",
-  "Maria Olsen": "Engineer for SDS Hub. Her Not a Bug decision was disputed.",
-  "Imran Hossain": "Engineer for EHS. Waiting on QA for information.",
+  "Rafiq Chowdhury": "Lead engineer for HUB ONE CRM. Has a new bug waiting for triage.",
+  "Maria Olsen": "HUB ONE engineer. Waiting on Wahid for information on BUG-000108.",
+  "Imran Hossain": "Engineer for EHS and SDS ONE Members.",
   "Nusrat Jahan": "QA lead. Settles disputes and picks up regressions for people who left.",
   "Hanne Lie": "Product manager. A deferred bug is due for review.",
   "Mahmud Karim": "Administrator. Manages people, projects and workflow settings.",

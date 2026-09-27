@@ -66,7 +66,6 @@ async function start(context) {
 
 const desktop = await browser.newContext({ viewport: { width: 1440, height: 1000 } });
 const { page, errors } = await start(desktop);
-const rail = () => page.locator(".bug-rail");
 const nav = (name) => page.locator(".nav").getByRole("link", { name });
 
 async function switchTo(name) {
@@ -82,42 +81,88 @@ async function openBug(key) {
   await page.waitForSelector(`.bug-key >> text=${key}`, { timeout: 10_000 });
 }
 const status = async () => (await page.locator(".bug-badges .pill").first().textContent()).trim();
+// Actions live in the task card at the top of the bug, or under "All actions" further down.
+async function actionButton(label) {
+  const top = page.locator(".task-area").getByRole("button", { name: label, exact: true });
+  if (await top.count()) return top.first();
+  const fold = page.locator("details.fold", { hasText: "All actions" });
+  if (await fold.count()) {
+    if (!(await fold.evaluate((e) => e.open))) await fold.locator("summary").click();
+    return fold.getByRole("button", { name: label, exact: true }).first();
+  }
+  return top.first();
+}
+async function openFold(title) {
+  const fold = page.locator("details.fold", { hasText: title });
+  if (!(await fold.evaluate((e) => e.open))) await fold.locator("summary").click();
+  await page.waitForTimeout(200);
+}
 async function act(label, fields = {}, submit) {
-  await rail().getByRole("button", { name: label, exact: true }).click();
+  // The form may already be open inline (for example the answer to a question).
+  const openInline = submit ? await page.locator(".inline-action").filter({ has: page.getByRole("button", { name: submit, exact: true }) }).count() : 0;
+  if (!openInline) await (await actionButton(label)).click();
   if (submit) {
-    const dialog = page.locator(".dialog");
-    await dialog.waitFor();
+    await page.waitForTimeout(200);
+    const form = (await page.locator(".dialog").count()) ? page.locator(".dialog") : page.locator(".inline-action");
+    await form.first().waitFor();
     for (const [id, value] of Object.entries(fields)) {
       const el = page.locator(`#${id}`);
       if (value === true) await el.check();
       else await el.fill(value);
     }
-    await dialog.getByRole("button", { name: submit, exact: true }).click();
-    await dialog.waitFor({ state: "detached", timeout: 10_000 });
+    await form.first().getByRole("button", { name: submit, exact: true }).click();
+    await form.first().waitFor({ state: "detached", timeout: 10_000 });
   }
   await page.waitForTimeout(400);
 }
+async function openNotifications() {
+  await page.getByRole("button", { name: /^Notifications/ }).click();
+  await page.getByRole("button", { name: "See all", exact: true }).click();
+  await page.waitForSelector(".notif");
+}
+
+step("A simpler dashboard and bug lists");
+await page.waitForSelector(".donut");
+expect((await page.locator(".queue-strip").count()) === 0, "the dashboard doesn't repeat the Needs my action queue");
+expect((await page.locator(".tile-note").count()) === 0, "status tiles show counts only, no overdue notes");
+expect((await page.locator(".donut path").count()) >= 2, "a pie shows pending, closed and not a bug");
+const legend = (await page.locator(".dashboard .legend").first().textContent()) ?? "";
+expect(["HUB ONE", "SDS ONE", "EHS"].every((n) => legend.includes(n)), "the weekly chart has one line per product");
+expect((await page.locator(".stat-grid.five .stat-tile").count()) === 5, "flow shows response, fix and close times, reopen rate and valid reports");
+await page.screenshot({ path: `${OUT}/dashboard.png`, fullPage: true });
+await nav(/^Bugs$/).click();
+await page.waitForSelector(".bugs-page .filter-bar");
+expect((await page.locator(".views-nav").count()) === 0, "the bug list has no sub-views, only filters");
+await nav(/^My bugs/).click();
+await page.waitForSelector("h1:has-text('My bugs')");
+await nav(/^Dashboard/).click();
 
 step("Wahid reports a bug with one sentence and a screenshot");
 const shot = await page.screenshot({ clip: { x: 240, y: 60, width: 800, height: 450 } });
 await page.getByRole("button", { name: /Report bug/ }).first().click();
-await page.getByLabel("What went wrong?").fill("changed the phone number and saved, reopened the member and the old phone number is back. every time on staging");
-await page.locator("input[type=file]").first().setInputFiles({ name: "edit-member.png", mimeType: "image/png", buffer: shot });
+await page.locator(".where-row select").first().selectOption({ label: "HUB ONE" });
+await page.getByLabel("What went wrong?").fill("changed the owner of a contact and saved, reopened the contact and the old owner is back. every time on staging");
+await page.locator("input[type=file]").first().setInputFiles({ name: "edit-contact.png", mimeType: "image/png", buffer: shot });
 await page.getByRole("button", { name: /Prepare report/ }).click();
 await page.waitForSelector("text=Check the report", { timeout: 60_000 });
 const rowText = async (field) => (await page.locator(`.review-row[data-field="${field}"] .review-value`).textContent()) ?? "";
 expect((await rowText("title")).length > 10, "the assistant drafts a title");
-expect((await rowText("where")).includes("Edit member"), "the product map places the report on the Edit member page");
+expect((await rowText("where")).includes("Edit contact"), "the product map places the report on the Edit contact page");
 expect((await rowText("expected_result")).length > 10, "the expected result comes from the page's rules");
 expect((await page.locator('.review-row[data-field="priority"] .review-meta').textContent()).includes("AI-inferred"), "priority is suggested and labelled as AI-inferred");
 expect((await page.locator(".review-row.unverified").count()) > 0, "assistant values wait for the analyst's check");
 // Correct the assistant: mark the spot on the screenshot and change the priority.
 await page.locator('.review-row[data-field="location"] .icon-btn').click();
+await page.waitForFunction(() => {
+  const img = document.querySelector(".marker.editable img");
+  return !!img && img.complete && img.naturalHeight > 0 && img.getBoundingClientRect().height > 40;
+});
 const marker = await page.locator(".marker.editable").boundingBox();
 await page.mouse.move(marker.x + marker.width * 0.2, marker.y + marker.height * 0.2);
 await page.mouse.down();
 await page.mouse.move(marker.x + marker.width * 0.5, marker.y + marker.height * 0.4, { steps: 4 });
 await page.mouse.up();
+expect((await page.locator(".marker.editable .marker-box").count()) === 1, "dragging on the screenshot draws the box");
 await page.locator('.review-row[data-field="location"]').getByRole("button", { name: "Done" }).click();
 await page.locator('.review-row[data-field="priority"] .icon-btn').click();
 await page.locator('.review-row[data-field="priority"]').getByRole("radio", { name: "Low" }).click();
@@ -132,14 +177,18 @@ await page.waitForSelector(".bug-title", { timeout: 10_000 });
 const key = (await page.locator(".bug-key").textContent()).trim();
 expect(/^[A-Z]{2,6}-\d{6}$/.test(key), `the new bug has an ID (${key})`);
 expect((await status()) === "New", "a new report starts as New");
-expect((await page.locator(".where-block").textContent()).includes("Edit member"), "the bug shows its page");
+expect((await page.locator(".where-block").textContent()).includes("Edit contact"), "the bug shows its page");
+await page.waitForSelector(".where-block .marker-box", { timeout: 8_000 }).catch(() => {});
 expect((await page.locator(".where-block .marker-box").count()) === 1, "the bug shows the marked spot on the screenshot");
 expect((await page.locator(".bug-badges").textContent()).includes("Low"), "the analyst's priority correction was kept");
 
-step(`Rafiq, owner of Members, asks a question on ${key}`);
+expect((await page.locator(".more .fold").count()) >= 6, "people, details, history and the rest are folded away below the report");
+expect((await page.locator(".bug-rail").count()) === 0, "there is no side rail competing with the report");
+
+step(`Rafiq, owner of CRM, asks a question on ${key}`);
 await switchTo("Rafiq Chowdhury");
 await openBug(key);
-await act("Request information", { "act-request_info-question": "Which member did you edit, and was the number in +47 format?" }, "Send question");
+await act("Request information", { "act-request_info-question": "Which contact did you edit, and who was the new owner?" }, "Send question");
 expect((await status()) === "Need More Information", "requesting information moves it to Need More Information");
 
 step("Wahid answers from his queue");
@@ -147,7 +196,8 @@ await switchTo("Wahid Hasan");
 await nav(/Needs my action/).click();
 await page.locator(".list-row", { hasText: key }).click();
 await page.waitForSelector(".bug-title");
-await act("Provide information", { "act-provide_info-answer": "Member Kari Nordmann. Yes, +47 912 34 567." }, "Send answer");
+expect((await page.locator(".task-area .inline-action").count()) === 1, "the question opens with the answer box ready, above the report");
+await act("Provide information", { "act-provide_info-answer": "Karim Ahmed at Delta Traders Ltd, changed from Sadia to Tanvir." }, "Send answer");
 expect((await status()) === "New", "answering returns it to where it was");
 
 step("Rafiq starts work and fixes it");
@@ -157,28 +207,29 @@ await act("Start work");
 expect((await status()) === "In Progress", "start work → In Progress");
 await act(
   "Mark fixed",
-  { "act-mark_fixed-resolution": "The phone field was missing from the update payload.", "act-mark_fixed-fix_version": "2.14.3", "act-mark_fixed-available_now": true },
+  { "act-mark_fixed-resolution": "The owner field was missing from the update payload.", "act-mark_fixed-fix_version": "4.14.3", "act-mark_fixed-available_now": true },
   "Mark fixed",
 );
 expect((await status()) === "Regression Required", "a testable fix goes straight to Regression Required");
-expect((await rail().getByRole("button", { name: "Close", exact: true }).count()) === 0, "engineers cannot close a fixed bug");
+expect((await page.getByRole("button", { name: "Close", exact: true }).count()) === 0, "engineers cannot close a fixed bug");
 
 step("Wahid fails the regression");
 await switchTo("Wahid Hasan");
 await nav(/^Regression/).click();
 await page.locator(".list-row", { hasText: key }).click();
 await page.waitForSelector(".bug-title");
-await act("Fail regression", { "act-fail_regression-details": "Still reverts when the number has spaces." }, "Fail and reopen");
+await act("Fail regression", { "act-fail_regression-details": "Still reverts when the contact belongs to two companies." }, "Fail and reopen");
 expect((await status()) === "Reopened", "a failed regression reopens the bug");
 
 step("Rafiq fixes it again; Wahid verifies");
 await switchTo("Rafiq Chowdhury");
 await openBug(key);
-await act("Mark fixed", { "act-mark_fixed-resolution": "Normalise spaces before saving.", "act-mark_fixed-fix_version": "2.14.4", "act-mark_fixed-available_now": true }, "Mark fixed");
+await act("Mark fixed", { "act-mark_fixed-resolution": "Owner is saved for contacts linked to several companies.", "act-mark_fixed-fix_version": "4.14.4", "act-mark_fixed-available_now": true }, "Mark fixed");
 await switchTo("Wahid Hasan");
 await openBug(key);
-await act("Pass regression", { "act-pass_regression-notes": "Checked with and without spaces." }, "Verify fix");
+await act("Pass regression", { "act-pass_regression-notes": "Checked contacts with one and two companies." }, "Verify fix");
 expect((await status()) === "Closed", "verifying closes the bug (auto-close on)");
+await openFold("Discussion and history");
 const timeline = (await page.locator(".tl-item").allTextContents()).join("\n");
 for (const phrase of ["reported this bug", "requested more information", "provided the requested information", "failed the regression", "verified the fix", "Closed automatically after verification"]) {
   expect(timeline.includes(phrase), `the timeline records “${phrase}”`);
@@ -186,25 +237,26 @@ for (const phrase of ["reported this bug", "requested more information", "provid
 await page.screenshot({ path: `${OUT}/lifecycle-closed.png`, fullPage: true });
 
 step("Notifications");
-await nav(/^Notifications/).click();
-await page.waitForSelector(".notif");
+expect((await nav(/^Notifications/).count()) === 0, "notifications live in the bell, not in the menu");
+await openNotifications();
 const wahidNotes = (await page.locator(".notif-title").allTextContents()).join("\n");
 expect(wahidNotes.includes(`${key} has been marked Fixed. Regression testing required.`), "QA is told the fix needs regression");
 await switchTo("Rafiq Chowdhury");
-await nav(/^Notifications/).click();
-await page.waitForSelector(".notif");
+await openNotifications();
 const rafiqNotes = (await page.locator(".notif-title").allTextContents()).join("\n");
 expect(rafiqNotes.includes(`QA reopened ${key} after failed regression.`), "engineering is told about the reopen");
 expect(rafiqNotes.includes(`New bug ${key} has been assigned to you.`), "the module owner is told about the new bug");
 step("Nusrat (QA lead) imports to the product map");
 await switchTo("Nusrat Jahan");
 await nav(/^Projects/).click();
-await page.locator(".project-card", { hasText: "Supplier Portal" }).click();
+await page.locator(".project-card", { hasText: "SDS ONE" }).click();
+await page.waitForSelector("text=About this software");
+expect((await page.locator(".about-text").textContent()).includes("safety data sheets"), "the project shows what the software does");
 await page.waitForSelector("text=Product map");
 const before = await page.locator(".map-page").count();
 await page.getByRole("button", { name: "Import map" }).click();
 await page.getByLabel("Product map JSON").fill(
-  JSON.stringify({ modules: [{ name: "Product catalogue", pages: [{ name: "Product details", feature: "Product details", path: "/products/:id", elements: ["Download SDS button"], rules: ["The Download SDS button is visible on every screen size."], importance: "high" }] }] }),
+  JSON.stringify({ modules: [{ name: "Supplier portal", pages: [{ name: "Product details", feature: "Product details", path: "/products/:id", elements: ["Download SDS button"], rules: ["The Download SDS button is visible on every screen size."], importance: "high" }] }] }),
 );
 await page.getByRole("button", { name: "Preview", exact: true }).click();
 await page.waitForSelector("text=nothing has been saved yet");
@@ -233,9 +285,9 @@ await noOverflow("dashboard");
 for (const [label, link] of [
   ["needs my action", /Needs my action/],
   ["bugs", /^Bugs$/],
+  ["my bugs", /^My bugs/],
   ["regression", /^Regression/],
-  ["notifications", /^Notifications/],
-  ["analytics", /^Analytics/],
+  ["my insights", /^My insights/],
   ["projects", /^Projects/],
 ]) {
   await mp.getByLabel("Open navigation").click();

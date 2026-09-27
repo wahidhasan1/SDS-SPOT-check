@@ -218,6 +218,9 @@ export interface ProjectInput {
   key?: string;
   name?: string;
   description?: string | null;
+  website?: string | null;
+  platforms?: string | null;
+  overview?: string | null;
   qa_lead_id?: string | null;
   pm_id?: string | null;
   archived?: boolean;
@@ -239,6 +242,9 @@ export function saveProject(ctx: AppContext, actor: UserRow, id: string | null, 
         key,
         name: requireText(input.name, "Project name", 120),
         description: cleanText(input.description, 2000),
+        website: cleanText(input.website, 300),
+        platforms: cleanText(input.platforms, 200),
+        overview: cleanText(input.overview, 6000),
         qa_lead_id: input.qa_lead_id ?? null,
         pm_id: input.pm_id ?? null,
         archived: false,
@@ -253,6 +259,9 @@ export function saveProject(ctx: AppContext, actor: UserRow, id: string | null, 
     const patch: Partial<Project> = {};
     if (input.name !== undefined) patch.name = requireText(input.name, "Project name", 120);
     if (input.description !== undefined) patch.description = cleanText(input.description, 2000);
+    if (input.website !== undefined) patch.website = cleanText(input.website, 300);
+    if (input.platforms !== undefined) patch.platforms = cleanText(input.platforms, 200);
+    if (input.overview !== undefined) patch.overview = cleanText(input.overview, 6000);
     if (input.qa_lead_id !== undefined) patch.qa_lead_id = input.qa_lead_id;
     if (input.pm_id !== undefined) patch.pm_id = input.pm_id;
     if (input.archived !== undefined) patch.archived = !!input.archived;

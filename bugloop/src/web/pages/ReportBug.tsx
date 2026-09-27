@@ -94,7 +94,7 @@ const EMPTY_REPORT: Report = {
   frequency: "unknown",
 };
 
-const EXAMPLE = "Changed a member's role and saved, it said Saved, but when I open the member again the old role is back.";
+const EXAMPLE = "Changed the owner of a contact and saved, it said Contact updated, but when I open the contact again the old owner is back.";
 
 /** A comparable snapshot of one row's value, to tell whether the analyst changed it. */
 function snapshot(r: Report, k: Key): string {
@@ -153,7 +153,8 @@ export function ReportBugPage() {
   const api = useApi();
   const toast = useToast();
   const navigate = useNavigate();
-  const defaultProject = ws.projects.find((p) => !p.archived)?.id ?? "";
+  const active = ws.projects.filter((p) => !p.archived);
+  const defaultProject = (active.find((p) => p.id === ws.recent_project_id) ?? active[0])?.id ?? "";
   const saved = useMemo(() => loadInput(ws.me.id), [ws.me.id]);
 
   const [step, setStep] = useState<"describe" | "review">("describe");
@@ -1073,7 +1074,7 @@ function StepsEditor({ steps, onChange }: { steps: string[]; onChange: (s: strin
               value={s}
               autoFocus={i === steps.length - 1 && !s}
               aria-label={`Step ${i + 1}`}
-              placeholder={i === 0 ? "Open Members › Edit member" : "Next action…"}
+              placeholder={i === 0 ? "Open CRM › Edit contact" : "Next action…"}
               onChange={(e) => onChange(steps.map((x, j) => (j === i ? e.target.value : x)))}
               onKeyDown={(e) => {
                 if (e.key === "Enter") {

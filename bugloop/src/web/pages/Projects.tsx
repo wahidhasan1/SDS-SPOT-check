@@ -103,16 +103,32 @@ export function ProjectDetailPage() {
           {project.description && <p className="sub">{project.description}</p>}
         </div>
         <div className="row-wrap">
-          <Link className="btn" to={`/bugs?view=open&project=${project.id}`}>
+          <Link className="btn" to={`/bugs?state=open&project=${project.id}`}>
             Open bugs
           </Link>
+        </div>
+      </div>
+
+      <section className="panel about-software">
+        <div className="panel-head">
+          <h2>About this software</h2>
           {can && (
-            <button className="btn" onClick={() => setEditing(true)}>
-              <Pencil /> Edit project
+            <button className="btn btn-sm" onClick={() => setEditing(true)}>
+              <Pencil /> Edit details
             </button>
           )}
         </div>
-      </div>
+        <div className="panel-body stack-sm">
+          {project.overview ? <p className="about-text">{project.overview}</p> : <p className="small muted">No overview yet. {can ? "Add what the software does and its main functions, so the report assistant understands where testers work." : "A project manager or admin can add one."}</p>}
+          {(project.website || project.platforms) && (
+            <div className="row-wrap small secondary">
+              {project.platforms && <span className="chip">{project.platforms}</span>}
+              {project.website && <span className="mono">{project.website}</span>}
+            </div>
+          )}
+          <p className="tiny muted">Used by the report assistant, together with the module descriptions and the product map below.</p>
+        </div>
+      </section>
 
       <div className="bug-grid">
         <div className="stack-lg" style={{ minWidth: 0 }}>
@@ -138,7 +154,7 @@ export function ProjectDetailPage() {
                           <strong>{m.name}</strong>
                           {m.archived && <span className="chip">Archived</span>}
                           {s && (
-                            <Link to={`/bugs?view=open&module=${m.id}`} className="tiny">
+                            <Link to={`/bugs?state=open&module=${m.id}`} className="tiny">
                               {s.open} open · {s.total} all time
                             </Link>
                           )}
@@ -240,6 +256,9 @@ function ProjectDialog({ project, onClose }: { project?: Project; onClose: () =>
     key: project?.key ?? "",
     name: project?.name ?? "",
     description: project?.description ?? "",
+    website: project?.website ?? "",
+    platforms: project?.platforms ?? "",
+    overview: project?.overview ?? "",
     qa_lead_id: project?.qa_lead_id ?? "",
     pm_id: project?.pm_id ?? "",
     archived: project?.archived ?? false,
@@ -247,14 +266,33 @@ function ProjectDialog({ project, onClose }: { project?: Project; onClose: () =>
   const save = useMutate(
     (api, body: typeof form) =>
       project
-        ? api.patch(`/admin/projects/${project.id}`, { name: body.name, description: body.description || null, qa_lead_id: body.qa_lead_id || null, pm_id: body.pm_id || null, archived: body.archived })
-        : api.post("/admin/projects", { ...body, description: body.description || null, qa_lead_id: body.qa_lead_id || null, pm_id: body.pm_id || null }),
+        ? api.patch(`/admin/projects/${project.id}`, {
+            name: body.name,
+            description: body.description || null,
+            website: body.website || null,
+            platforms: body.platforms || null,
+            overview: body.overview || null,
+            qa_lead_id: body.qa_lead_id || null,
+            pm_id: body.pm_id || null,
+            archived: body.archived,
+          })
+        : api.post("/admin/projects", {
+            ...body,
+            description: body.description || null,
+            website: body.website || null,
+            platforms: body.platforms || null,
+            overview: body.overview || null,
+            qa_lead_id: body.qa_lead_id || null,
+            pm_id: body.pm_id || null,
+          }),
     { success: project ? "Project saved" : "Project created" },
   );
   return (
     <Dialog
       title={project ? `Edit ${project.name}` : "New project"}
+      description="Describe the software in plain words. The report assistant reads this, together with the modules and the product map, to place and word reports."
       onClose={onClose}
+      wide
       footer={
         <>
           <button className="btn" onClick={onClose}>
@@ -274,8 +312,19 @@ function ProjectDialog({ project, onClose }: { project?: Project; onClose: () =>
           <input id="p-key" className="input mono" value={form.key} disabled={!!project} onChange={(e) => setForm({ ...form, key: e.target.value.toUpperCase() })} maxLength={8} />
         </Field>
       </div>
-      <Field label="Description" htmlFor="p-desc">
-        <textarea id="p-desc" className="textarea" rows={2} value={form.description} onChange={(e) => setForm({ ...form, description: e.target.value })} />
+      <Field label="Short description" help="One line, shown on the project card." htmlFor="p-desc">
+        <input id="p-desc" className="input" value={form.description} onChange={(e) => setForm({ ...form, description: e.target.value })} />
+      </Field>
+      <div className="grid-2">
+        <Field label="Website or app" help="Where it runs, e.g. https://app.example.com" htmlFor="p-web">
+          <input id="p-web" className="input" value={form.website} onChange={(e) => setForm({ ...form, website: e.target.value })} />
+        </Field>
+        <Field label="Platforms" help="e.g. Web app, iOS and Android" htmlFor="p-plat">
+          <input id="p-plat" className="input" value={form.platforms} onChange={(e) => setForm({ ...form, platforms: e.target.value })} />
+        </Field>
+      </div>
+      <Field label="What the software does" help="Who uses it, its main functions and how the modules connect. A few sentences is enough." htmlFor="p-over">
+        <textarea id="p-over" className="textarea" rows={6} value={form.overview} onChange={(e) => setForm({ ...form, overview: e.target.value })} placeholder="HUB ONE is our business suite. Sales teams use CRM to manage contacts, companies and leads; Sales for deals and quotes…" />
       </Field>
       <div className="grid-2">
         <Field label="QA lead" htmlFor="p-lead">

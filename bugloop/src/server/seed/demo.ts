@@ -20,7 +20,11 @@ import { newId } from "../services/util";
 import type { IncomingFile } from "../services/attachments";
 import { ensureBaseConfig } from "./base";
 import { PEOPLE, PROJECTS, TEAMS } from "./org";
-import { DEFER_REASONS, ENGINEER_NOTES, NAB_FALLBACKS, QA_NOTES, TEMPLATES, type BugTemplate } from "./templates";
+import { DEFER_REASONS, ENGINEER_NOTES, NAB_FALLBACKS, QA_NOTES, TEMPLATES as SDS_EHS_TEMPLATES, type BugTemplate } from "./templates";
+import { HUB_TEMPLATES } from "./templates-hub";
+import { EHS_NAV, HUB_NAV, SDS_NAV, SUP_NAV } from "./showcase";
+
+const TEMPLATES: BugTemplate[] = [...HUB_TEMPLATES, ...SDS_EHS_TEMPLATES];
 import { orgEvents, showcaseScenarios } from "./showcase";
 import { logFile, screenshotFile, type ShotSpec } from "./screenshots";
 import { mulberry32, timeHelpers, type FileSpec, type OrgEvent, type Scenario, type StepSpec, type Who } from "./script";
@@ -85,6 +89,9 @@ async function seedOrganisation(ctx: AppContext, opts: { passwords: boolean }) {
         key: project.code,
         name: project.name,
         description: project.description,
+        website: project.website,
+        platforms: project.platforms,
+        overview: project.overview,
         qa_lead_id: ids[project.qaLead],
         pm_id: ids[project.pm],
         archived: false,
@@ -171,11 +178,13 @@ const QUESTIONS: [string, string][] = [
 
 const VARIANT_PREFIXES = ["Again: ", "Customer report: ", "Seen on production: ", "Firefox: "];
 
-function versionAt(project: string, date: Date, now: Date): string {
+function versionAt(tpl: BugTemplate, date: Date, now: Date): string {
   const weeksAgo = Math.floor((now.getTime() - date.getTime()) / (7 * DAY));
   const step = Math.max(0, 16 - weeksAgo);
-  if (project === "mob") return `3.${5 + Math.floor(step / 5)}.${step % 5}`;
-  if (project === "sup") return `1.${8 + Math.floor(step / 6)}.${step % 6}`;
+  if (tpl.project === "hub") return `4.${11 + Math.floor(step / 5)}.${step % 5}`;
+  if (tpl.project === "ehs") return `1.${6 + Math.floor(step / 6)}.${step % 6}`;
+  if (tpl.module === "mobile") return `3.${5 + Math.floor(step / 5)}.${step % 5}`;
+  if (tpl.module === "supplier") return `1.${8 + Math.floor(step / 6)}.${step % 6}`;
   return `2.${11 + Math.floor(step / 5)}.${step % 5}`;
 }
 
@@ -184,13 +193,14 @@ function autoShot(t: BugTemplate): ShotSpec | null {
   const mod = project.modules.find((m) => m.key === t.module)!;
   const crumbs = [mod.name, ...(t.feature ? [t.feature] : [])];
   const text = t.actual.length > 72 ? `${t.actual.slice(0, 70)}…` : t.actual;
-  if (t.project === "mob") {
-    return { app: "SDS Manager", nav: [], active: "", mobile: true, crumbs, heading: t.feature ?? mod.name, banner: { tone: "error", text: text.slice(0, 36) + (text.length > 36 ? "…" : "") }, note: "See report" };
+  if (t.module === "mobile") {
+    return { app: "SDS ONE", nav: [], active: "", mobile: true, crumbs, heading: t.feature ?? mod.name, banner: { tone: "error", text: text.slice(0, 36) + (text.length > 36 ? "…" : "") }, note: "See report" };
   }
-  const nav = t.project === "sup" ? ["Documents", "Products", "Account"] : ["Dashboard", "SDS Hub", "EHS", "Members", "Sites", "Reports", "Settings"];
-  const active = t.project === "sup" ? (t.module === "upload" ? "Documents" : t.module === "catalogue" ? "Products" : "Account") : mod.name;
+  const supplier = t.module === "supplier";
+  const nav = t.project === "hub" ? HUB_NAV : t.project === "ehs" ? EHS_NAV : supplier ? SUP_NAV : SDS_NAV;
+  const active = supplier ? (t.feature?.startsWith("Product") ? "Products" : t.feature === "Registration" || t.feature === "Company users" ? "Account" : "Documents") : mod.name;
   return {
-    app: t.project === "sup" ? "Supplier Portal" : "SDS Manager",
+    app: t.project === "hub" ? "HUB ONE" : t.project === "ehs" ? "EHS" : supplier ? "SDS ONE Supplier portal" : "SDS ONE",
     nav,
     active,
     crumbs,
@@ -268,8 +278,18 @@ function backgroundScenarios(rng: () => number, showcase: Scenario[], now: Date)
   const total = times.length;
 
   // Order templates: originals shuffled, re-reports placed after their originals.
-  const originals = TEMPLATES.filter((t) => !t.dupOf);
+  let originals = TEMPLATES.filter((t) => !t.dupOf);
   const dups = TEMPLATES.filter((t) => t.dupOf);
+  // More templates than slots: leave out SDS ONE and EHS ones first, so HUB ONE is fully covered.
+  const excess = originals.length + dups.length - total;
+  if (excess > 0) {
+    const keep = new Set(dups.map((d) => d.dupOf));
+    const candidates = originals.filter((t) => t.project !== "hub" && !keep.has(t.id));
+    const n = Math.min(excess, candidates.length);
+    // Spread evenly over the modules so every area keeps some history.
+    const drop = new Set(candidates.filter((_, i) => Math.floor((i * n) / candidates.length) !== Math.floor(((i + 1) * n) / candidates.length)).map((t) => t.id));
+    originals = originals.filter((t) => !drop.has(t.id));
+  }
   for (let i = originals.length - 1; i > 0; i--) {
     const j = Math.floor(rng() * (i + 1));
     [originals[i], originals[j]] = [originals[j], originals[i]];
@@ -379,7 +399,7 @@ function buildBackground(rng: () => number, tpl: BugTemplate & { variantOf?: str
     }
   };
 
-  const version = (d: Date) => versionAt(tpl.project, d, now);
+  const version = (d: Date) => versionAt(tpl, d, now);
 
   if (outcome !== "new") {
     triage();
@@ -418,7 +438,8 @@ function buildBackground(rng: () => number, tpl: BugTemplate & { variantOf?: str
       default: {
         // Work-based outcomes share a common path and stop at the right stage.
         if (rng() < 0.4) push({ at: advance(1, 24), as: eng, action: "start_review" });
-        const hasInfoRound = rng() < 0.25;
+        // Someone who has left can't answer questions, so their reports skip the information round.
+        const hasInfoRound = rng() < 0.25 && reporter !== "farhan";
         if (hasInfoRound) {
           const [q, a] = QUESTIONS[Math.floor(rng() * QUESTIONS.length)];
           push({ at: advance(2, 30), as: eng, action: "request_info", input: { question: q } });
@@ -465,7 +486,7 @@ function buildBackground(rng: () => number, tpl: BugTemplate & { variantOf?: str
       tags: tpl.tags,
       frequency: tpl.frequency,
       env: envPick,
-      browser: tpl.browser ?? (tpl.project === "mob" ? undefined : pickWeighted(rng, [["Chrome 128", 5], ["Edge 128", 2], ["Firefox 130", 2], ["Safari 17", 1]] as [string, number][])),
+      browser: tpl.browser ?? (tpl.module === "mobile" ? undefined : pickWeighted(rng, [["Chrome 128", 5], ["Edge 128", 2], ["Firefox 130", 2], ["Safari 17", 1]] as [string, number][])),
       device: tpl.device,
       os: tpl.os,
       version: tpl.version,
@@ -591,7 +612,8 @@ export async function seedDemo(baseCtx: AppContext, opts: { passwords?: boolean;
       },
     });
     for (const step of s.steps) {
-      ops.push({ time: step.at.getTime(), order: order++, label: `${s.handle}`, run: () => runStep(s.handle, step) });
+      const what = "action" in step ? step.action : Object.keys(step).find((k) => k !== "at" && k !== "as") ?? "step";
+      ops.push({ time: step.at.getTime(), order: order++, label: `${s.handle} ${what} by ${step.as}`, run: () => runStep(s.handle, step) });
     }
   }
 
@@ -602,7 +624,9 @@ export async function seedDemo(baseCtx: AppContext, opts: { passwords?: boolean;
     else if (step.as === "@reporter") actorId = bug.reporter_id;
     else actorId = ids[step.as] ?? null;
     if (!actorId) return;
-    const actor = ctx.store.get("users", actorId)!;
+    let actor = ctx.store.get("users", actorId)!;
+    // A regression owned by someone who has left is picked up by the QA lead, as in real life.
+    if (!actor.active && step.as === "@regression") actor = user("nusrat");
     if (!actor.active) {
       if (step.as.startsWith("@")) return; // e.g. the reporter has left; skip their optional steps
       throw new Error(`${actor.name} is inactive`);

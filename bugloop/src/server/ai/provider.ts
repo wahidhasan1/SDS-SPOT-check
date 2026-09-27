@@ -40,7 +40,8 @@ export interface DraftPage {
 }
 
 export interface DraftContext {
-  project: { id: string; name: string } | null;
+  /** The project, with what the software is for as the team described it. */
+  project: { id: string; name: string; overview?: string | null; website?: string | null; platforms?: string | null } | null;
   module: { id: string; name: string } | null;
   feature: { id: string; name: string } | null;
   /** The screen the analyst picked, if any. */
@@ -49,7 +50,7 @@ export interface DraftContext {
   pages: DraftPage[];
   priorities: { key: string; label: string; description: string | null }[];
   environment: { id: string; name: string } | null;
-  modules: { id: string; name: string; features: { id: string; name: string }[] }[];
+  modules: { id: string; name: string; description?: string | null; features: { id: string; name: string }[] }[];
   environments: { id: string; name: string }[];
   severities: { key: string; label: string; description: string | null }[];
   today: string;

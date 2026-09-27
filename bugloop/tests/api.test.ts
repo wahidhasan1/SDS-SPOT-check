@@ -196,13 +196,16 @@ describe("end-to-end workflow (brief section 25)", () => {
     expect(dash.status).toBe(200);
     expect(dash.body.status_counts.closed).toBe(1);
     expect(dash.body.metrics.regression_pass_rate).toBe(0.5);
-    const contrib = await call(nusrat.id, "GET", "/analytics/contributions?weeks=4");
-    expect(contrib.body.scope).toBe("team");
-    const wahidStats = contrib.body.people.find((p: { user_id: string }) => p.user_id === wahid.id);
-    expect(wahidStats).toMatchObject({ reported: 1, fixed: 1, reopened: 1, verified: 1 });
+    expect(dash.body.outcomes.closed).toBe(1);
+    expect(dash.body.metrics.avg_hours_to_close).not.toBeNull();
+    // Insights are personal, even for a QA lead.
+    const lead = await call(nusrat.id, "GET", "/analytics/contributions?weeks=4");
+    expect(lead.body.scope).toBe("self");
+    expect(lead.body.people.map((p: { user_id: string }) => p.user_id)).toEqual([nusrat.id]);
     const own = await call(wahid.id, "GET", "/analytics/contributions?weeks=4");
     expect(own.body.scope).toBe("self");
     expect(own.body.people).toHaveLength(1);
+    expect(own.body.people[0]).toMatchObject({ user_id: wahid.id, reported: 1, fixed: 1, reopened: 1 });
   });
 });
 

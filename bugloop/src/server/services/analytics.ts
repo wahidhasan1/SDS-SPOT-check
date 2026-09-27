@@ -12,14 +12,18 @@ import type {
 import type { Bug, EventRecord, StatusKey } from "../../core/types";
 import { QA_ROLES, STATUS_KEYS } from "../../core/types";
 import { OPEN_STATUSES, STATUS_DEFS, hoursBetween, isOverdue } from "../../core/statuses";
-import { canViewTeamAnalytics } from "../../core/permissions";
 import { concepts, conceptLabel } from "../../core/text";
 import type { AppContext } from "../context";
 import { nowIso } from "../context";
 import type { UserRow } from "../db/schema";
 import type { Where } from "../db/store";
-import { actorOf, listEnv, toListItem } from "./bugs";
+import { listEnv, toListItem } from "./bugs";
 import { severities, statusConfigs } from "./lookups";
+
+export function mean(xs: number[]): number | null {
+  if (!xs.length) return null;
+  return Math.round((xs.reduce((a, b) => a + b, 0) / xs.length) * 10) / 10;
+}
 
 export function median(xs: number[]): number | null {
   if (!xs.length) return null;
@@ -167,6 +171,25 @@ export function dashboard(ctx: AppContext, user: UserRow, opts: { projectId: str
     .find("regression_runs", { where: { completed_at: { gte: since }, result: { in: ["passed", "failed"] } } })
     .filter((r) => ids.has(r.bug_id));
 
+  // One line per product, or per module inside one product, for the weekly trend.
+  const lineOf = opts.projectId ? (b: Bug) => b.module_id : (b: Bug) => b.project_id;
+  const lineIds = opts.projectId
+    ? ctx.store.find("modules", { where: { project_id: opts.projectId }, orderBy: [{ column: "sort_order" }] }).filter((m) => !m.archived || bugs.some((b) => b.module_id === m.id))
+    : ctx.store.find("projects", { orderBy: [{ column: "created_at" }, { column: "name" }] }).filter((p) => !p.archived);
+  const lineCounts = new Map(lineIds.map((l) => [l.id, weeks.map(() => 0)]));
+  for (const b of bugs) {
+    const i = weekIndex.get(weekStart(b.created_at));
+    const arr = lineCounts.get(lineOf(b));
+    if (i !== undefined && arr) arr[i]++;
+  }
+
+  const outcomes = { pending: 0, closed: 0, not_a_bug: 0 };
+  for (const b of bugs) {
+    if (b.status === "not_a_bug") outcomes.not_a_bug++;
+    else if (b.status === "closed" || b.status === "verified" || b.status === "duplicate") outcomes.closed++;
+    else outcomes.pending++;
+  }
+
   const result: DashboardResponse = {
     generated_at: now,
     scope: { project_id: opts.projectId, days },
@@ -174,11 +197,20 @@ export function dashboard(ctx: AppContext, user: UserRow, opts: { projectId: str
     overdue_counts,
     open_total: open.length,
     weekly,
+    outcomes,
+    reported_by_line: {
+      kind: opts.projectId ? "module" : "project",
+      weeks,
+      lines: lineIds.map((l) => ({ id: l.id, name: l.name, counts: lineCounts.get(l.id)! })),
+    },
     by_module,
     by_severity,
     time_in_status,
     oldest_waiting,
     metrics: {
+      avg_hours_to_first_response: mean(firstResponse),
+      avg_hours_to_fix: mean(fixTimes),
+      avg_hours_to_close: mean(closeTimes),
       median_hours_to_first_response: median(firstResponse),
       median_hours_to_fix: median(fixTimes),
       median_hours_to_close: median(closeTimes),
@@ -202,7 +234,8 @@ export function dashboard(ctx: AppContext, user: UserRow, opts: { projectId: str
 
 export function contributions(ctx: AppContext, user: UserRow, opts: { projectId: string | null; weeks: number }): ContributionsResponse {
   const now = nowIso(ctx);
-  const team = canViewTeamAnalytics(actorOf(user));
+  // Insights are personal: everyone sees their own numbers only.
+  const team = false;
   const weeks = weeksBack(now, Math.min(Math.max(opts.weeks, 4), 52));
   const since = `${weeks[0]}T00:00:00.000Z`;
   const bugs = scopedBugs(ctx, opts.projectId);
@@ -254,7 +287,7 @@ export function contributions(ctx: AppContext, user: UserRow, opts: { projectId:
 export function engineering(ctx: AppContext, user: UserRow, opts: { projectId: string | null; days: number }): EngineeringResponse {
   const now = nowIso(ctx);
   const since = new Date(Date.parse(now) - Math.min(Math.max(opts.days, 7), 365) * 86_400_000).toISOString();
-  const team = canViewTeamAnalytics(actorOf(user));
+  const team = false;
   const bugs = scopedBugs(ctx, opts.projectId);
   const ids = new Set(bugs.map((b) => b.id));
   const engineers = ctx.store
@@ -282,6 +315,8 @@ export function engineering(ctx: AppContext, user: UserRow, opts: { projectId: s
       reopened_after_fix: failed.filter((e) => bugById.get(e.bug_id!)?.fixed_by_id === u.id).length,
       median_hours_to_fix: median(fixHours),
       median_hours_to_first_response: median(responseHours),
+      avg_hours_to_fix: mean(fixHours),
+      avg_hours_to_first_response: mean(responseHours),
     };
   });
 

@@ -147,7 +147,9 @@ function AppRoutes() {
         <Route element={<AppShell />}>
           <Route index element={<DashboardPage />} />
           <Route path="action" element={<ActionPage />} />
-          <Route path="bugs" element={<BugsPage />} />
+          <Route path="bugs" element={<BugsPage key="all" />} />
+          <Route path="my-bugs" element={<BugsPage key="mine" scope="mine" />} />
+          <Route path="assigned" element={<BugsPage key="assigned" scope="assigned" />} />
           <Route path="bugs/new" element={<Guard allow={caps.report}><ReportBugPage /></Guard>} />
           <Route path="bugs/:ref" element={<BugDetailPage />} />
           <Route path="regression" element={<RegressionPage />} />

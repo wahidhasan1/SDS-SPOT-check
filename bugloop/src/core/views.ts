@@ -2,7 +2,7 @@
 
 export const BUG_VIEWS = [
   { key: "open", label: "All open", description: "Everything not yet resolved, except deferred bugs." },
-  { key: "mine", label: "My bugs", description: "Bugs you reported or are credited as co-reporter on." },
+  { key: "mine", label: "My bugs", description: "Bugs you reported." },
   { key: "assigned", label: "Assigned to me", description: "Open bugs you own or collaborate on." },
   { key: "my_regression", label: "Needs my regression", description: "Fixes waiting for you to re-test." },
   { key: "waiting_engineering", label: "Waiting for engineering", description: "New, in review, in progress, reopened or fixed but not yet testable." },
