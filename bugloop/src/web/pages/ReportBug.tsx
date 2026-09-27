@@ -661,7 +661,11 @@ function DescribeStep({
             <span className="help">
               A sentence or two is enough: what you did and what happened.{" "}
               {!input.text && (
-                <button type="button" className="link-btn small" onClick={() => set({ text: EXAMPLE })}>
+                <button type="button" className="link-btn small" onClick={() => {
+                  // The example is a CRM report; switch to the project that has the Edit contact screen.
+                  const crm = ws.pages.find((p) => p.name === "Edit contact" && !p.archived);
+                  set(crm && crm.project_id !== input.project_id ? { text: EXAMPLE, project_id: crm.project_id, module_id: "", page_id: "" } : { text: EXAMPLE });
+                }}>
                   Try the example
                 </button>
               )}

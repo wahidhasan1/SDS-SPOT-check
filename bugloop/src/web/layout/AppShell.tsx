@@ -134,6 +134,7 @@ export function AppShell() {
               <Plus /> Report
             </button>
           )}
+          <ThemeToggle />
           <NotificationBell />
         </header>
         <main className="content" id="main">
@@ -323,6 +324,19 @@ function GlobalSearch() {
         </div>
       )}
     </div>
+  );
+}
+
+/** One-click light/dark switch. Flips whatever is showing now into an explicit choice. */
+function ThemeToggle() {
+  const { theme, setTheme } = useTheme();
+  const systemDark = typeof window !== "undefined" && window.matchMedia?.("(prefers-color-scheme: dark)").matches;
+  const attr = typeof document !== "undefined" ? document.documentElement.getAttribute("data-theme") : null;
+  const dark = theme === "dark" || (theme === "system" && (attr ? attr === "dark" : systemDark));
+  return (
+    <button className="icon-btn" onClick={() => setTheme(dark ? "light" : "dark")} aria-label={dark ? "Switch to light mode" : "Switch to dark mode"} title={dark ? "Light mode" : "Dark mode"}>
+      {dark ? <Sun /> : <Moon />}
+    </button>
   );
 }
 

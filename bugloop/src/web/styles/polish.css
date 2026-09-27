@@ -1,0 +1,279 @@
+/* Visual finish. Loaded last: depth, emphasis and the dark control sidebar.
+   Rule of thumb: the one thing to act on glows; supporting information recedes. */
+
+/* ------------------------------------------------------------------ Canvas and type */
+
+body {
+  background:
+    radial-gradient(1200px 520px at 85% -120px, var(--bg-glow), transparent 70%),
+    var(--bg);
+  background-attachment: fixed;
+  font-feature-settings: "ss01", "cv11";
+  letter-spacing: -0.003em;
+}
+h1 { font-size: 26px; font-weight: 680; letter-spacing: -0.028em; line-height: 1.2; }
+h2 { font-weight: 620; letter-spacing: -0.012em; }
+.page-head { margin-bottom: 22px; }
+.page-head .sub { color: var(--text-3); font-size: 13.5px; margin-top: 6px; }
+.eyebrow { font-size: 10.5px; letter-spacing: 0.09em; color: var(--text-3); font-weight: 650; }
+.mono { font-feature-settings: normal; }
+
+/* ------------------------------------------------------------------ Control sidebar (dark in both themes) */
+
+.sidebar {
+  /* Scoped tokens: everything inside re-colours itself. */
+  --surface: #121620;
+  --surface-2: rgba(255, 255, 255, 0.055);
+  --surface-3: rgba(255, 255, 255, 0.09);
+  --border: rgba(255, 255, 255, 0.08);
+  --border-strong: rgba(255, 255, 255, 0.14);
+  --text: #f1f3f8;
+  --text-2: #a9b0c0;
+  --text-3: #6b7385;
+  --text-inverse: #0b0e14;
+  --accent: #9aabff;
+  --accent-hover: #b6c2ff;
+  --focus: #9aabff;
+  --shadow-2: 0 18px 44px -10px rgba(0, 0, 0, 0.8);
+  color-scheme: dark;
+  color: var(--text);
+  background:
+    radial-gradient(420px 260px at 0% 0%, rgba(90, 114, 255, 0.16), transparent 70%),
+    linear-gradient(180deg, #0d1019 0%, #0a0c13 100%);
+  border-right: 1px solid rgba(255, 255, 255, 0.06);
+  padding: 16px 12px 12px;
+}
+:root[data-theme="dark"] .sidebar { border-right-color: var(--border); }
+.brand { padding: 4px 8px 6px; }
+.brand-mark { width: 30px; height: 30px; filter: drop-shadow(0 4px 12px rgba(74, 98, 242, 0.45)); }
+.brand-name { font-size: 16.5px; letter-spacing: -0.03em; }
+.brand-sub { color: var(--text-3); }
+
+.nav { gap: 2px; }
+.nav a {
+  position: relative; padding: 8px 10px; border-radius: 8px; color: var(--text-2); font-size: 13.5px;
+  transition: background 0.14s, color 0.14s;
+}
+.nav a svg { color: var(--text-3); transition: color 0.14s; }
+.nav a:hover { background: rgba(255, 255, 255, 0.05); color: var(--text); }
+.nav a:hover svg { color: var(--text-2); }
+.nav a.active {
+  background: linear-gradient(90deg, rgba(106, 128, 255, 0.2), rgba(106, 128, 255, 0.05));
+  color: #fff; box-shadow: inset 0 0 0 1px rgba(130, 150, 255, 0.18);
+}
+.nav a.active svg { color: #a9b7ff; }
+.nav a.active::before {
+  content: ""; position: absolute; left: -12px; top: 8px; bottom: 8px; width: 3px; border-radius: 0 3px 3px 0;
+  background: #7d90ff; box-shadow: 0 0 12px 1px rgba(125, 144, 255, 0.8);
+}
+.nav .count { background: rgba(255, 255, 255, 0.08); color: var(--text-2); height: 20px; font-size: 11px; }
+.nav .count.hot {
+  background: linear-gradient(180deg, #6d82ff, #4a62f2); color: #fff;
+  box-shadow: 0 0 0 3px rgba(74, 98, 242, 0.18), 0 4px 14px -2px rgba(74, 98, 242, 0.7);
+  animation: hot-pulse 2.6s ease-in-out infinite;
+}
+@keyframes hot-pulse {
+  0%, 100% { box-shadow: 0 0 0 3px rgba(74, 98, 242, 0.18), 0 4px 14px -2px rgba(74, 98, 242, 0.7); }
+  50% { box-shadow: 0 0 0 6px rgba(74, 98, 242, 0.06), 0 4px 18px 0 rgba(74, 98, 242, 0.85); }
+}
+.nav-label { color: var(--text-3); }
+.sidebar .btn-primary.btn-block { height: 38px; font-size: 13.5px; margin-bottom: 4px; }
+.sidebar-foot { gap: 10px; }
+.sidebar-foot .list-row { background: rgba(255, 255, 255, 0.03) !important; border-color: var(--border) !important; }
+.sidebar-foot .list-row:hover { background: rgba(255, 255, 255, 0.07) !important; }
+.demo-banner {
+  background: transparent; border: 1px dashed rgba(255, 255, 255, 0.1); color: var(--text-3);
+  font-size: 11.5px; line-height: 1.45; padding: 8px 10px;
+}
+.demo-banner strong { color: var(--text-2); font-weight: 600; }
+.demo-banner:hover { border-color: rgba(255, 255, 255, 0.2); color: var(--text-2); }
+.sidebar .popover { background: #171b26; border-color: rgba(255, 255, 255, 0.1); }
+
+/* ------------------------------------------------------------------ Top bar */
+
+.topbar {
+  background: color-mix(in oklab, var(--bg) 78%, transparent);
+  backdrop-filter: saturate(1.6) blur(14px);
+  -webkit-backdrop-filter: saturate(1.6) blur(14px);
+  border-bottom: 1px solid var(--hairline);
+}
+.global-search .input {
+  height: 38px; border-radius: 10px; background: var(--surface); border-color: var(--border);
+  box-shadow: var(--shadow-1);
+}
+.icon-btn { border-radius: 9px; }
+.icon-btn .dot-count {
+  background: linear-gradient(180deg, #ff6b5e, #e5382c); border-color: var(--bg);
+  box-shadow: 0 2px 8px -1px rgba(229, 56, 44, 0.6);
+}
+
+/* ------------------------------------------------------------------ Buttons */
+
+.btn {
+  border-radius: 8px; border-color: var(--border-strong); background: var(--surface);
+  box-shadow: var(--shadow-1), var(--inner-hi); font-weight: 550;
+  transition: background 0.14s, border-color 0.14s, color 0.14s, box-shadow 0.14s, transform 0.08s;
+}
+.btn:active:not(:disabled) { transform: translateY(1px); }
+.btn-primary, .btn-accent {
+  color: #fff; border-color: transparent;
+  background: linear-gradient(180deg, var(--accent-solid-hi), var(--accent-solid));
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.22), 0 0 0 1px color-mix(in oklab, var(--accent-solid) 80%, black), 0 6px 18px -6px var(--accent-glow);
+}
+.btn-primary:hover, .btn-accent:hover {
+  color: #fff; border-color: transparent;
+  background: linear-gradient(180deg, color-mix(in oklab, var(--accent-solid-hi) 88%, white), color-mix(in oklab, var(--accent-solid) 92%, white));
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.25), 0 0 0 1px color-mix(in oklab, var(--accent-solid) 80%, black), 0 10px 26px -6px var(--accent-glow);
+}
+.btn-positive {
+  background: linear-gradient(180deg, color-mix(in oklab, #16a46c 85%, white), #0f8a5a); border-color: transparent; color: #fff;
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.2), 0 6px 16px -6px rgba(15, 138, 90, 0.55);
+}
+.btn-danger.solid { background: linear-gradient(180deg, #ea4a40, #cc2c2c); border-color: transparent; box-shadow: inset 0 1px 0 rgba(255,255,255,0.18), 0 6px 16px -6px rgba(204, 44, 44, 0.55); }
+.btn-ghost { box-shadow: none; background: transparent; }
+
+/* ------------------------------------------------------------------ Surfaces */
+
+.panel {
+  border-color: var(--border); border-radius: var(--radius-lg);
+  box-shadow: var(--shadow-1), var(--inner-hi);
+}
+.panel-head { padding: 16px 20px 0; }
+.panel-head h2 { font-size: 14.5px; }
+.panel-head .hint { font-size: 12px; color: var(--text-3); }
+.panel-body { padding: 14px 20px 20px; }
+.input, .select, .textarea { border-radius: 8px; background: var(--surface); }
+.input:focus, .select:focus, .textarea:focus { box-shadow: 0 0 0 4px color-mix(in oklab, var(--focus) 16%, transparent); }
+.segmented { background: var(--surface-3); border-radius: 10px; padding: 3px; }
+.segmented button { border-radius: 7px; }
+.segmented button.on { box-shadow: 0 1px 3px rgba(0, 0, 0, 0.12), var(--inner-hi); font-weight: 600; }
+.popover { border-radius: 12px; box-shadow: var(--shadow-3); }
+.dialog { border-radius: 16px; box-shadow: var(--shadow-3), var(--inner-hi); }
+.dialog-backdrop { backdrop-filter: blur(3px); }
+.tooltip { border-radius: 10px; }
+.toast { border-radius: 11px; background: #0f131c; color: #eef1f7; border: 1px solid rgba(255, 255, 255, 0.08); }
+
+/* Tables: quiet headers, confident rows */
+.table th { background: var(--surface-2); font-size: 10.5px; letter-spacing: 0.08em; color: var(--text-3); border-bottom-color: var(--border); }
+.table tbody tr.clickable:hover { background: color-mix(in oklab, var(--accent) 5%, var(--surface)); }
+.table tbody tr.clickable:hover .title-cell .t { color: var(--accent); }
+.table .title-cell .t { font-weight: 560; }
+.list-row { transition: background 0.12s; }
+a.list-row:hover, button.list-row:hover { background: color-mix(in oklab, var(--accent) 5%, var(--surface)); }
+
+/* Pills and chips stay crisp in both themes */
+.pill { font-weight: 620; letter-spacing: 0.005em; }
+.pill .dot { box-shadow: 0 0 0 3px oklch(var(--tone-dot-l) calc(var(--tone-dot-c) * var(--k)) var(--h) / 0.18); }
+.chip { border-radius: 7px; }
+
+/* ------------------------------------------------------------------ Numbers that matter */
+
+.stat .value { font-size: 27px; font-weight: 680; letter-spacing: -0.035em; }
+.stat .label { font-size: 12px; font-weight: 550; color: var(--text-2); }
+.stat .note { color: var(--text-3); font-size: 11.5px; }
+.stat-tile {
+  position: relative; overflow: hidden; border-radius: 12px;
+  background: linear-gradient(180deg, var(--surface), var(--surface-2));
+  border: 1px solid var(--border); box-shadow: var(--inner-hi);
+}
+.stat-tile::after {
+  content: ""; position: absolute; left: 14px; right: 14px; top: 0; height: 1px;
+  background: linear-gradient(90deg, transparent, color-mix(in oklab, var(--accent) 45%, transparent), transparent);
+}
+.stat-tile.tone-text-danger .value { color: var(--danger); }
+
+/* Status board: colour-coded, lifted on hover, zero counts recede */
+.status-tile {
+  position: relative; overflow: hidden; border-radius: 12px; padding: 12px 12px 11px; gap: 6px;
+  background: linear-gradient(180deg, oklch(var(--tone-bg-l) calc(var(--tone-bg-c) * var(--k) * 0.6) var(--h)), var(--surface) 70%);
+  box-shadow: var(--shadow-1), var(--inner-hi);
+  transition: transform 0.14s, box-shadow 0.14s, border-color 0.14s;
+}
+.status-tile::before {
+  content: ""; position: absolute; left: 0; right: 0; top: 0; height: 3px;
+  background: oklch(var(--tone-dot-l) calc(var(--tone-dot-c) * var(--k)) var(--h));
+}
+.status-tile:hover { transform: translateY(-2px); box-shadow: var(--shadow-2); }
+.status-tile .tile-count { font-size: 30px; font-weight: 700; letter-spacing: -0.04em; line-height: 1.05; color: var(--text); }
+.status-tile .tile-label { color: var(--text-2); font-size: 12px; font-weight: 560; }
+.status-tile.zero { opacity: 0.55; box-shadow: none; background: var(--surface); }
+.status-tile.zero .tile-count { color: var(--text-3); }
+.status-tile.zero:hover { opacity: 1; }
+
+/* Charts */
+.donut-value { font-size: 30px; font-weight: 720; letter-spacing: -0.04em; }
+.chart .grid { stroke: var(--chart-grid); }
+
+/* ------------------------------------------------------------------ The task comes first */
+
+.task-area .callout {
+  position: relative; border-radius: 14px; padding: 18px 20px 18px 22px; box-shadow: var(--shadow-2);
+}
+.task-area .callout::before {
+  content: ""; position: absolute; left: 0; top: 12px; bottom: 12px; width: 4px; border-radius: 0 4px 4px 0; background: currentColor;
+}
+.task-area .callout.warning { color: var(--warning); background: linear-gradient(180deg, var(--warning-soft), var(--surface)); border-color: color-mix(in oklab, var(--warning) 35%, transparent); box-shadow: 0 12px 34px -12px color-mix(in oklab, var(--warning) 45%, transparent); }
+.task-area .callout.danger { color: var(--danger); background: linear-gradient(180deg, var(--danger-soft), var(--surface)); box-shadow: 0 12px 34px -12px color-mix(in oklab, var(--danger) 40%, transparent); }
+.task-area .callout.info { color: var(--accent); background: linear-gradient(180deg, var(--accent-soft), var(--surface)); }
+.task-area .callout > * { color: var(--text); }
+.task-area .callout > svg { color: inherit; width: 20px; height: 20px; }
+.task-area .callout .title { font-size: 16px; font-weight: 650; letter-spacing: -0.012em; }
+.task-area .quote { font-size: 15px; color: var(--text); padding: 8px 12px; margin-top: 8px; border-radius: 9px; background: var(--surface); border: 1px solid var(--border); }
+.task-area .actions-panel { box-shadow: var(--shadow-2); }
+.inline-action { border-radius: 12px; background: var(--surface); box-shadow: var(--shadow-1); }
+
+.bug-title { font-size: 26px; font-weight: 700; letter-spacing: -0.028em; line-height: 1.22; }
+.bug-key { font-family: var(--font-mono); }
+.more { border-top-color: var(--hairline); }
+.fold { border-bottom-color: var(--hairline); }
+.fold > summary { color: var(--text-3); }
+.fold > summary:hover { color: var(--text); }
+.fold[open] > summary { color: var(--text); }
+
+/* Needs my action: tone rails on each group */
+.action-row { transition: background 0.12s; }
+
+/* Project cards */
+.project-card { border-radius: 14px; transition: transform 0.14s, box-shadow 0.14s, border-color 0.14s; }
+.project-card:hover { transform: translateY(-2px); box-shadow: var(--shadow-2); border-color: color-mix(in oklab, var(--accent) 35%, var(--border)); }
+.project-key {
+  display: inline-flex; padding: 2px 8px; border-radius: 6px; font-size: 11px; font-weight: 600; letter-spacing: 0.04em;
+  color: var(--accent); background: var(--accent-soft); border: 1px solid color-mix(in oklab, var(--accent) 22%, transparent);
+}
+
+/* Sign-in */
+.auth-page {
+  background:
+    radial-gradient(900px 480px at 50% -80px, var(--bg-glow), transparent 70%),
+    var(--bg);
+}
+.auth-card { border-radius: 18px; box-shadow: var(--shadow-3), var(--inner-hi); }
+.persona { border-radius: 12px; transition: transform 0.12s, box-shadow 0.12s, border-color 0.12s; }
+.persona:hover:not(:disabled) { transform: translateY(-1px); box-shadow: var(--shadow-2); }
+
+/* Report flow */
+.submit-bar .btn-primary { height: 40px; padding: 0 18px; font-size: 14px; }
+
+@media (prefers-reduced-motion: reduce) {
+  .nav .count.hot { animation: none; }
+  .status-tile:hover, .project-card:hover, .persona:hover:not(:disabled) { transform: none; }
+}
+@media (max-width: 960px) {
+  .nav a.active::before { left: -12px; }
+}
+.bug-page.focus { margin: 0 auto; width: 100%; }
+.bug-page.focus .bug-title { max-width: none; }
+.action-title { font-weight: 620; font-size: 14px; letter-spacing: -0.008em; }
+.action-side .btn { color: var(--accent); border-color: color-mix(in oklab, var(--accent) 35%, var(--border)); }
+.action-row:hover .action-side .btn {
+  color: #fff; border-color: transparent;
+  background: linear-gradient(180deg, var(--accent-solid-hi), var(--accent-solid));
+  box-shadow: 0 6px 16px -6px var(--accent-glow);
+}
+@media (max-width: 720px) {
+  .status-tile { padding: 10px 9px 9px; }
+  .status-tiles { grid-template-columns: repeat(2, minmax(0, 1fr)) !important; }
+  .status-tile .tile-label { font-size: 12px; }
+  .status-tile .tile-count { font-size: 24px; }
+  h1, .bug-title { font-size: 22px; }
+}

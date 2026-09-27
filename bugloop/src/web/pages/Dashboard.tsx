@@ -68,7 +68,7 @@ export function DashboardPage() {
                         {shown.map((s) => {
                           const cfg = lookup.status(s);
                           return (
-                            <Link key={s} to={statusLink(s)} className={cx("status-tile", `tone-${cfg.color}`)} title={cfg.description}>
+                            <Link key={s} to={statusLink(s)} className={cx("status-tile", `tone-${cfg.color}`, d.status_counts[s] === 0 && "zero")} title={cfg.description}>
                               <span className="tile-label">
                                 <span className="dot" aria-hidden />
                                 <span>{cfg.label}</span>

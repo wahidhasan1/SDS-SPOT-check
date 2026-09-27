@@ -3,6 +3,7 @@ import { createRoot } from "react-dom/client";
 import "./styles/tokens.css";
 import "./styles/base.css";
 import "./styles/pages.css";
+import "./styles/polish.css";
 import { ApiClient } from "./api/client";
 import { BugloopApp } from "./app/App";
 import { initTheme } from "./lib/theme";

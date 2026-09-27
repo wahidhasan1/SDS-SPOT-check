@@ -7,6 +7,7 @@ import { createRoot } from "react-dom/client";
 import "../web/styles/tokens.css";
 import "../web/styles/base.css";
 import "../web/styles/pages.css";
+import "../web/styles/polish.css";
 import { ApiClient } from "../web/api/client";
 import { BugloopApp } from "../web/app/App";
 import { initTheme } from "../web/lib/theme";
