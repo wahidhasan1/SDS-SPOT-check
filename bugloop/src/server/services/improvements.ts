@@ -81,7 +81,7 @@ export async function polishImprovement(ctx: AppContext, user: UserRow, input: {
     log("error", null, message.slice(0, 500), provider.id);
     used = offline;
     result = await offline.polishImprovement(req);
-    note = `${message} Your text was tidied offline instead (spelling and punctuation only).`;
+    note = `${message} The proposal was prepared with the basic formatter instead; review it before sending.`;
   }
   const out = result.output;
   if (!out.body.trim()) throw badRequest("The assistant returned an empty text. Try again or submit it as written.");

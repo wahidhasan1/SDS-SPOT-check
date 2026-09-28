@@ -273,7 +273,7 @@ await page.getByRole("button", { name: /New report/ }).first().click();
 await page.getByRole("radio", { name: /Suggest an improvement/ }).click();
 await page.locator("#imp-project").selectOption({ label: "HUB ONE" });
 await page.locator("#imp-text").fill("in crm contact list the owner coloumn is to narrow, names get cut. pls make it wider its realy hard to read");
-await page.getByRole("button", { name: /Polish my English/ }).click();
+await page.getByRole("button", { name: /Prepare proposal/ }).click();
 await page.waitForSelector("#imp-body");
 const polishedText = await page.locator("#imp-body").inputValue();
 expect(/really hard to read/.test(polishedText) && /^In CRM contact list/.test(polishedText), `the assistant tidies the text (${polishedText})`);

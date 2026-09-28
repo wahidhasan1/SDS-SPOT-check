@@ -106,7 +106,7 @@ function ImprovementForm() {
       },
     );
 
-  const aiLabel = polished?.provider === "offline" ? "Tidied offline: spelling and punctuation" : "Rewritten by Claude";
+  const aiLabel = polished?.provider === "offline" ? "Formatted by the assistant" : "Drafted by the assistant";
 
   return (
     <div className="improve-grid">
@@ -132,14 +132,14 @@ function ImprovementForm() {
 
           {!polished ? (
             <>
-              <Field label="Your suggestion" htmlFor="imp-text" help="Write it the way you'd say it. Spelling and grammar don't matter; the assistant turns it into clear English for the project manager.">
+              <Field label="Your idea" htmlFor="imp-text" help="Quick notes are enough: where it is, what could be better and how. The assistant turns them into a structured proposal for the project manager.">
                 <textarea
                   id="imp-text"
                   className="textarea imp-text"
                   rows={7}
                   value={text}
                   onChange={(e) => setText(e.target.value)}
-                  placeholder="for example: in contact list when i open a contact and come back my filter is gone, every time i have to set it again. pls keep the filter so its not hassle"
+                  placeholder="For example: contact list, filters reset after opening a contact and going back, keep them"
                 />
               </Field>
               {polish.error && (
@@ -153,7 +153,7 @@ function ImprovementForm() {
                   Send as written
                 </button>
                 <button className="btn btn-primary btn-lg" disabled={!text.trim() || !projectId || polish.isPending} onClick={() => runPolish(false)}>
-                  {polish.isPending ? <span className="spinner" /> : <Sparkles />} Polish my English
+                  {polish.isPending ? <span className="spinner" /> : <Sparkles />} Prepare proposal
                 </button>
               </div>
             </>
@@ -161,7 +161,7 @@ function ImprovementForm() {
             <>
               <div className="polished-head">
                 <span className="chip ai"><Sparkles /> {aiLabel}</span>
-                <span className="small muted">Read it once and change anything that isn't what you meant.</span>
+                <span className="small muted">Review the proposal and adjust anything before sending.</span>
               </div>
               {polished.note && (
                 <div className="callout warning">
@@ -178,7 +178,7 @@ function ImprovementForm() {
               <details className="fold">
                 <summary>
                   <ChevronRight className="fold-chevron" size={15} aria-hidden />
-                  <span className="fold-title">Your original words</span>
+                  <span className="fold-title">Your notes</span>
                   <span className="fold-meta">kept with the suggestion</span>
                 </summary>
                 <div className="fold-body">
@@ -188,10 +188,10 @@ function ImprovementForm() {
               <div className="row-between">
                 <div className="row-wrap">
                   <button className="btn btn-ghost btn-sm" onClick={() => setPolished(null)}>
-                    <Pencil /> Change my text
+                    <Pencil /> Edit notes
                   </button>
                   <button className="btn btn-ghost btn-sm" disabled={polish.isPending} onClick={() => runPolish(false)}>
-                    <RotateCcw /> Rewrite again
+                    <RotateCcw /> Regenerate
                   </button>
                 </div>
                 <button className="btn btn-primary btn-lg" disabled={!body.trim() || send.isPending} onClick={() => submit(false)}>
@@ -366,7 +366,7 @@ function ImprovementView({ detail }: { detail: ImprovementDetail }) {
           <h2>The suggestion</h2>
           {i.polished_by && (
             <span className="chip ai" title="The reporter checked the rewritten text before sending it">
-              <Sparkles /> {i.polished_by === "offline" ? "Tidied by the assistant" : "Rewritten by Claude"}, checked by the reporter
+              <Sparkles /> Prepared with the assistant, reviewed by the reporter
             </span>
           )}
         </div>
@@ -381,7 +381,7 @@ function ImprovementView({ detail }: { detail: ImprovementDetail }) {
       <section className="more" aria-label="More about this suggestion">
         <h2 className="more-title">More</h2>
         {i.polished_by && i.original_text !== i.body && (
-          <SimpleFold title="The reporter's original words">
+          <SimpleFold title="Original notes">
             <p className="original-text">{i.original_text}</p>
           </SimpleFold>
         )}
