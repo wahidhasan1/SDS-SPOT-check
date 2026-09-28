@@ -16,7 +16,7 @@ import { BugsPage } from "../pages/Bugs";
 import { DashboardPage } from "../pages/Dashboard";
 import { LoginPage, NotFoundPage, SettingsPage, SetupPage } from "../pages/Account";
 import { ProjectDetailPage, ProjectsPage } from "../pages/Projects";
-import { ReportBugPage } from "../pages/ReportBug";
+import { ImprovementDetailPage, ImprovementsPage, NewReportPage } from "../pages/Improvements";
 import { ApiProvider, ToastProvider, WorkspaceProvider, useApi, useWorkspace } from "./context";
 
 export function BugloopApp({ client, router }: { client: ApiClient; router: "browser" | "memory" }) {
@@ -150,7 +150,9 @@ function AppRoutes() {
           <Route path="bugs" element={<BugsPage key="all" />} />
           <Route path="my-bugs" element={<BugsPage key="mine" scope="mine" />} />
           <Route path="assigned" element={<BugsPage key="assigned" scope="assigned" />} />
-          <Route path="bugs/new" element={<Guard allow={caps.report}><ReportBugPage /></Guard>} />
+          <Route path="bugs/new" element={<Guard allow={caps.report}><NewReportPage /></Guard>} />
+          <Route path="improvements" element={<ImprovementsPage />} />
+          <Route path="improvements/:ref" element={<ImprovementDetailPage />} />
           <Route path="bugs/:ref" element={<BugDetailPage />} />
           <Route path="regression" element={<RegressionPage />} />
           <Route path="notifications" element={<NotificationsPage />} />

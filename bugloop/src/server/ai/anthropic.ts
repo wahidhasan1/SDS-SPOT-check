@@ -17,6 +17,9 @@ import {
   normalizeDraft,
   normalizeRisk,
   normalizeSummary,
+  PolishSchema,
+  buildPolishPrompt,
+  normalizePolish,
   type Prompt,
 } from "./prompts";
 import {
@@ -26,6 +29,8 @@ import {
   type BugDigest,
   type DraftModelOutput,
   type DraftRequest,
+  type PolishOutput,
+  type PolishRequest,
   type RegressionChecksOutput,
   type ReleaseRiskOutput,
   type ReleaseRiskRequest,
@@ -140,5 +145,10 @@ export class AnthropicProvider implements AiProvider {
   async releaseRisk(req: ReleaseRiskRequest): Promise<AiResult<ReleaseRiskOutput>> {
     const r = await this.call(buildReleaseRiskPrompt(req, false), ReleaseRiskSchema);
     return { output: normalizeRisk(r.parsed), meta: { model: r.model, input_tokens: r.input, output_tokens: r.output } };
+  }
+
+  async polishImprovement(req: PolishRequest): Promise<AiResult<PolishOutput>> {
+    const r = await this.call(buildPolishPrompt(req, false), PolishSchema);
+    return { output: normalizePolish(r.parsed, req), meta: { model: r.model, input_tokens: r.input, output_tokens: r.output } };
   }
 }

@@ -4,6 +4,8 @@
 import { z } from "zod";
 import { FREQUENCIES } from "../../core/types";
 import type {
+  PolishOutput,
+  PolishRequest,
   BugDigest,
   DraftModelOutput,
   DraftRequest,
@@ -430,4 +432,54 @@ export function normalizeRisk(raw: unknown): ReleaseRiskOutput {
       : [],
     recommendation: String(r.recommendation ?? ""),
   };
+}
+
+// ---------------------------------------------------------------------------
+// Improvement suggestions: rough English in, one clear paragraph out
+// ---------------------------------------------------------------------------
+
+export const PolishSchema = z.object({
+  title: z.string(),
+  body: z.string(),
+  module: z.string().nullable(),
+});
+
+export function buildPolishPrompt(req: PolishRequest, includeShape: boolean): Prompt {
+  const modules = req.modules.map((m) => `- ${m.name}${m.description ? ` (${m.description})` : ""}`).join("\n");
+  return {
+    system: `A QA analyst is suggesting an improvement to a software product for the project manager to review. They may write quickly, with spelling mistakes, broken grammar or a mix of languages. Rewrite their suggestion in clear, friendly, professional English so the project manager understands it at a glance.
+
+Rules:
+1. Keep every idea the analyst gave and add none of your own. Do not invent screens, numbers, users or reasons they did not mention.
+2. Write one paragraph of two to five sentences. Where the text allows, cover in this order: where in the product it is, what is inconvenient or could be better today, and how the analyst suggests improving it.
+3. If the analyst didn't say how to improve it, don't make it up; describe the problem clearly instead.
+4. Keep the analyst's point of view ("I suggest…" is fine), a calm and polite tone, and plain words. No bullet points, no headings.
+5. Title: at most 80 characters, specific, starting with the thing to improve (for example "Contact list: keep filters after opening a contact").
+6. module: the module from the list that the suggestion is about, copied exactly, or null if it isn't clear.`,
+    user: `Product: ${req.project}
+${req.overview ? `What the product does: ${req.overview.slice(0, 2500)}\n` : ""}Module chosen by the analyst: ${req.module ?? "not chosen"}
+Modules:
+${modules || "(none)"}
+
+The analyst's suggestion:
+"""
+${req.text.trim()}
+"""${
+      includeShape
+        ? `
+
+Reply with only a JSON object: {"title": string, "body": string, "module": string | null}`
+        : ""
+    }`,
+  };
+}
+
+export function normalizePolish(raw: unknown, req: PolishRequest): PolishOutput {
+  const p = PolishSchema.safeParse(raw);
+  const r = p.success ? p.data : ((raw ?? {}) as Record<string, unknown>);
+  const title = String(r.title ?? "").replace(/\s+/g, " ").trim().slice(0, 120);
+  const body = String(r.body ?? "").trim();
+  const known = new Set(req.modules.map((m) => m.name));
+  const module = typeof r.module === "string" && known.has(r.module) ? r.module : null;
+  return { title, body, module };
 }

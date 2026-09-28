@@ -139,7 +139,8 @@ await nav(/^Dashboard/).click();
 
 step("Wahid reports a bug with one sentence and a screenshot");
 const shot = await page.screenshot({ clip: { x: 240, y: 60, width: 800, height: 450 } });
-await page.getByRole("button", { name: /Report bug/ }).first().click();
+await page.getByRole("button", { name: /New report/ }).first().click();
+expect((await page.getByRole("radio", { name: /Report a bug/ }).getAttribute("aria-checked")) === "true", "the new report form starts on Bug, with Improvement one click away");
 await page.locator(".where-row select").first().selectOption({ label: "HUB ONE" });
 await page.getByLabel("What went wrong?").fill("changed the owner of a contact and saved, reopened the contact and the old owner is back. every time on staging");
 await page.locator("input[type=file]").first().setInputFiles({ name: "edit-contact.png", mimeType: "image/png", buffer: shot });
@@ -266,6 +267,43 @@ await page.waitForSelector(".map-page >> text=Product details");
 expect((await page.locator(".map-page").count()) === before + 1, "the import adds the page to the map");
 await page.screenshot({ path: `${OUT}/product-map.png`, fullPage: true });
 
+step("Wahid suggests an improvement in rough English");
+await switchTo("Wahid Hasan");
+await page.getByRole("button", { name: /New report/ }).first().click();
+await page.getByRole("radio", { name: /Suggest an improvement/ }).click();
+await page.locator("#imp-project").selectOption({ label: "HUB ONE" });
+await page.locator("#imp-text").fill("in crm contact list the owner coloumn is to narrow, names get cut. pls make it wider its realy hard to read");
+await page.getByRole("button", { name: /Polish my English/ }).click();
+await page.waitForSelector("#imp-body");
+const polishedText = await page.locator("#imp-body").inputValue();
+expect(/really hard to read/.test(polishedText) && /^In CRM contact list/.test(polishedText), `the assistant tidies the text (${polishedText})`);
+expect((await page.locator("#imp-module").inputValue()) !== "", "the module is picked from the text");
+await page.getByRole("button", { name: /Send to Jonas Strand/ }).click();
+await page.waitForSelector(".bug-key >> text=/IMP-/");
+const impKey = (await page.locator(".bug-key").textContent()).trim();
+expect((await page.locator(".bug-badges").textContent()).includes("Waiting for PM"), `${impKey} waits for the project manager`);
+
+step(`Jonas (PM) approves ${impKey}; Rafiq builds it`);
+await switchTo("Jonas Strand");
+await nav(/Needs my action/).click();
+await page.locator(".list-row", { hasText: impKey }).click();
+await page.waitForSelector("text=Your decision: approve it or close it");
+await page.getByRole("button", { name: /Approve and send to engineer/ }).click();
+await page.waitForSelector(".bug-badges >> text=Approved · to do");
+await switchTo("Rafiq Chowdhury");
+await nav(/Needs my action/).click();
+await page.waitForSelector("text=Improvements to build");
+await page.locator(".list-row", { hasText: impKey }).click();
+await page.getByRole("button", { name: "Mark done" }).first().click();
+await page.locator("#imp-done").fill("The owner column now fits full names.");
+await page.locator(".inline-action").getByRole("button", { name: "Mark done" }).click();
+await page.waitForSelector(".bug-badges >> text=Done");
+await switchTo("Wahid Hasan");
+await openNotifications();
+const impNotes = (await page.locator(".notif-title").allTextContents()).join("\n");
+expect(impNotes.includes(`Your suggestion ${impKey} was approved.`) && impNotes.includes(`Rafiq Chowdhury finished ${impKey}.`), "the reporter hears about the approval and the finished work");
+await page.screenshot({ path: `${OUT}/improvement.png`, fullPage: true });
+
 expect(errors.length === 0, `no console errors during the lifecycle${errors.length ? `: ${errors.join(" | ")}` : ""}`);
 
 // ---------------------------------------------------------------------------------------------
@@ -287,6 +325,7 @@ for (const [label, link] of [
   ["bugs", /^Bugs$/],
   ["my bugs", /^My bugs/],
   ["regression", /^Regression/],
+  ["improvements", /^Improvements/],
   ["my insights", /^My insights/],
   ["projects", /^Projects/],
 ]) {

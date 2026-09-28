@@ -474,6 +474,7 @@ export interface Notification {
   type: string;
   category: NotificationCategory;
   bug_id: string | null;
+  improvement_id: string | null;
   actor_id: string | null;
   title: string;
   body: string | null;
@@ -596,4 +597,45 @@ export interface WorkspaceCapabilities {
   assign: boolean;
   qa: boolean;
   engineering: boolean;
+}
+
+// ---------------------------------------------------------------------------
+// Improvements: suggestions that go to the project manager, then to engineering
+// ---------------------------------------------------------------------------
+
+export const IMPROVEMENT_STATUSES = ["proposed", "approved", "in_progress", "done", "declined"] as const;
+export type ImprovementStatus = (typeof IMPROVEMENT_STATUSES)[number];
+
+export const IMPROVEMENT_STATUS_LABELS: Record<ImprovementStatus, string> = {
+  proposed: "Waiting for PM",
+  approved: "Approved · to do",
+  in_progress: "In progress",
+  done: "Done",
+  declined: "Closed by PM",
+};
+
+export interface Improvement {
+  id: string;
+  number: number;
+  key: string;
+  project_id: string;
+  module_id: string | null;
+  reporter_id: string;
+  title: string;
+  /** The suggestion as it will be read: the analyst's words, polished by the assistant if they chose to. */
+  body: string;
+  /** Exactly what the analyst typed, kept for reference. */
+  original_text: string;
+  /** "anthropic", "artifact" or "offline" when the assistant polished the text; null when submitted as written. */
+  polished_by: string | null;
+  status: ImprovementStatus;
+  assignee_id: string | null;
+  decided_by_id: string | null;
+  decided_at: string | null;
+  decision_note: string | null;
+  done_by_id: string | null;
+  done_at: string | null;
+  done_note: string | null;
+  created_at: string;
+  updated_at: string;
 }

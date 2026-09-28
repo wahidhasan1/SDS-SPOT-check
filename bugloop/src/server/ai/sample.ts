@@ -11,6 +11,8 @@ import {
   normalizeDraft,
   normalizeRisk,
   normalizeSummary,
+  buildPolishPrompt,
+  normalizePolish,
   type Prompt,
 } from "./prompts";
 import {
@@ -20,6 +22,8 @@ import {
   type BugDigest,
   type DraftModelOutput,
   type DraftRequest,
+  type PolishOutput,
+  type PolishRequest,
   type RegressionChecksOutput,
   type ReleaseRiskOutput,
   type ReleaseRiskRequest,
@@ -110,5 +114,9 @@ export class SampleProvider implements AiProvider {
 
   async releaseRisk(req: ReleaseRiskRequest): Promise<AiResult<ReleaseRiskOutput>> {
     return { output: normalizeRisk(await this.ask(buildReleaseRiskPrompt(req, true))), meta: { model: "Claude (claude.ai)" } };
+  }
+
+  async polishImprovement(req: PolishRequest): Promise<AiResult<PolishOutput>> {
+    return { output: normalizePolish(await this.ask(buildPolishPrompt(req, true)), req), meta: { model: "Claude (claude.ai)" } };
   }
 }

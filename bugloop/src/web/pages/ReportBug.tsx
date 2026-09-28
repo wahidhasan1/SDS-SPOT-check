@@ -449,7 +449,7 @@ export function ReportBugPage() {
     <div className="quick-report">
       <div className="page-head">
         <div>
-          <h1>Report a problem</h1>
+          <h1>Report a bug</h1>
           <p className="sub">Say what went wrong and add a screenshot. The assistant prepares the report; you check every value before it's sent.</p>
         </div>
         <ol className="stepper" aria-label="Progress">

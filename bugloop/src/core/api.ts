@@ -94,6 +94,7 @@ export interface ActionItem {
 
 export interface ActionItemsResponse {
   items: ActionItem[];
+  improvements: ImprovementActionItem[];
   counts: Record<string, number>;
 }
 
@@ -298,4 +299,47 @@ export interface AuditResponse {
   page: number;
   page_size: number;
   bugs: BugRef[];
+}
+
+// ---------------------------------------------------------------------------
+// Improvements
+// ---------------------------------------------------------------------------
+
+export interface PolishResult {
+  title: string;
+  body: string;
+  module_id: string | null;
+  provider: "anthropic" | "artifact" | "offline";
+  model: string | null;
+  /** Why the offline tidy-up was used instead of Claude, if it was. */
+  note: string | null;
+}
+
+export interface ImprovementListResponse {
+  items: import("./types").Improvement[];
+  total: number;
+}
+
+export interface ImprovementPermissions {
+  approve: boolean;
+  decline: boolean;
+  start: boolean;
+  done: boolean;
+}
+
+export interface ImprovementDetail {
+  improvement: import("./types").Improvement;
+  events: EventRecord[];
+  can: ImprovementPermissions;
+  /** Who is expected to act next, in words. */
+  waiting_on: string;
+}
+
+export type ImprovementActionKind = "review_improvement" | "build_improvement";
+
+export interface ImprovementActionItem {
+  kind: ImprovementActionKind;
+  label: string;
+  since: string;
+  improvement: import("./types").Improvement;
 }

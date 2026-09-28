@@ -94,7 +94,15 @@ Signed in as **Wahid Hasan** (QA analyst):
 6. **Projects → HUB ONE** describes what the software does and its modules. The assistant reads this
    together with the product map.
 
-Then switch person: **Rafiq Chowdhury** (engineer, owner of CRM) has **BUG-000125** waiting for
+7. **New report → Suggest an improvement** takes a suggestion in any English. **Polish my English**
+   turns it into a clear paragraph (Claude rewrites it; the offline helper fixes spelling, capitals
+   and punctuation) that you can edit before sending. It goes to the project's manager, who
+   approves it and picks an engineer, or closes it with a reason. Approved suggestions appear under
+   **Improvements to build** in the engineer's Needs my action, and the reporter is told at each
+   step. **Improvements** lists them all.
+
+Then switch person: **Jonas Strand** (PM for HUB ONE) has **IMP-000006** to approve or close;
+**Rafiq Chowdhury** (engineer, owner of CRM) has **BUG-000125** waiting for
 triage; **Nusrat Jahan** (QA lead) settles disputes; **Mahmud Karim** (admin) manages people, projects
 and workflow.
 

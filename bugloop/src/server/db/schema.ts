@@ -19,6 +19,7 @@ import type {
   Team,
   User,
   Page,
+  Improvement,
 } from "../../core/types";
 
 export type ColumnType = "text" | "integer" | "real" | "boolean" | "json";
@@ -91,6 +92,7 @@ export interface Tables {
   modules: Module;
   features: Feature;
   pages: Page;
+  improvements: Improvement;
   environments: Environment;
   severity_levels: Level;
   priority_levels: Level;
@@ -212,6 +214,32 @@ export const SCHEMA: Record<TableName, TableDef> = {
       created_at: text,
     },
     indexes: [{ columns: ["module_id"] }],
+  },
+  improvements: {
+    pk: "id",
+    columns: {
+      id: text,
+      number: t("integer", { unique: true }),
+      key: t("text", { unique: true }),
+      project_id: ref("projects", false),
+      module_id: ref("modules"),
+      reporter_id: ref("users", false),
+      title: text,
+      body: text,
+      original_text: text,
+      polished_by: textN,
+      status: text,
+      assignee_id: ref("users"),
+      decided_by_id: ref("users"),
+      decided_at: textN,
+      decision_note: textN,
+      done_by_id: ref("users"),
+      done_at: textN,
+      done_note: textN,
+      created_at: text,
+      updated_at: text,
+    },
+    indexes: [{ columns: ["project_id", "status"] }, { columns: ["reporter_id"] }, { columns: ["assignee_id"] }],
   },
   pages: {
     pk: "id",
@@ -450,6 +478,7 @@ export const SCHEMA: Record<TableName, TableDef> = {
       type: text,
       category: text,
       bug_id: ref("bugs"),
+      improvement_id: ref("improvements"),
       actor_id: ref("users"),
       title: text,
       body: textN,

@@ -8,6 +8,7 @@ import type { AppContext } from "../context";
 import type { UserRow } from "../db/schema";
 import { listEnv, toListItem } from "./bugs";
 import { getSettings, statusLabel } from "./lookups";
+import { improvementActions } from "./improvements";
 
 const ORDER: ActionItemKind[] = [
   "answer_question",
@@ -154,7 +155,7 @@ export function actionItems(ctx: AppContext, user: UserRow): ActionItemsResponse
   items.sort((a, b) => ORDER.indexOf(a.kind) - ORDER.indexOf(b.kind) || (a.since < b.since ? -1 : a.since > b.since ? 1 : 0));
   const counts: Record<string, number> = {};
   for (const i of items) counts[i.kind] = (counts[i.kind] ?? 0) + 1;
-  return { items, counts };
+  return { items, counts, improvements: improvementActions(ctx, user) };
 }
 
 export function listNotifications(ctx: AppContext, user: UserRow, opts: { unreadOnly?: boolean; limit?: number } = {}): NotificationsResponse {
@@ -184,7 +185,7 @@ export function viewCounts(ctx: AppContext, user: UserRow): ViewCounts {
     .find("bugs", { where: { archived_at: null, status: { in: OPEN_STATUSES.filter((s) => s !== "deferred") } } })
     .filter((b) => b.assignee_id === user.id || b.collaborator_ids.includes(user.id)).length;
   return {
-    action_items: items.items.length,
+    action_items: items.items.length + items.improvements.length,
     my_regression: items.counts.run_regression ?? 0,
     unread_notifications: ctx.store.count("notifications", { user_id: user.id, read_at: null }),
     assigned,

@@ -36,6 +36,17 @@ import {
 } from "./services/admin";
 import { draftReport, regressionChecks, releaseRisk, summarizeBug } from "./services/ai";
 import { PRODUCT_MAP_TEMPLATE, importProductMap, savePage, type PageInput } from "./services/pages";
+import {
+  approveImprovement,
+  completeImprovement,
+  createImprovement,
+  declineImprovement,
+  getImprovement,
+  listImprovements,
+  polishImprovement,
+  resolveImprovement,
+  startImprovement,
+} from "./services/improvements";
 
 type Env = { Variables: { user: UserRow; token: string } };
 
@@ -521,6 +532,46 @@ export function createApp(ctx: AppContext) {
   app.post("/ai/release-risk", async (c) => {
     const { body } = await readBody(c);
     return c.json(await releaseRisk(ctx, c.get("user"), String(body.project_id ?? ""), body.offline === true));
+  });
+
+  // Improvements -------------------------------------------------------------------
+
+  const str = (v: unknown) => (typeof v === "string" ? v : undefined);
+  app.post("/ai/polish-improvement", async (c) => {
+    const { body } = await readBody(c);
+    return c.json(await polishImprovement(ctx, c.get("user"), { project_id: str(body.project_id), module_id: str(body.module_id) ?? null, text: str(body.text), offline: body.offline === true }));
+  });
+  app.get("/improvements", (c) =>
+    c.json(listImprovements(ctx, c.get("user"), { status: c.req.query("status"), project_id: c.req.query("project"), mine: c.req.query("mine") === "1", q: c.req.query("q") })),
+  );
+  app.post("/improvements", async (c) => {
+    const { body } = await readBody(c);
+    const imp = createImprovement(ctx, c.get("user"), {
+      project_id: str(body.project_id),
+      module_id: str(body.module_id) ?? null,
+      title: str(body.title),
+      body: str(body.body),
+      original_text: str(body.original_text),
+      polished_by: str(body.polished_by) ?? null,
+    });
+    return c.json(getImprovement(ctx, c.get("user"), imp), 201);
+  });
+  app.get("/improvements/:ref", (c) => c.json(getImprovement(ctx, c.get("user"), resolveImprovement(ctx, c.req.param("ref")))));
+  app.post("/improvements/:ref/approve", async (c) => {
+    const { body } = await readBody(c);
+    const imp = approveImprovement(ctx, c.get("user"), resolveImprovement(ctx, c.req.param("ref")), { assignee_id: str(body.assignee_id) ?? null, note: str(body.note) ?? null });
+    return c.json(getImprovement(ctx, c.get("user"), imp));
+  });
+  app.post("/improvements/:ref/decline", async (c) => {
+    const { body } = await readBody(c);
+    const imp = declineImprovement(ctx, c.get("user"), resolveImprovement(ctx, c.req.param("ref")), { reason: str(body.reason) });
+    return c.json(getImprovement(ctx, c.get("user"), imp));
+  });
+  app.post("/improvements/:ref/start", (c) => c.json(getImprovement(ctx, c.get("user"), startImprovement(ctx, c.get("user"), resolveImprovement(ctx, c.req.param("ref"))))));
+  app.post("/improvements/:ref/done", async (c) => {
+    const { body } = await readBody(c);
+    const imp = completeImprovement(ctx, c.get("user"), resolveImprovement(ctx, c.req.param("ref")), { note: str(body.note) ?? null });
+    return c.json(getImprovement(ctx, c.get("user"), imp));
   });
 
   // Administration -----------------------------------------------------------------

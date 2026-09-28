@@ -79,7 +79,7 @@ describe.each(stores)("%s store", (_name, make) => {
     s.insert("events", { id: "e1", bug_id: null, actor_id: "u1", type: "x", entity_type: "t", entity_id: null, data: { tags: ["a"] }, created_at: now });
     const e = s.get("events", "e1")!;
     expect(e.data).toEqual({ tags: ["a"] });
-    s.insert("notifications", { id: "n1", user_id: "u1", type: "t", category: "action", bug_id: null, actor_id: null, title: "Hello", body: null, created_at: now, read_at: null });
+    s.insert("notifications", { id: "n1", user_id: "u1", type: "t", category: "action", bug_id: null, improvement_id: null, actor_id: null, title: "Hello", body: null, created_at: now, read_at: null });
     expect(s.count("notifications", { user_id: "u1", read_at: null })).toBe(1);
   });
 

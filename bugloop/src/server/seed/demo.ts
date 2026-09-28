@@ -13,6 +13,7 @@ import { reassignRegression } from "../services/regression";
 import { updateUser } from "../services/admin";
 import { saveSetting } from "../services/lookups";
 import { importProductMap } from "../services/pages";
+import { approveImprovement, completeImprovement, createImprovement, declineImprovement, startImprovement } from "../services/improvements";
 import { matchElement, matchPage } from "../ai/heuristic";
 import type { DraftPage } from "../ai/provider";
 import { PRODUCT_MAPS } from "./productmap";
@@ -664,6 +665,38 @@ export async function seedDemo(baseCtx: AppContext, opts: { passwords?: boolean;
     }
   }
 
+  // Improvement suggestions at every stage.
+  for (const s of IMPROVEMENT_STORIES) {
+    try {
+      clock.set(now.getTime() - s.daysAgo * DAY);
+      let imp = createImprovement(ctx, user(s.by), {
+        project_id: ids[`project:${s.project}`],
+        module_id: s.module ? ids[`module:${s.project}:${s.module}`] : null,
+        title: s.title,
+        body: s.body,
+        original_text: s.original,
+        polished_by: "anthropic",
+      });
+      if (s.decision) {
+        clock.set(now.getTime() - s.decision.daysAgo * DAY);
+        imp =
+          s.decision.approve
+            ? approveImprovement(ctx, user(s.decision.by), imp, { assignee_id: ids[s.decision.assignee!], note: s.decision.note })
+            : declineImprovement(ctx, user(s.decision.by), imp, { reason: s.decision.note });
+      }
+      if (s.started) {
+        clock.set(now.getTime() - s.started * DAY);
+        imp = startImprovement(ctx, user(s.decision!.assignee!), imp);
+      }
+      if (s.done) {
+        clock.set(now.getTime() - s.done.daysAgo * DAY);
+        completeImprovement(ctx, user(s.decision!.assignee!), imp, { note: s.done.note });
+      }
+    } catch (err) {
+      errors.push(`improvement ${s.title}: ${err instanceof Error ? err.message : String(err)}`);
+    }
+  }
+
   // Place existing sample bugs on their screen from the product map where the match is clear.
   clock.set(now);
   const pagesByModule = new Map<string, DraftPage[]>();
@@ -704,3 +737,66 @@ export async function seedDemo(baseCtx: AppContext, opts: { passwords?: boolean;
 
   return { bugs: ctx.store.count("bugs"), users: ctx.store.count("users"), projects: ctx.store.count("projects"), errors };
 }
+
+// ---------------------------------------------------------------------------
+// Improvement suggestions, written the way analysts type them and polished by the assistant
+// ---------------------------------------------------------------------------
+
+interface ImprovementStory {
+  by: string;
+  project: "hub" | "sds" | "ehs";
+  module?: string;
+  daysAgo: number;
+  original: string;
+  title: string;
+  body: string;
+  decision?: { by: string; daysAgo: number; approve: boolean; assignee?: string; note: string };
+  started?: number;
+  done?: { daysAgo: number; note: string };
+}
+
+const IMPROVEMENT_STORIES: ImprovementStory[] = [
+  {
+    by: "sadia", project: "hub", module: "sales", daysAgo: 21,
+    original: "forecast chart won and lost colours are almost same, in meeting room projector we cant see diffrence. pls make it more clear",
+    title: "Forecast chart: make won and lost easier to tell apart",
+    body: "On the Sales forecast chart, the colours for won and lost deals look almost the same, and on the meeting-room projector we can't tell them apart. I suggest using clearly different colours so the chart is readable in meetings.",
+    decision: { by: "jonas", daysAgo: 19, approve: true, assignee: "maria", note: "Good catch, we present this chart every Monday." },
+    started: 12,
+    done: { daysAgo: 6, note: "Won is now green and lost grey, with labels on each bar." },
+  },
+  {
+    by: "tanvir", project: "hub", module: "support", daysAgo: 16,
+    original: "customer portal need dark mode, many customer work night shift",
+    title: "Customer portal: add a dark mode",
+    body: "Many of our customers work night shifts, so I suggest adding a dark mode to the Support customer portal.",
+    decision: { by: "jonas", daysAgo: 14, approve: false, note: "The portal follows each customer's own branding. Dark mode is part of next year's portal redesign, so we won't add it separately now." },
+  },
+  {
+    by: "wahid", project: "hub", module: "crm", daysAgo: 12,
+    original: "in contact list when i open one contact and come back my filters are gone. evry time i have to set owner filter again, its realy wasting time. pls keep the filter like before",
+    title: "Contact list: keep filters after opening a contact",
+    body: "In CRM › Contacts, the filters I set are cleared when I open a contact and go back to the list, so I have to choose the owner filter again every time. This wastes time during daily work. I suggest keeping the list's filters when returning from a contact.",
+    decision: { by: "jonas", daysAgo: 10, approve: true, assignee: "rafiq", note: "Yes, the sales team has asked for this too." },
+    started: 3,
+  },
+  {
+    by: "wahid", project: "hub", module: "crm", daysAgo: 8,
+    original: "merge button is grey and small nobody notice it, make it red so people see it",
+    title: "Contacts: make the Merge button easier to notice",
+    body: "On a contact in CRM, the Merge button is small and grey, so people don't notice it. I suggest making it red so it stands out.",
+    decision: { by: "jonas", daysAgo: 7, approve: false, note: "Red is kept for actions that delete things. We'll show a hint about duplicates instead, which is tracked separately." },
+  },
+  {
+    by: "ingrid", project: "sds", module: "hub", daysAgo: 5,
+    original: "when uploading new SDS it would be nice to see preview of first page before save, sometimes i pick wrong pdf and notice after",
+    title: "SDS upload: show a preview of the first page before saving",
+    body: "When I upload a new safety data sheet in SDS Hub, I sometimes pick the wrong PDF and only notice after saving. I suggest showing a preview of the first page before the upload is saved, so mistakes are caught straight away.",
+  },
+  {
+    by: "wahid", project: "hub", module: "crm", daysAgo: 2,
+    original: "edit contact form is long and save buton is at bottom so i scrol evry time. would be nice if save stay on top or sticky when scroling",
+    title: "Edit contact: keep the Save button visible while scrolling",
+    body: "The Edit contact form in CRM is long and the Save button is only at the bottom, so I have to scroll down every time I change something. I suggest keeping the Save button visible while scrolling, for example at the top of the form or pinned to the bottom of the screen.",
+  },
+];

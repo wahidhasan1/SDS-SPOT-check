@@ -73,6 +73,15 @@ describe("demo seed", async () => {
     expect(hanne).toContain("revisit");
   });
 
+  it("has improvement suggestions at every stage", () => {
+    const statuses = ctx.store.find("improvements").map((i) => i.status).sort();
+    expect(statuses).toEqual(["approved", "declined", "declined", "done", "proposed", "proposed"].sort().map((s) => (s === "approved" ? "in_progress" : s)).sort());
+    const jonas = actionItems(ctx, user("Jonas Strand")).improvements.map((i) => `${i.kind}:${i.improvement.title}`);
+    expect(jonas).toContain("review_improvement:Edit contact: keep the Save button visible while scrolling");
+    const rafiq = actionItems(ctx, user("Rafiq Chowdhury")).improvements.map((i) => i.kind);
+    expect(rafiq).toEqual(["build_improvement"]);
+  });
+
   it("flags simultaneous reports as potential duplicates", () => {
     const later = ctx.store.findOne("bugs", { title: "SDS search ignores Norwegian letters in product names" })!;
     const earlier = ctx.store.findOne("bugs", { title: "SDS search returns no results for product names with æ, ø or å" })!;

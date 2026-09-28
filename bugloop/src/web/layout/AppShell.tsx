@@ -10,6 +10,7 @@ import {
   FolderKanban,
   Inbox,
   LayoutDashboard,
+  Lightbulb,
   ListChecks,
   LogOut,
   Menu,
@@ -86,8 +87,8 @@ export function AppShell() {
           </span>
         </NavLink>
         {caps.report && (
-          <button className="btn btn-primary btn-block" onClick={() => navigate("/bugs/new")} title="Report a bug (c)">
-            <Plus /> Report bug
+          <button className="btn btn-primary btn-block" onClick={() => navigate("/bugs/new")} title="Report a bug or suggest an improvement (c)">
+            <Plus /> New report
           </button>
         )}
         <nav className="nav">
@@ -100,6 +101,7 @@ export function AppShell() {
             <NavItem to="/my-bugs" icon={ListChecks} label="My bugs" count={c?.mine_open} />
           )}
           {(caps.qa || ws.me.role === "project_manager") && <NavItem to="/regression" icon={ClipboardCheck} label="Regression" count={c?.my_regression} hot={!!c?.my_regression} />}
+          <NavItem to="/improvements" icon={Lightbulb} label="Improvements" />
           <NavItem to="/analytics" icon={BarChart3} label="My insights" />
           <NavItem to="/projects" icon={FolderKanban} label="Projects" />
           {(caps.manage_users || caps.manage_config || caps.view_audit) && <div className="nav-label eyebrow">Admin</div>}
@@ -388,7 +390,8 @@ export function NotificationLink({ n, onGo, compact }: { n: import("../../core/t
         // Marking as read is best-effort.
       }
     }
-    if (n.bug_id) navigate(`/bugs/${bugKey ?? n.bug_id}`);
+    if (n.improvement_id) navigate(`/improvements/${bugKey ?? n.improvement_id}`);
+    else if (n.bug_id) navigate(`/bugs/${bugKey ?? n.bug_id}`);
   };
   return (
     <button className={cx("notif", !n.read_at && "unread", compact && "compact")} onClick={open}>
@@ -415,7 +418,8 @@ const PERSONA_HINTS: Record<string, string> = {
   "Maria Olsen": "HUB ONE engineer. Waiting on Wahid for information on BUG-000108.",
   "Imran Hossain": "Engineer for EHS and SDS ONE Members.",
   "Nusrat Jahan": "QA lead. Settles disputes and picks up regressions for people who left.",
-  "Hanne Lie": "Product manager. A deferred bug is due for review.",
+  "Hanne Lie": "Product manager for SDS ONE and EHS. A deferred bug and a suggestion are waiting.",
+  "Jonas Strand": "Product manager for HUB ONE. Approves or closes improvement suggestions.",
   "Mahmud Karim": "Administrator. Manages people, projects and workflow settings.",
   "Kamal Uddin": "Mobile engineer. A sync bug has been reopened three times.",
   "Sofie Berg": "Mobile lead. Has a fix waiting for a test build.",

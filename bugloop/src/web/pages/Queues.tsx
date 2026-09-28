@@ -3,7 +3,8 @@
 import { useState } from "react";
 import { Link } from "react-router";
 import { ArrowRight, BellOff, CheckCheck, ClipboardCheck, Inbox, PartyPopper } from "lucide-react";
-import type { ActionItem, ActionItemKind } from "../../core/api";
+import type { ActionItem, ActionItemKind, ImprovementActionItem } from "../../core/api";
+import { ImprovementPill } from "./Improvements";
 import { useWorkspace } from "../app/context";
 import { useActionItems, useMutate, useNotifications, useRegressionQueue } from "../api/hooks";
 import { Person, SeverityBadge, StatusPill } from "../components/badges";
@@ -30,6 +31,7 @@ const GROUPS: { kind: ActionItemKind; title: string; hint: string; tone?: string
 export function ActionPage() {
   const q = useActionItems();
   const items = q.data?.items ?? [];
+  const imps = q.data?.improvements ?? [];
   return (
     <div className="stack-lg narrow-page">
       <div className="page-head">
@@ -40,14 +42,36 @@ export function ActionPage() {
       </div>
       {q.isLoading ? (
         <Loading />
-      ) : items.length === 0 ? (
+      ) : items.length === 0 && imps.length === 0 ? (
         <section className="panel">
           <Empty icon={<PartyPopper />} title="Nothing needs you right now">
             New questions, regressions and decisions will show up here.
           </Empty>
         </section>
       ) : (
-        GROUPS.map((g) => {
+        <>
+        {IMP_GROUPS.map((g) => {
+          const list = imps.filter((i) => i.kind === g.kind);
+          if (!list.length) return null;
+          return (
+            <section key={g.kind} className="panel">
+              <div className="panel-head">
+                <h2 className="row" style={{ gap: 8 }}>
+                  {g.title} <span className="chip accent">{list.length}</span>
+                </h2>
+                <span className="hint">{g.hint}</span>
+              </div>
+              <div className="panel-body flush">
+                <div className="list">
+                  {list.map((it) => (
+                    <ImprovementActionRow key={it.improvement.id} item={it} />
+                  ))}
+                </div>
+              </div>
+            </section>
+          );
+        })}
+        {GROUPS.map((g) => {
           const list = items.filter((i) => i.kind === g.kind);
           if (!list.length) return null;
           return (
@@ -67,9 +91,44 @@ export function ActionPage() {
               </div>
             </section>
           );
-        })
+        })}
+        </>
       )}
     </div>
+  );
+}
+
+const IMP_GROUPS: { kind: ImprovementActionItem["kind"]; title: string; hint: string }[] = [
+  { kind: "review_improvement", title: "Improvements to review", hint: "Approve and pick an engineer, or close with a reason." },
+  { kind: "build_improvement", title: "Improvements to build", hint: "Approved by the project manager." },
+];
+
+function ImprovementActionRow({ item }: { item: ImprovementActionItem }) {
+  const { lookup } = useWorkspace();
+  const i = item.improvement;
+  return (
+    <Link to={`/improvements/${i.key}`} className="list-row action-row">
+      <div className="grow stack-sm" style={{ gap: 3 }}>
+        <div className="row-wrap" style={{ gap: 8 }}>
+          <span className="mono tiny muted">{i.key}</span>
+          <ImprovementPill status={i.status} size="sm" />
+          <span className="tiny muted">
+            {lookup.project(i.project_id)?.name}
+            {i.module_id ? ` › ${lookup.module(i.module_id)?.name}` : ""}
+          </span>
+        </div>
+        <div className="action-title">{i.title}</div>
+        <div className="small secondary clamp-2">Suggested by {lookup.userName(i.reporter_id)}: {i.body}</div>
+      </div>
+      <div className="stack-sm action-side">
+        <span className="tiny nowrap muted" title={item.since}>
+          Waiting {duration((Date.now() - Date.parse(item.since)) / 3_600_000)}
+        </span>
+        <span className="btn btn-sm">
+          {item.label} <ArrowRight />
+        </span>
+      </div>
+    </Link>
   );
 }
 

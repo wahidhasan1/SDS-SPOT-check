@@ -155,6 +155,25 @@ export interface AiResult<T> {
   meta: AiCallMeta;
 }
 
+/** An improvement suggestion in the analyst's own (possibly rough) English. */
+export interface PolishRequest {
+  text: string;
+  project: string;
+  overview: string | null;
+  /** The module the analyst picked, if any. */
+  module: string | null;
+  modules: { name: string; description: string | null }[];
+}
+
+export interface PolishOutput {
+  /** A short, specific title. */
+  title: string;
+  /** One clear paragraph: where, what is wrong or could be better, and how to improve it. */
+  body: string;
+  /** Module name from the list, when the text makes it clear; otherwise null. */
+  module: string | null;
+}
+
 export interface AiProvider {
   readonly id: "anthropic" | "artifact" | "offline";
   status(): AiStatus;
@@ -162,6 +181,7 @@ export interface AiProvider {
   summarize(bug: BugDigest): Promise<AiResult<SummaryOutput>>;
   regressionChecks(bug: BugDigest): Promise<AiResult<RegressionChecksOutput>>;
   releaseRisk(req: ReleaseRiskRequest): Promise<AiResult<ReleaseRiskOutput>>;
+  polishImprovement(req: PolishRequest): Promise<AiResult<PolishOutput>>;
 }
 
 export class AiProviderError extends Error {

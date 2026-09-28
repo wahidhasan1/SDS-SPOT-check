@@ -11,6 +11,8 @@ import type {
   ContributionsResponse,
   DashboardResponse,
   EngineeringResponse,
+  ImprovementDetail,
+  ImprovementListResponse,
   ModulesResponse,
   NotificationsResponse,
   RegressionQueueItem,
@@ -67,6 +69,16 @@ export function useSimilarForBug(ref: string | undefined) {
     enabled: !!ref,
     staleTime: 60_000,
   });
+}
+
+export function useImprovements(params: Record<string, string | undefined>) {
+  const api = useApi();
+  return useQuery({ queryKey: ["improvements", params], queryFn: () => api.get<ImprovementListResponse>("/improvements", params), placeholderData: keepPreviousData, refetchInterval: LIVE });
+}
+
+export function useImprovement(ref: string | undefined) {
+  const api = useApi();
+  return useQuery({ queryKey: ["improvement", ref], queryFn: () => api.get<ImprovementDetail>(`/improvements/${encodeURIComponent(ref!)}`), enabled: !!ref, refetchInterval: LIVE });
 }
 
 export function useActionItems() {

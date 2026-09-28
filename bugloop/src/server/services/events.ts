@@ -32,6 +32,7 @@ export interface NotifySpec {
   type: string;
   category: NotificationCategory;
   bugId: string | null;
+  improvementId?: string | null;
   actorId: string | null;
   title: string;
   body?: string | null;
@@ -56,6 +57,7 @@ export function notify(ctx: AppContext, recipients: (string | null | undefined)[
         type: spec.type,
         category: spec.category,
         bug_id: spec.bugId,
+        improvement_id: spec.improvementId ?? null,
         actor_id: spec.actorId,
         title: spec.title,
         body: spec.body ?? null,

@@ -1,6 +1,7 @@
 // The offline assistant: a rule-based fallback when no model is available. It only
 // rearranges the analyst's own words (never adds facts) and asks for everything else.
 
+import { polishOffline } from "./tidy";
 import type { Sourced } from "../../core/api";
 import type { AiStatus, Frequency } from "../../core/types";
 import { capitalize, concepts, ensurePeriod, normalizeWhitespace, sentences, stem, tokenize, truncate } from "../../core/text";
@@ -11,6 +12,8 @@ import type {
   DraftModelOutput,
   DraftPage,
   DraftRequest,
+  PolishOutput,
+  PolishRequest,
   RegressionChecksOutput,
   ReleaseRiskOutput,
   ReleaseRiskRequest,
@@ -499,5 +502,9 @@ export class OfflineProvider implements AiProvider {
 
   async releaseRisk(req: ReleaseRiskRequest): Promise<AiResult<ReleaseRiskOutput>> {
     return { output: riskOffline(req), meta: { model: null } };
+  }
+
+  async polishImprovement(req: PolishRequest): Promise<AiResult<PolishOutput>> {
+    return { output: polishOffline(req), meta: { model: null } };
   }
 }
