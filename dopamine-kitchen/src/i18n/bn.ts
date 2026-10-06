@@ -1,0 +1,31 @@
+import type { DictKey } from './en'
+
+// Bangla (beta). Missing keys fall back to English.
+export const bn: Partial<Record<DictKey, string>> = {
+  'nav.home': 'হোম',
+  'nav.food': 'খাবার',
+  'nav.shop': 'শপ',
+  'nav.offers': 'অফার',
+  'nav.cart': 'কার্ট',
+  'nav.account': 'অ্যাকাউন্ট',
+  'nav.orders': 'অর্ডার',
+  'nav.search': 'খুঁজুন',
+  'nav.favorites': 'প্রিয়',
+  'nav.notifications': 'নোটিফিকেশন',
+  'brand.tagline': 'ইচ্ছেটা মেটান, ডেলিভারি ছাড়াই।',
+  'demo.banner': 'ডেমো সিমুলেশন — কোনো আসল পেমেন্ট, অর্ডার বা ডেলিভারি নেই।',
+  'demo.bannerShort': 'সিমুলেশন · কোনো টাকা কাটা বা ডেলিভারি হয় না',
+  'home.craving': 'আজ কী খেতে ইচ্ছে করছে?',
+  'home.popularNearby': 'কাছের জনপ্রিয় রেস্টুরেন্ট',
+  'home.recommended': 'আপনার জন্য',
+  'home.recent': 'সম্প্রতি দেখা',
+  'home.offers': 'অফার ও ভাউচার',
+  'home.shopCategories': 'ক্যাটাগরি অনুযায়ী কেনাকাটা',
+  'search.placeholder': 'রেস্টুরেন্ট, খাবার, পণ্য বা ব্র্যান্ড খুঁজুন…',
+  'cart.empty': 'আপনার কার্ট খালি',
+  'common.seeAll': 'সব দেখুন',
+  'common.addToCart': 'কার্টে যোগ করুন',
+  'common.buyNow': 'এখনই কিনুন',
+  'common.apply': 'প্রয়োগ',
+  'common.deliverTo': 'ডেলিভারি',
+}

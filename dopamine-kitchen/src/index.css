@@ -1,0 +1,139 @@
+@import 'tailwindcss';
+
+/* ===== Dopamine Kitchen design tokens ===== */
+@theme {
+  --font-sans: 'Plus Jakarta Sans', ui-sans-serif, system-ui, -apple-system, 'Segoe UI', Roboto, 'Noto Sans Bengali', sans-serif;
+  --font-display: 'Bricolage Grotesque', 'Plus Jakarta Sans', ui-sans-serif, system-ui, sans-serif;
+
+  /* Dopa Violet — primary */
+  --color-brand-50: #f6f1ff;
+  --color-brand-100: #ede3ff;
+  --color-brand-200: #dac8ff;
+  --color-brand-300: #bd9dff;
+  --color-brand-400: #9f6dfb;
+  --color-brand-500: #7c3aed;
+  --color-brand-600: #6d28d9;
+  --color-brand-700: #5b21b6;
+  --color-brand-800: #4c1d95;
+  --color-brand-900: #2e1065;
+
+  /* Craving Coral — accent */
+  --color-coral-50: #fff4f0;
+  --color-coral-100: #ffe3d9;
+  --color-coral-200: #ffc5b2;
+  --color-coral-300: #ff9c7f;
+  --color-coral-400: #ff7a57;
+  --color-coral-500: #ff5a36;
+  --color-coral-600: #e8431f;
+  --color-coral-700: #c13415;
+
+  --color-ink-900: #17121f;
+  --color-ink-700: #3b3447;
+  --color-ink-500: #6b6478;
+  --color-ink-400: #8e879b;
+  --color-ink-300: #bdb7c8;
+  --color-ink-200: #e4e0ea;
+  --color-ink-100: #f0edf4;
+  --color-ink-50: #f8f6fb;
+
+  --shadow-card: 0 1px 2px rgb(23 18 31 / 0.04), 0 4px 16px rgb(23 18 31 / 0.06);
+  --shadow-lift: 0 2px 4px rgb(23 18 31 / 0.05), 0 12px 32px rgb(23 18 31 / 0.12);
+  --shadow-glow: 0 8px 24px rgb(124 58 237 / 0.35);
+
+  --animate-fade-in: fade-in 0.25s ease-out both;
+  --animate-slide-up: slide-up 0.32s cubic-bezier(0.2, 0.9, 0.3, 1.1) both;
+  --animate-pop: pop 0.35s cubic-bezier(0.2, 0.9, 0.3, 1.4) both;
+  --animate-shimmer: shimmer 1.4s linear infinite;
+  --animate-float: float 3s ease-in-out infinite;
+  --animate-ping-slow: ping 2s cubic-bezier(0, 0, 0.2, 1) infinite;
+
+  @keyframes fade-in {
+    from { opacity: 0; transform: translateY(6px); }
+    to { opacity: 1; transform: none; }
+  }
+  @keyframes slide-up {
+    from { opacity: 0; transform: translateY(24px); }
+    to { opacity: 1; transform: none; }
+  }
+  @keyframes pop {
+    0% { opacity: 0; transform: scale(0.85); }
+    100% { opacity: 1; transform: scale(1); }
+  }
+  @keyframes shimmer {
+    from { background-position: -400px 0; }
+    to { background-position: 400px 0; }
+  }
+  @keyframes float {
+    0%, 100% { transform: translateY(0); }
+    50% { transform: translateY(-6px); }
+  }
+}
+
+@layer base {
+  html { -webkit-tap-highlight-color: transparent; scroll-behavior: smooth; }
+  body {
+    @apply bg-ink-50 text-ink-900 font-sans antialiased;
+    font-feature-settings: 'ss01', 'cv11';
+  }
+  h1, h2, h3, .font-display { font-family: var(--font-display); letter-spacing: -0.02em; }
+  button { cursor: pointer; }
+  button:disabled { cursor: not-allowed; }
+  :focus-visible { outline: 2px solid var(--color-brand-500); outline-offset: 2px; border-radius: 6px; }
+  input, select, textarea { font: inherit; }
+}
+
+@layer components {
+  .btn {
+    @apply inline-flex items-center justify-center gap-2 rounded-xl px-4 h-11 text-sm font-semibold transition-all duration-150 select-none whitespace-nowrap active:scale-[0.98] disabled:opacity-50 disabled:active:scale-100;
+  }
+  .btn-sm { @apply h-9 px-3 text-[13px] rounded-lg; }
+  .btn-lg { @apply h-13 px-6 text-base rounded-2xl; }
+  .btn-primary { @apply bg-brand-600 text-white hover:bg-brand-700 shadow-[0_6px_18px_-6px_rgb(109_40_217/0.6)]; }
+  .btn-accent { @apply bg-coral-500 text-white hover:bg-coral-600 shadow-[0_6px_18px_-6px_rgb(255_90_54/0.6)]; }
+  .btn-secondary { @apply bg-white text-ink-900 border border-ink-200 hover:border-ink-300 hover:bg-ink-50; }
+  .btn-soft { @apply bg-brand-50 text-brand-700 hover:bg-brand-100; }
+  .btn-ghost { @apply text-ink-700 hover:bg-ink-100; }
+  .btn-danger { @apply bg-red-600 text-white hover:bg-red-700; }
+  .icon-btn { @apply inline-flex items-center justify-center size-10 rounded-full text-ink-700 hover:bg-ink-100 transition-colors relative; }
+
+  .card { @apply bg-white rounded-2xl shadow-card border border-ink-100; }
+  .card-hover { @apply transition-all duration-200 hover:shadow-lift hover:-translate-y-0.5; }
+
+  .chip {
+    @apply inline-flex items-center gap-1.5 h-9 px-3.5 rounded-full border border-ink-200 bg-white text-[13px] font-semibold text-ink-700 whitespace-nowrap transition-colors hover:border-ink-300;
+  }
+  .chip-active { @apply bg-ink-900 text-white border-ink-900 hover:border-ink-900; }
+
+  .input {
+    @apply w-full h-11 rounded-xl border border-ink-200 bg-white px-3.5 text-[15px] text-ink-900 placeholder:text-ink-400 outline-none transition focus:border-brand-500 focus:ring-4 focus:ring-brand-100;
+  }
+  .input-error { @apply border-red-400 focus:border-red-500 focus:ring-red-100; }
+  .label { @apply block text-[13px] font-semibold text-ink-700 mb-1.5; }
+
+  .badge { @apply inline-flex items-center gap-1 rounded-full px-2 py-0.5 text-[11px] font-bold uppercase tracking-wide; }
+
+  .skeleton {
+    @apply rounded-xl;
+    background: linear-gradient(90deg, #efecf3 0px, #f8f6fb 120px, #efecf3 240px);
+    background-size: 800px 100%;
+    animation: var(--animate-shimmer);
+  }
+
+  .section-title { @apply font-display text-xl sm:text-2xl font-bold text-ink-900; }
+  .scrollbar-none { scrollbar-width: none; }
+  .scrollbar-none::-webkit-scrollbar { display: none; }
+  .bg-brand-gradient { background-image: linear-gradient(135deg, #6d28d9 0%, #a43ee0 48%, #ff5a36 100%); }
+  .text-brand-gradient {
+    background-image: linear-gradient(120deg, #6d28d9, #c026d3 50%, #ff5a36);
+    -webkit-background-clip: text; background-clip: text; color: transparent;
+  }
+  .map-grid {
+    background-color: #eef0e8;
+    background-image:
+      linear-gradient(rgba(255,255,255,0.9) 2px, transparent 2px),
+      linear-gradient(90deg, rgba(255,255,255,0.9) 2px, transparent 2px);
+    background-size: 46px 46px;
+  }
+}
+
+.pb-safe { padding-bottom: env(safe-area-inset-bottom); }
