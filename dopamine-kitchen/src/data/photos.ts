@@ -200,14 +200,15 @@ export const FOOD_PHOTOS = {
 export type FoodPool = keyof typeof FOOD_PHOTOS
 
 /** Product photos keyed by catalog photo code: one image per available colour, plus an optional back view. */
-export const PRODUCT_PHOTOS: Record<string, { colors: Record<string, string>; back: string | null }> = {
+export const PRODUCT_PHOTOS: Record<string, { colors: Record<string, string>; back: string | null; extra: string[] }> = {
   "ms04": {
     "colors": {
       "black": "img/p/ms04-black.webp",
       "orange": "img/p/ms04-orange.webp",
       "red": "img/p/ms04-red.webp"
     },
-    "back": null
+    "back": null,
+    "extra": []
   },
   "ms11": {
     "colors": {
@@ -215,7 +216,8 @@ export const PRODUCT_PHOTOS: Record<string, { colors: Record<string, string>; ba
       "green": "img/p/ms11-green.webp",
       "yellow": "img/p/ms11-yellow.webp"
     },
-    "back": null
+    "back": null,
+    "extra": []
   },
   "ms07": {
     "colors": {
@@ -223,7 +225,8 @@ export const PRODUCT_PHOTOS: Record<string, { colors: Record<string, string>; ba
       "green": "img/p/ms07-green.webp",
       "white": "img/p/ms07-white.webp"
     },
-    "back": null
+    "back": null,
+    "extra": []
   },
   "mt01": {
     "colors": {
@@ -231,7 +234,8 @@ export const PRODUCT_PHOTOS: Record<string, { colors: Record<string, string>; ba
       "orange": "img/p/mt01-orange.webp",
       "red": "img/p/mt01-red.webp"
     },
-    "back": null
+    "back": null,
+    "extra": []
   },
   "mp04": {
     "colors": {
@@ -239,7 +243,8 @@ export const PRODUCT_PHOTOS: Record<string, { colors: Record<string, string>; ba
       "gray": "img/p/mp04-gray.webp",
       "green": "img/p/mp04-green.webp"
     },
-    "back": null
+    "back": null,
+    "extra": []
   },
   "mp11": {
     "colors": {
@@ -247,7 +252,8 @@ export const PRODUCT_PHOTOS: Record<string, { colors: Record<string, string>; ba
       "brown": "img/p/mp11-brown.webp",
       "green": "img/p/mp11-green.webp"
     },
-    "back": null
+    "back": null,
+    "extra": []
   },
   "msh03": {
     "colors": {
@@ -255,7 +261,8 @@ export const PRODUCT_PHOTOS: Record<string, { colors: Record<string, string>; ba
       "blue": "img/p/msh03-blue.webp",
       "green": "img/p/msh03-green.webp"
     },
-    "back": null
+    "back": null,
+    "extra": []
   },
   "mj03": {
     "colors": {
@@ -263,7 +270,8 @@ export const PRODUCT_PHOTOS: Record<string, { colors: Record<string, string>; ba
       "green": "img/p/mj03-green.webp",
       "red": "img/p/mj03-red.webp"
     },
-    "back": "img/p/mj03-back.webp"
+    "back": "img/p/mj03-back.webp",
+    "extra": []
   },
   "mj06": {
     "colors": {
@@ -271,7 +279,8 @@ export const PRODUCT_PHOTOS: Record<string, { colors: Record<string, string>; ba
       "green": "img/p/mj06-green.webp",
       "purple": "img/p/mj06-purple.webp"
     },
-    "back": "img/p/mj06-back.webp"
+    "back": "img/p/mj06-back.webp",
+    "extra": []
   },
   "mj11": {
     "colors": {
@@ -279,7 +288,8 @@ export const PRODUCT_PHOTOS: Record<string, { colors: Record<string, string>; ba
       "green": "img/p/mj11-green.webp",
       "red": "img/p/mj11-red.webp"
     },
-    "back": "img/p/mj11-back.webp"
+    "back": "img/p/mj11-back.webp",
+    "extra": []
   },
   "mh01": {
     "colors": {
@@ -287,7 +297,8 @@ export const PRODUCT_PHOTOS: Record<string, { colors: Record<string, string>; ba
       "gray": "img/p/mh01-gray.webp",
       "orange": "img/p/mh01-orange.webp"
     },
-    "back": null
+    "back": null,
+    "extra": []
   },
   "ws03": {
     "colors": {
@@ -295,7 +306,8 @@ export const PRODUCT_PHOTOS: Record<string, { colors: Record<string, string>; ba
       "green": "img/p/ws03-green.webp",
       "red": "img/p/ws03-red.webp"
     },
-    "back": null
+    "back": null,
+    "extra": []
   },
   "ws06": {
     "colors": {
@@ -303,7 +315,8 @@ export const PRODUCT_PHOTOS: Record<string, { colors: Record<string, string>; ba
       "purple": "img/p/ws06-purple.webp",
       "red": "img/p/ws06-red.webp"
     },
-    "back": null
+    "back": null,
+    "extra": []
   },
   "ws11": {
     "colors": {
@@ -311,7 +324,8 @@ export const PRODUCT_PHOTOS: Record<string, { colors: Record<string, string>; ba
       "orange": "img/p/ws11-orange.webp",
       "yellow": "img/p/ws11-yellow.webp"
     },
-    "back": null
+    "back": null,
+    "extra": []
   },
   "wh03": {
     "colors": {
@@ -319,7 +333,8 @@ export const PRODUCT_PHOTOS: Record<string, { colors: Record<string, string>; ba
       "purple": "img/p/wh03-purple.webp",
       "red": "img/p/wh03-red.webp"
     },
-    "back": null
+    "back": null,
+    "extra": []
   },
   "wh05": {
     "colors": {
@@ -327,7 +342,8 @@ export const PRODUCT_PHOTOS: Record<string, { colors: Record<string, string>; ba
       "purple": "img/p/wh05-purple.webp",
       "white": "img/p/wh05-white.webp"
     },
-    "back": null
+    "back": null,
+    "extra": []
   },
   "wh01": {
     "colors": {
@@ -335,7 +351,8 @@ export const PRODUCT_PHOTOS: Record<string, { colors: Record<string, string>; ba
       "orange": "img/p/wh01-orange.webp",
       "purple": "img/p/wh01-purple.webp"
     },
-    "back": "img/p/wh01-back.webp"
+    "back": "img/p/wh01-back.webp",
+    "extra": []
   },
   "wj06": {
     "colors": {
@@ -343,7 +360,8 @@ export const PRODUCT_PHOTOS: Record<string, { colors: Record<string, string>; ba
       "green": "img/p/wj06-green.webp",
       "purple": "img/p/wj06-purple.webp"
     },
-    "back": null
+    "back": null,
+    "extra": []
   },
   "wj04": {
     "colors": {
@@ -351,7 +369,8 @@ export const PRODUCT_PHOTOS: Record<string, { colors: Record<string, string>; ba
       "red": "img/p/wj04-red.webp",
       "white": "img/p/wj04-white.webp"
     },
-    "back": null
+    "back": null,
+    "extra": []
   },
   "wp02": {
     "colors": {
@@ -359,7 +378,8 @@ export const PRODUCT_PHOTOS: Record<string, { colors: Record<string, string>; ba
       "purple": "img/p/wp02-purple.webp",
       "red": "img/p/wp02-red.webp"
     },
-    "back": "img/p/wp02-back.webp"
+    "back": "img/p/wp02-back.webp",
+    "extra": []
   },
   "wp03": {
     "colors": {
@@ -367,7 +387,8 @@ export const PRODUCT_PHOTOS: Record<string, { colors: Record<string, string>; ba
       "blue": "img/p/wp03-blue.webp",
       "purple": "img/p/wp03-purple.webp"
     },
-    "back": null
+    "back": null,
+    "extra": []
   },
   "wsh04": {
     "colors": {
@@ -375,7 +396,8 @@ export const PRODUCT_PHOTOS: Record<string, { colors: Record<string, string>; ba
       "green": "img/p/wsh04-green.webp",
       "orange": "img/p/wsh04-orange.webp"
     },
-    "back": "img/p/wsh04-back.webp"
+    "back": "img/p/wsh04-back.webp",
+    "extra": []
   },
   "wt02": {
     "colors": {
@@ -383,7 +405,8 @@ export const PRODUCT_PHOTOS: Record<string, { colors: Record<string, string>; ba
       "orange": "img/p/wt02-orange.webp",
       "yellow": "img/p/wt02-yellow.webp"
     },
-    "back": null
+    "back": null,
+    "extra": []
   },
   "wt05": {
     "colors": {
@@ -391,7 +414,8 @@ export const PRODUCT_PHOTOS: Record<string, { colors: Record<string, string>; ba
       "purple": "img/p/wt05-purple.webp",
       "white": "img/p/wt05-white.webp"
     },
-    "back": null
+    "back": null,
+    "extra": []
   },
   "mh08": {
     "colors": {
@@ -399,7 +423,8 @@ export const PRODUCT_PHOTOS: Record<string, { colors: Record<string, string>; ba
       "purple": "img/p/mh08-purple.webp",
       "red": "img/p/mh08-red.webp"
     },
-    "back": "img/p/mh08-back.webp"
+    "back": "img/p/mh08-back.webp",
+    "extra": []
   },
   "mh12": {
     "colors": {
@@ -407,7 +432,8 @@ export const PRODUCT_PHOTOS: Record<string, { colors: Record<string, string>; ba
       "green": "img/p/mh12-green.webp",
       "red": "img/p/mh12-red.webp"
     },
-    "back": null
+    "back": null,
+    "extra": []
   },
   "mh05": {
     "colors": {
@@ -415,7 +441,8 @@ export const PRODUCT_PHOTOS: Record<string, { colors: Record<string, string>; ba
       "red": "img/p/mh05-red.webp",
       "white": "img/p/mh05-white.webp"
     },
-    "back": null
+    "back": null,
+    "extra": []
   },
   "mh11": {
     "colors": {
@@ -423,7 +450,8 @@ export const PRODUCT_PHOTOS: Record<string, { colors: Record<string, string>; ba
       "red": "img/p/mh11-red.webp",
       "white": "img/p/mh11-white.webp"
     },
-    "back": null
+    "back": null,
+    "extra": []
   },
   "mp06": {
     "colors": {
@@ -431,200 +459,295 @@ export const PRODUCT_PHOTOS: Record<string, { colors: Record<string, string>; ba
       "green": "img/p/mp06-green.webp",
       "orange": "img/p/mp06-orange.webp"
     },
-    "back": "img/p/mp06-back.webp"
+    "back": "img/p/mp06-back.webp",
+    "extra": []
   },
   "mb02": {
     "colors": {
       "blue": "img/p/mb02-blue-0.webp",
       "gray": "img/p/mb02-gray-0.webp"
     },
-    "back": null
+    "back": null,
+    "extra": []
   },
   "mb03": {
     "colors": {
       "black": "img/p/mb03-black-0.webp"
     },
-    "back": null
+    "back": null,
+    "extra": [
+      "img/p/mb03-black-0_alt1.webp",
+      "img/p/mb03-detail.webp"
+    ]
   },
   "mb01": {
     "colors": {
       "blue": "img/p/mb01-blue-0.webp"
     },
-    "back": null
+    "back": null,
+    "extra": [
+      "img/p/mb01-detail.webp"
+    ]
   },
   "mb04": {
     "colors": {
       "black": "img/p/mb04-black-0.webp"
     },
-    "back": null
+    "back": null,
+    "extra": [
+      "img/p/mb04-black-0_alt1.webp",
+      "img/p/mb04-detail.webp"
+    ]
   },
   "mb05": {
     "colors": {
       "black": "img/p/mb05-black-0.webp"
     },
-    "back": null
+    "back": null,
+    "extra": [
+      "img/p/mb05-detail.webp"
+    ]
   },
   "mb06": {
     "colors": {
       "gray": "img/p/mb06-gray-0.webp"
     },
-    "back": null
+    "back": null,
+    "extra": [
+      "img/p/mb06-detail.webp"
+    ]
   },
   "mg01": {
     "colors": {
       "bk": "img/p/mg01-bk-0.webp"
     },
-    "back": null
+    "back": null,
+    "extra": [
+      "img/p/mg01-detail.webp"
+    ]
   },
   "mg03": {
     "colors": {
       "br": "img/p/mg03-br-0.webp"
     },
-    "back": null
+    "back": null,
+    "extra": [
+      "img/p/mg03-detail.webp"
+    ]
   },
   "mg04": {
     "colors": {
       "bk": "img/p/mg04-bk-0.webp"
     },
-    "back": null
+    "back": null,
+    "extra": [
+      "img/p/mg04-detail.webp"
+    ]
   },
   "mg05": {
     "colors": {
       "br": "img/p/mg05-br-0.webp"
     },
-    "back": null
+    "back": null,
+    "extra": [
+      "img/p/mg05-detail.webp"
+    ]
   },
   "ug06": {
     "colors": {
       "lb": "img/p/ug06-lb-0.webp"
     },
-    "back": null
+    "back": null,
+    "extra": [
+      "img/p/ug06-detail.webp"
+    ]
   },
   "ug04": {
     "colors": {
       "bk": "img/p/ug04-bk-0.webp"
     },
-    "back": null
+    "back": null,
+    "extra": [
+      "img/p/ug04-detail.webp"
+    ]
   },
   "ug05": {
     "colors": {
       "gr": "img/p/ug05-gr-0.webp"
     },
-    "back": null
+    "back": null,
+    "extra": [
+      "img/p/ug05-detail.webp"
+    ]
   },
   "ug01": {
     "colors": {
       "bk": "img/p/ug01-bk-0.webp"
     },
-    "back": null
+    "back": null,
+    "extra": [
+      "img/p/ug01-detail.webp"
+    ]
   },
   "ball": {
     "colors": {
       "ball": "img/p/luma-stability-ball-pink.webp",
       "blue": "img/p/luma-stability-ball.webp"
     },
-    "back": null
+    "back": null,
+    "extra": []
   },
   "roller": {
     "colors": {
       "default": "img/p/luma-foam-roller.webp"
     },
-    "back": null
+    "back": null,
+    "extra": [
+      "img/p/roller-detail.webp"
+    ]
   },
   "yogakit": {
     "colors": {
       "default": "img/p/luma-yoga-kit-2.webp"
     },
-    "back": null
+    "back": null,
+    "extra": [
+      "img/p/yogakit-detail.webp"
+    ]
   },
   "strap": {
     "colors": {
       "default": "img/p/luma-yoga-strap-set.webp"
     },
-    "back": null
+    "back": null,
+    "extra": [
+      "img/p/strap-detail.webp"
+    ]
   },
   "brick": {
     "colors": {
       "default": "img/p/luma-yoga-brick.webp"
     },
-    "back": null
+    "back": null,
+    "extra": [
+      "img/p/brick-detail.webp"
+    ]
   },
   "shoe-knit": {
     "colors": {
       "default": "img/p/shoe-knit.webp"
     },
-    "back": null
+    "back": null,
+    "extra": [
+      "img/p/shoe-knit-detail.webp"
+    ]
   },
   "shoe-court": {
     "colors": {
       "default": "img/p/shoe-court.webp"
     },
-    "back": null
+    "back": null,
+    "extra": [
+      "img/p/shoe-court-detail.webp"
+    ]
   },
   "shoe-slipon": {
     "colors": {
       "default": "img/p/shoe-slipon.webp"
     },
-    "back": null
+    "back": null,
+    "extra": [
+      "img/p/shoe-slipon-detail.webp"
+    ]
   },
   "shoe-slides": {
     "colors": {
       "default": "img/p/shoe-slides.webp"
     },
-    "back": null
+    "back": null,
+    "extra": [
+      "img/p/shoe-slides-detail.webp"
+    ]
   },
   "shoe-boots": {
     "colors": {
       "default": "img/p/shoe-boots.webp"
     },
-    "back": null
+    "back": null,
+    "extra": [
+      "img/p/shoe-boots-detail.webp"
+    ]
   },
   "shoe-loafer": {
     "colors": {
       "default": "img/p/shoe-loafer.webp"
     },
-    "back": null
+    "back": null,
+    "extra": [
+      "img/p/shoe-loafer-detail.webp"
+    ]
   },
   "shoe-pumps": {
     "colors": {
       "default": "img/p/shoe-pumps.webp"
     },
-    "back": null
+    "back": null,
+    "extra": [
+      "img/p/shoe-pumps-detail.webp"
+    ]
   },
   "shoe-stiletto": {
     "colors": {
       "default": "img/p/shoe-stiletto.webp"
     },
-    "back": null
+    "back": null,
+    "extra": [
+      "img/p/shoe-stiletto-detail.webp"
+    ]
   },
   "shoe-sandal": {
     "colors": {
       "default": "img/p/shoe-sandal.webp"
     },
-    "back": null
+    "back": null,
+    "extra": [
+      "img/p/shoe-sandal-detail.webp"
+    ]
   },
   "shoe-flats": {
     "colors": {
       "default": "img/p/shoe-flats.webp"
     },
-    "back": null
+    "back": null,
+    "extra": [
+      "img/p/shoe-flats-detail.webp"
+    ]
   },
   "cap-dad": {
     "colors": {
       "default": "img/p/cap-dad.webp"
     },
-    "back": null
+    "back": null,
+    "extra": [
+      "img/p/cap-dad-detail.webp"
+    ]
   },
   "cap-beanie": {
     "colors": {
       "default": "img/p/cap-beanie.webp"
     },
-    "back": null
+    "back": null,
+    "extra": [
+      "img/p/cap-beanie-detail.webp"
+    ]
   },
   "cap-flat": {
     "colors": {
       "default": "img/p/cap-flat.webp"
     },
-    "back": null
+    "back": null,
+    "extra": [
+      "img/p/cap-flat-detail.webp"
+    ]
   }
 }

@@ -87,6 +87,18 @@ function freshDB(): DB {
   }
 }
 
+/** A few recently viewed items so the home page section isn't empty on a first visit. */
+const demoRecent = (): RecentItem[] => {
+  const now = Date.now()
+  return [
+    { kind: 'restaurant', id: 'r-kacchi-corner', at: now - 36e5 },
+    { kind: 'product', id: 'p-025', at: now - 2 * 36e5 },
+    { kind: 'restaurant', id: 'r-urban-burger', at: now - 5 * 36e5 },
+    { kind: 'product', id: 'p-032', at: now - 8 * 36e5 },
+    { kind: 'product', id: 'p-042', at: now - 20 * 36e5 },
+  ]
+}
+
 const emptyFav = (): Favorites => ({ restaurants: [], foods: [], products: [], brands: [] })
 const demoFav = (): Favorites => ({ restaurants: ['r-kacchi-corner', 'r-urban-burger'], foods: ['r-kacchi-corner-0', 'r-urban-burger-1'], products: ['p-016', 'p-034'], brands: ['b-urban-tiger'] })
 
@@ -236,7 +248,7 @@ export const useStore = create<State>()(
         vouchersApplied: {},
         favorites: { 'u-ayesha': demoFav() },
         recentSearches: ['kacchi', 'burger', 'sneakers'],
-        recentlyViewed: [],
+        recentlyViewed: demoRecent(),
         settings: { simSpeed: 1, lang: 'en', mindfulCheckIn: true, notifyOrders: true, notifyPromos: true },
 
         login: (userId) => {
@@ -523,17 +535,18 @@ export const useStore = create<State>()(
         resetDemo: () =>
           set({
             db: freshDB(), currentUserId: 'u-ayesha', selectedAddressId: 'a-1', guestAreaId: 'banani', cart: [], saved: [], vouchersApplied: {},
-            favorites: { 'u-ayesha': demoFav() }, recentSearches: ['kacchi', 'burger', 'sneakers'], recentlyViewed: [],
+            favorites: { 'u-ayesha': demoFav() }, recentSearches: ['kacchi', 'burger', 'sneakers'], recentlyViewed: demoRecent(),
           }),
       }
     },
     {
       name: 'dopamine-kitchen-v1',
-      version: 2,
-      // v2 bundled the catalog photos locally and refreshed the shop catalog: reseed demo data, keep settings/session.
+      version: 3,
+      // v2 bundled the catalog photos locally and refreshed the shop catalog; v3 added extra gallery views.
+      // Both reseed the demo data and keep settings/session.
       migrate: (persisted, version) => {
         const p = persisted as Partial<State>
-        if (version < 2) return { ...p, db: freshDB(), cart: [], saved: [], vouchersApplied: {}, recentlyViewed: [] } as unknown as State
+        if (version < 3) return { ...p, db: freshDB(), cart: [], saved: [], vouchersApplied: {}, recentlyViewed: demoRecent() } as unknown as State
         return p as State
       },
       storage: batchedStorage<State>(),

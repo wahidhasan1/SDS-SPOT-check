@@ -124,7 +124,7 @@ export const SEED_PRODUCTS: Product[] = RAW.map((p, n) => {
   const entries = Object.entries(ph.colors)
   const colors = entries.map(([key]) => (key === 'default' ? p.color ?? { name: 'Default', hex: '#9CA3AF' } : COLOR[key] ?? { name: key, hex: '#9CA3AF' }))
   const colorImages = Object.fromEntries(entries.map(([, src], i) => [colors[i].name, src]))
-  const images = [...entries.map(([, src]) => src), ...(ph.back ? [ph.back] : [])]
+  const images = [...entries.map(([, src]) => src), ...(ph.back ? [ph.back] : []), ...ph.extra]
   return {
     id: `p-${String(n + 1).padStart(3, '0')}`,
     brandId: p.brand,
