@@ -5,7 +5,7 @@ import { useStore } from '../store/store'
 import { areaById } from '../data/areas'
 import { SHOP_CATEGORIES } from '../data/products'
 import { cx } from '../lib/format'
-import { useSimLoad, useTitle } from '../lib/hooks'
+import { useTitle } from '../lib/hooks'
 import { FavButton, ProductCard } from '../components/cards'
 import { Badge, EmptyState, GridSkeleton, Img, Rating, StoreLogo } from '../components/ui'
 import { applyShopFilters, EMPTY_SHOP } from './Shop'
@@ -16,7 +16,7 @@ export default function StorePage() {
   const products = useStore((s) => s.db.products)
   const [cat, setCat] = useState('')
   const [sort, setSort] = useState('popular')
-  const loading = useSimLoad([id])
+  const loading = false
   useTitle(b?.name ?? 'Store')
   const mine = useMemo(() => products.filter((p) => p.brandId === id), [products, id])
   const list = useMemo(() => applyShopFilters(mine.filter((p) => !cat || p.category === cat), EMPTY_SHOP, sort), [mine, cat, sort])

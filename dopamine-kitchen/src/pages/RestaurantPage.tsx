@@ -8,7 +8,7 @@ import { areaById } from '../data/areas'
 import { foodDelivery } from '../lib/pricing'
 import { reviewsFor, ratingBreakdown } from '../lib/reviews'
 import { cx, taka, timeAgo } from '../lib/format'
-import { useSimLoad, useTitle } from '../lib/hooks'
+import { useTitle } from '../lib/hooks'
 import { FavButton } from '../components/cards'
 import { Badge, EmptyState, Img, Modal, Price, QtyStepper, Rating, Skeleton, StoreLogo, Stars } from '../components/ui'
 
@@ -21,7 +21,7 @@ export default function RestaurantPage() {
   const cart = useStore((s) => s.cart)
   const addRecent = useStore((s) => s.addRecentlyViewed)
   const { areaId } = useCurrentArea()
-  const loading = useSimLoad([id])
+  const loading = false
   const [q, setQ] = useState('')
   const [reviewsOpen, setReviewsOpen] = useState(false)
   const [infoOpen, setInfoOpen] = useState(false)

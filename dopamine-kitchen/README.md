@@ -31,17 +31,17 @@ The default signed-in account is **Ayesha Rahman** (admin). The **Demo Control P
 
 * Food orders target **~30 minutes**; shopping targets **within 1 day** (express: 6 hours).
 * Stages: Order Confirmed → Preparing/Packing → Picked Up → On the Way → Delivered → *"Simulation Complete — No real product was delivered."*
-* Progress continues while the tab is closed. On the tracking screen (or in Settings) you can switch between **Real-time, 10× and 60×** speed, or **skip to the next stage**. Admins can set any status or ETA.
+* Progress is derived from the clock (nothing is written every second) and continues while the tab is closed. On the tracking screen (or in Settings) you can switch between **Real-time, 10× and 60×** speed, or **skip to the next stage**. Admins can set any status or ETA.
 * Optional craving check-ins before ordering and after "delivery" show whether the urge eased.
 
 ## Architecture
 
 * **React 19 + TypeScript + Vite**, **Tailwind CSS v4** design tokens (`src/index.css`), **Zustand** store persisted to `localStorage`, **lucide-react** icons.
-* `src/data/` holds the typed data model (`types.ts`) and seed data: 14 restaurants, 158 dishes, 10 brands, 47 products, 9 vouchers, 5 users, 8 addresses and 18 orders covering every status. The modules are plain JSON-shaped arrays, so they can be swapped for authorised partner data or an API later.
+* `src/data/` holds the typed data model (`types.ts`) and seed data: 14 restaurants, 158 dishes, 10 brands, 61 products, 9 vouchers, 5 users, 8 addresses and 18 orders covering every status. The modules are plain JSON-shaped arrays, so they can be swapped for authorised partner data or an API later.
 * `src/store/store.ts` holds all app state and actions (cart, vouchers, orders, the simulation ticker, favourites, notifications and admin CRUD).
 * `src/lib/` contains pricing (delivery fee/ETA from area distance, voucher rules), the order simulation, search, deterministic review generation and formatting (BDT, +880 phone numbers).
 * `src/i18n/` has English strings plus a Bangla (beta) dictionary; missing keys fall back to English.
-* Images are illustrative Unsplash photos. If a photo can't load, `<Img>` renders a generated illustration, so the app stays usable offline or on restricted networks.
+* **Photos are bundled with the app** (`public/img`, about 270 compressed WebP files, ~6.5 MB, lazy-loaded), so they load quickly and work on any host, including ones that block third-party images. Sources and licences are in [`public/img/CREDITS.md`](public/img/CREDITS.md). The food photos come from a community placeholder dataset whose original sources are unclear, so replace them with licensed photography before any public launch. If a photo is missing, `<Img>` renders a generated illustration.
 
 ## Walkthrough scripts
 

@@ -7,7 +7,7 @@ import { areaById } from '../data/areas'
 import { cx, discounted, taka, timeAgo } from '../lib/format'
 import { reviewsFor, ratingBreakdown } from '../lib/reviews'
 import { voucherHeadline } from '../lib/pricing'
-import { useSimLoad, useTitle } from '../lib/hooks'
+import { useTitle } from '../lib/hooks'
 import { FavButton, ProductCard } from '../components/cards'
 import { Badge, EmptyState, Img, Modal, QtyStepper, Rating, SectionHeader, Skeleton, StoreLogo, Stars } from '../components/ui'
 
@@ -21,7 +21,7 @@ export default function ProductPage() {
   const addToCart = useStore((s) => s.addToCart)
   const addRecent = useStore((s) => s.addRecentlyViewed)
   const { areaId } = useCurrentArea()
-  const loading = useSimLoad([id], 450)
+  const loading = false
   const [img, setImg] = useState(0)
   const [size, setSize] = useState('')
   const [color, setColor] = useState('')
@@ -59,7 +59,7 @@ export default function ProductPage() {
       toast('warning', 'Please select a size')
       return
     }
-    addToCart({ kind: 'shop', refId: p.id, storeId: p.brandId, name: p.name, image: p.images[0], unitPrice: price, qty, size: p.sizes.length > 1 ? size : undefined, color })
+    addToCart({ kind: 'shop', refId: p.id, storeId: p.brandId, name: p.name, image: p.colorImages?.[color] ?? p.images[0], unitPrice: price, qty, size: p.sizes.length > 1 ? size : undefined, color })
     if (buyNow) nav('/checkout?kind=shop')
     else toast('success', 'Added to cart', `${qty}× ${p.name}${p.sizes.length > 1 ? ` · ${size}` : ''} · ${color}`, { label: 'View cart', onClick: () => nav('/cart?tab=shop') })
   }
@@ -143,7 +143,7 @@ export default function ProductPage() {
             <p className="text-sm font-bold">Colour: <span className="font-normal text-ink-500">{color}</span></p>
             <div className="mt-2 flex flex-wrap gap-2.5">
               {p.colors.map((c) => (
-                <button key={c.name} onClick={() => setColor(c.name)} title={c.name} aria-label={c.name} aria-pressed={color === c.name} className={cx('grid size-10 place-items-center rounded-full ring-2 ring-offset-2 transition', color === c.name ? 'ring-brand-600' : 'ring-transparent hover:ring-ink-200')}>
+                <button key={c.name} onClick={() => { setColor(c.name); const src = p.colorImages?.[c.name]; const i = src ? p.images.indexOf(src) : -1; if (i >= 0) setImg(i) }} title={c.name} aria-label={c.name} aria-pressed={color === c.name} className={cx('grid size-10 place-items-center rounded-full ring-2 ring-offset-2 transition', color === c.name ? 'ring-brand-600' : 'ring-transparent hover:ring-ink-200')}>
                   <span className="size-full rounded-full border border-black/10" style={{ background: c.hex }} />
                 </button>
               ))}

@@ -6,7 +6,7 @@ import { FOOD_CATEGORIES } from '../data/restaurants'
 import { pick } from '../data/images'
 import { areaById } from '../data/areas'
 import { foodDelivery } from '../lib/pricing'
-import { useSimLoad, useTitle } from '../lib/hooks'
+import { useTitle } from '../lib/hooks'
 import { cx } from '../lib/format'
 import { RestaurantCard } from '../components/cards'
 import { EmptyState, FilterGroup, GridSkeleton, HScroll, Img, Modal } from '../components/ui'
@@ -41,7 +41,7 @@ export default function Food() {
   const [f, setF] = useState<Filters>(EMPTY)
   const [draft, setDraft] = useState<Filters>(EMPTY)
   const [sheet, setSheet] = useState<'filters' | 'sort' | null>(null)
-  const loading = useSimLoad([cat])
+  const loading = false
   const catLabel = FOOD_CATEGORIES.find((c) => c.id === cat)?.label
   useTitle(catLabel ? `${catLabel} delivery` : 'Restaurants')
 

@@ -80,7 +80,7 @@ export const SEED_RESTAURANTS: Restaurant[] = [
   {
     id: 'r-brew-bloom', name: 'Brew & Bloom Café', tagline: 'Specialty coffee, bakes & brunch plates',
     cuisines: ['Café', 'Coffee', 'Bakery'], categories: ['coffee', 'drinks', 'desserts'], areaId: 'gulshan-1',
-    address: 'Road 32, Gulshan 1', cover: pick('coffee', 0), logoBg: '#3F2A1E', logoEmoji: '☕',
+    address: 'Road 32, Gulshan 1', cover: pick('desserts', 3), logoBg: '#3F2A1E', logoEmoji: '☕',
     rating: 4.6, reviewCount: 980, priceLevel: 3, prepMinutes: 10, baseDeliveryFee: 49, minOrder: 300, isOpen: true,
     offer: { label: '৳100 off orders over ৳600', voucherCode: 'CAFE100' }, tags: ['New'],
     sections: ['Popular', 'Coffee', 'Cold Drinks', 'Bakery', 'Brunch'], createdAt: T0 + 1.2e9,
@@ -96,21 +96,21 @@ export const SEED_RESTAURANTS: Restaurant[] = [
   {
     id: 'r-tokyo-tiffin', name: 'Tokyo Tiffin', tagline: 'Ramen bowls, katsu & rice boxes',
     cuisines: ['Japanese', 'Ramen'], categories: ['japanese', 'chicken'], areaId: 'banani',
-    address: 'Road 17, Banani', cover: pick('ramen', 0), logoBg: '#1E3A8A', logoEmoji: '🍜',
+    address: 'Road 17, Banani', cover: pick('japanese', 0), logoBg: '#1E3A8A', logoEmoji: '🍜',
     rating: 4.4, reviewCount: 760, priceLevel: 3, prepMinutes: 20, baseDeliveryFee: 55, minOrder: 450, isOpen: true,
     tags: ['New'], sections: ['Popular', 'Ramen', 'Rice Boxes', 'Small Plates'], createdAt: T0 + 1.5e9,
   },
   {
     id: 'r-green-bowl', name: 'Green Bowl', tagline: 'Salads, grain bowls & cold-pressed juice',
     cuisines: ['Healthy', 'Salads'], categories: ['healthy', 'drinks'], areaId: 'dhanmondi',
-    address: 'Road 27, Dhanmondi', cover: pick('healthy', 1), logoBg: '#15803D', logoEmoji: '🥗',
+    address: 'Road 27, Dhanmondi', cover: pick('healthy', 0), logoBg: '#15803D', logoEmoji: '🥗',
     rating: 4.5, reviewCount: 640, priceLevel: 2, prepMinutes: 12, baseDeliveryFee: 35, minOrder: 300, isOpen: true,
     tags: ['Healthy'], sections: ['Popular', 'Bowls', 'Salads', 'Juices'], createdAt: T0,
   },
   {
     id: 'r-shawarma-station', name: 'Shawarma Station', tagline: 'Arabian shawarma, platters & mandi',
     cuisines: ['Arabian', 'Shawarma'], categories: ['arabian', 'chicken', 'grill'], areaId: 'uttara',
-    address: 'Sector 4, Uttara', cover: pick('snacks', 5), logoBg: '#0F766E', logoEmoji: '🌯',
+    address: 'Sector 4, Uttara', cover: pick('grill', 1), logoBg: '#0F766E', logoEmoji: '🌯',
     rating: 4.3, reviewCount: 1310, priceLevel: 1, prepMinutes: 12, baseDeliveryFee: 30, minOrder: 200, isOpen: true,
     offer: { label: '10% off everything' }, tags: ['Budget friendly'],
     sections: ['Popular', 'Shawarma', 'Platters', 'Sides & Drinks'], createdAt: T0,
@@ -194,7 +194,7 @@ export const SEED_MENU: MenuItem[] = [
       ['Chicken Fry Rice', 'Wok-tossed rice with egg & chicken', 260, 'chinese'],
     ]],
     ['Drinks', 'drinks', [
-      ['Borhani', 'Spiced yoghurt drink with mint', 70, 'drinks', 'v'],
+      ['Borhani', 'Spiced yoghurt drink with mint', 70, 'yogurt', 'v'],
       ['Fresh Lime Soda', 'Sweet, salted or mixed', 90, 'drinks', 'v'],
     ]],
   ]),
@@ -208,16 +208,16 @@ export const SEED_MENU: MenuItem[] = [
     ['Biriyani & Polao', 'biriyani', [
       ['Chicken Biriyani', 'Spiced chicken leg on fragrant rice', 320, 'biriyani', 'o:portion,biriyaniAdd'],
       ['Beef Tehari', 'Mustard-oil tehari with diced beef & green chilli', 260, 'biriyani', 'p s'],
-      ['Morog Polao', 'Half chicken roast on ghee-scented polao', 380, 'biriyani'],
+      ['Morog Polao', 'Half chicken roast on ghee-scented polao', 380, 'polao'],
     ]],
     ['Add-ons', 'bangladeshi', [
       ['Jali Kabab', 'Pan-fried minced meat patty with egg lace', 90, 'grill'],
-      ['Chicken Roast (1 pc)', 'Rich, sweet-savoury wedding-style roast', 180, 'curry'],
-      ['Firni', 'Chilled rice pudding with cardamom', 70, 'desserts', 'v'],
+      ['Chicken Roast (1 pc)', 'Rich, sweet-savoury wedding-style roast', 180, 'polao'],
+      ['Firni', 'Chilled rice pudding with cardamom', 70, 'yogurt', 'v'],
     ]],
     ['Drinks', 'drinks', [
-      ['Borhani (500ml)', 'House borhani with mint & black salt', 110, 'drinks', 'p v'],
-      ['Mango Lassi', 'Ripe mango & yoghurt', 140, 'drinks', 'v'],
+      ['Borhani (500ml)', 'House borhani with mint & black salt', 110, 'yogurt', 'p v'],
+      ['Mango Lassi', 'Ripe mango & yoghurt', 140, 'yogurt', 'v'],
     ]],
   ]),
   ...menu('r-urban-burger', [
@@ -258,11 +258,11 @@ export const SEED_MENU: MenuItem[] = [
     ]],
     ['Rice & Breads', 'indian', [
       ['Hyderabadi Chicken Biriyani', 'Dum biriyani with raita', 390, 'biriyani', 'p s'],
-      ['Jeera Rice', 'Basmati tempered with cumin', 160, 'biriyani', 'v'],
+      ['Jeera Rice', 'Basmati tempered with cumin', 160, 'polao', 'v'],
       ['Butter Naan', 'Soft clay-oven naan', 55, 'curry', 'v'],
     ]],
     ['Desserts', 'desserts', [
-      ['Gulab Jamun (2 pcs)', 'Warm milk dumplings in rose syrup', 120, 'desserts', 'v'],
+      ['Gulab Jamun (2 pcs)', 'Warm milk dumplings in rose syrup', 120, 'sweets', 'v'],
       ['Kulfi Falooda', 'Pistachio kulfi, vermicelli, rose', 220, 'desserts', 'v'],
     ]],
   ]),
@@ -354,11 +354,11 @@ export const SEED_MENU: MenuItem[] = [
   ]),
   ...menu('r-mishti-mahal', [
     ['Traditional Sweets', 'desserts', [
-      ['Roshogolla (1 kg)', 'Spongy chhana balls in light syrup', 420, 'desserts', 'p v'],
-      ['Mishti Doi (500g clay pot)', 'Caramelised sweet yoghurt', 180, 'desserts', 'p v'],
-      ['Kalojam (1 kg)', 'Dark fried milk sweets', 450, 'desserts', 'v'],
-      ['Chomchom (1 kg)', 'Tangail-style chomchom with mawa', 480, 'desserts', 'v'],
-      ['Sandesh (12 pcs)', 'Nolen gur sandesh', 360, 'desserts', 'v'],
+      ['Roshogolla (1 kg)', 'Spongy chhana balls in light syrup', 420, 'sweets', 'p v'],
+      ['Mishti Doi (500g clay pot)', 'Caramelised sweet yoghurt', 180, 'yogurt', 'p v'],
+      ['Kalojam (1 kg)', 'Dark fried milk sweets', 450, 'sweets', 'v'],
+      ['Chomchom (1 kg)', 'Tangail-style chomchom with mawa', 480, 'sweets', 'v'],
+      ['Sandesh (12 pcs)', 'Nolen gur sandesh', 360, 'sweets', 'v'],
     ]],
     ['Cakes & Pastries', 'desserts', [
       ['Chocolate Fudge Cake (1 lb)', 'Rich chocolate layers', 750, 'desserts', 'p'],
@@ -395,7 +395,7 @@ export const SEED_MENU: MenuItem[] = [
   ...menu('r-old-dhaka', [
     ['Polao & Tehari', 'bangladeshi', [
       ['Haji-style Beef Biriyani', 'Puran Dhaka style biriyani with mustard oil', 280, 'biriyani', 'p s'],
-      ['Morog Polao (Full)', 'Whole-chicken polao with egg', 360, 'biriyani', 'p'],
+      ['Morog Polao (Full)', 'Whole-chicken polao with egg', 360, 'polao', 'p'],
       ['Mutton Kacchi', 'Old Dhaka kacchi with aloo', 420, 'biriyani', 'o:portion,biriyaniAdd'],
       ['Beef Tehari', 'Classic tehari with green chilli', 220, 'biriyani'],
     ]],
@@ -409,7 +409,7 @@ export const SEED_MENU: MenuItem[] = [
       ['Nan Ruti', 'Tandoori bread', 40, 'curry', 'v'],
     ]],
     ['Drinks', 'drinks', [
-      ['Lassi (Old Dhaka style)', 'Thick lassi with malai', 120, 'drinks', 'p v'],
+      ['Lassi (Old Dhaka style)', 'Thick lassi with malai', 120, 'yogurt', 'p v'],
       ['Rooh Afza Sherbet', 'Rose sherbet with basil seeds', 80, 'drinks', 'v'],
     ]],
   ]),
@@ -421,8 +421,8 @@ export const SEED_MENU: MenuItem[] = [
     ]],
     ['Rice Boxes', 'japanese', [
       ['Chicken Katsu Curry', 'Panko chicken, Japanese curry, rice', 690, 'curry', 'p'],
-      ['Teriyaki Beef Bowl', 'Glazed beef, rice, pickles', 720, 'chinese'],
-      ['Salmon Don', 'Torched salmon on rice (demo item)', 890, 'healthy'],
+      ['Teriyaki Beef Bowl', 'Glazed beef, rice, pickles', 720, 'japanese'],
+      ['Salmon Don', 'Torched salmon on rice (demo item)', 890, 'japanese'],
     ]],
     ['Small Plates', 'japanese', [
       ['Gyoza (6 pcs)', 'Pan-fried chicken dumplings', 380, 'chinese', 'p'],
@@ -462,7 +462,7 @@ export const SEED_MENU: MenuItem[] = [
     ['Sides & Drinks', 'drinks', [
       ['Garlic Fries', 'Fries with toum', 150, 'fries', 'v'],
       ['Mint Lemonade', 'Blended mint & lemon', 140, 'drinks', 'p v'],
-      ['Laban Ayran', 'Salted yoghurt drink', 90, 'drinks', 'v'],
+      ['Laban Ayran', 'Salted yoghurt drink', 90, 'yogurt', 'v'],
     ]],
   ]),
 ]
@@ -471,18 +471,18 @@ export const SEED_MENU: MenuItem[] = [
 export const FOOD_CATEGORIES: { id: FoodCategory; label: string; emoji: string; pool: ImagePool; idx: number }[] = [
   { id: 'burger', label: 'Burger', emoji: '🍔', pool: 'burger', idx: 0 },
   { id: 'pizza', label: 'Pizza', emoji: '🍕', pool: 'pizza', idx: 0 },
-  { id: 'kacchi', label: 'Kacchi', emoji: '🍛', pool: 'biriyani', idx: 0 },
+  { id: 'kacchi', label: 'Kacchi', emoji: '🍛', pool: 'biriyani', idx: 2 },
   { id: 'biriyani', label: 'Biriyani', emoji: '🍚', pool: 'biriyani', idx: 1 },
   { id: 'chinese', label: 'Chinese', emoji: '🥡', pool: 'chinese', idx: 0 },
   { id: 'chicken', label: 'Chicken', emoji: '🍗', pool: 'chicken', idx: 0 },
   { id: 'desserts', label: 'Desserts', emoji: '🍰', pool: 'desserts', idx: 0 },
   { id: 'snacks', label: 'Snacks', emoji: '🥟', pool: 'snacks', idx: 0 },
-  { id: 'drinks', label: 'Drinks', emoji: '🧋', pool: 'drinks', idx: 4 },
+  { id: 'drinks', label: 'Drinks', emoji: '🧋', pool: 'drinks', idx: 0 },
   { id: 'coffee', label: 'Coffee', emoji: '☕', pool: 'coffee', idx: 0 },
   { id: 'bangladeshi', label: 'Bangladeshi', emoji: '🍲', pool: 'curry', idx: 1 },
-  { id: 'grill', label: 'Grill', emoji: '🍢', pool: 'grill', idx: 0 },
+  { id: 'grill', label: 'Grill', emoji: '🍢', pool: 'grill', idx: 1 },
   { id: 'indian', label: 'Indian', emoji: '🌶️', pool: 'curry', idx: 0 },
-  { id: 'japanese', label: 'Japanese', emoji: '🍜', pool: 'ramen', idx: 0 },
+  { id: 'japanese', label: 'Japanese', emoji: '🍜', pool: 'japanese', idx: 0 },
   { id: 'healthy', label: 'Healthy', emoji: '🥗', pool: 'healthy', idx: 0 },
-  { id: 'arabian', label: 'Arabian', emoji: '🌯', pool: 'snacks', idx: 5 },
+  { id: 'arabian', label: 'Arabian', emoji: '🌯', pool: 'grill', idx: 2 },
 ]

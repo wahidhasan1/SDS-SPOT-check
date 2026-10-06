@@ -263,7 +263,7 @@ function RestaurantsAdmin() {
   )
 }
 
-const POOL_OPTS: ImagePool[] = ['burger', 'pizza', 'biriyani', 'curry', 'grill', 'chinese', 'chicken', 'snacks', 'ramen', 'desserts', 'drinks', 'coffee', 'healthy', 'pasta', 'restaurant']
+const POOL_OPTS: ImagePool[] = ['burger', 'pizza', 'biriyani', 'polao', 'curry', 'grill', 'chinese', 'chicken', 'snacks', 'ramen', 'desserts', 'sweets', 'drinks', 'coffee', 'healthy', 'pasta']
 
 function ImagePicker({ value, onChange, pools = POOL_OPTS }: { value: string; onChange: (v: string) => void; pools?: ImagePool[] }) {
   const [pool, setPool] = useState<ImagePool>(pools[0])
@@ -419,13 +419,13 @@ function ProductsAdmin() {
   )
 }
 
-const SHOP_POOLS: ImagePool[] = ['tshirt', 'hoodie', 'jacket', 'jeans', 'shirt', 'dress', 'sneakers', 'formalShoes', 'heels', 'bags', 'watches', 'eyewear', 'jewelry', 'caps', 'lifestyle']
+const SHOP_POOLS: ImagePool[] = ['menswear', 'womenswear', 'streetwear', 'shoes', 'bags', 'watches', 'lifestyle']
 
 function ProductForm({ initial, onClose }: { initial: Product | null; onClose: () => void }) {
   const brands = useStore((s) => s.db.brands)
   const upsert = useStore((s) => s.upsertProduct)
   const [f, setF] = useState<Product>(() => initial ?? {
-    id: uid('p'), brandId: brands[0]?.id ?? '', name: '', category: 'men', subcategory: '', images: [IMG.tshirt[0]], price: 1500, discountPct: 0, description: '', highlights: [],
+    id: uid('p'), brandId: brands[0]?.id ?? '', name: '', category: 'men', subcategory: '', images: [IMG.menswear[0]], price: 1500, discountPct: 0, description: '', highlights: [],
     sizes: ['S', 'M', 'L', 'XL'], colors: [{ name: 'Black', hex: '#111827' }], rating: 4.5, reviewCount: 0, stock: 25, deliveryHours: 24, expressAvailable: true, tags: ['New'], createdAt: Date.now(),
   })
   const [sizes, setSizes] = useState(f.sizes.join(', '))

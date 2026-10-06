@@ -31,8 +31,21 @@ const LABELS: Record<CartKind, Record<OrderStage, { title: string; detail: strin
 export const stageLabel = (kind: CartKind, s: OrderStatus) =>
   s === 'cancelled' ? { title: 'Cancelled', detail: 'This test order was cancelled.' } : LABELS[kind][s]
 
-export function progressOf(o: Order) {
-  return Math.min(1, o.simElapsedMs / (o.etaMinutes * 60000))
+// Simulation speed currently in effect (kept in sync with settings by the store).
+let currentSpeed = 1
+export const setSimSpeed = (s: number) => {
+  currentSpeed = s
+}
+
+/** Simulated ms elapsed right now: the last committed value plus wall-clock time since, scaled by speed.
+ *  Deriving it (instead of writing it every second) keeps the store and localStorage quiet. */
+export function liveElapsed(o: Order, now = Date.now()) {
+  if (o.status === 'delivered' || o.status === 'cancelled') return o.simElapsedMs
+  return o.simElapsedMs + Math.max(0, now - o.lastTickAt) * currentSpeed
+}
+
+export function progressOf(o: Order, now = Date.now()) {
+  return Math.min(1, liveElapsed(o, now) / (o.etaMinutes * 60000))
 }
 
 export function stageForProgress(p: number): OrderStage {
@@ -44,7 +57,7 @@ export function stageForProgress(p: number): OrderStage {
 export const isActive = (o: Order) => o.status !== 'delivered' && o.status !== 'cancelled'
 
 /** Simulated minutes remaining (in simulation time). */
-export const minutesLeft = (o: Order) => Math.max(0, o.etaMinutes - o.simElapsedMs / 60000)
+export const minutesLeft = (o: Order) => Math.max(0, o.etaMinutes - liveElapsed(o) / 60000)
 
 export const statusTone = (s: OrderStatus) =>
   s === 'delivered' ? 'success' : s === 'cancelled' ? 'danger' : s === 'confirmed' ? 'info' : 'brand'

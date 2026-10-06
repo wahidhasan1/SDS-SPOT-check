@@ -130,6 +130,8 @@ export interface Product {
   category: ShopCategory
   subcategory: string
   images: string[]
+  /** Photo for each colour option (by colour name), when the catalog has one. */
+  colorImages?: Record<string, string>
   price: number
   discountPct: number
   description: string

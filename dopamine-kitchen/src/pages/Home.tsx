@@ -6,7 +6,7 @@ import { FOOD_CATEGORIES } from '../data/restaurants'
 import { SHOP_CATEGORIES } from '../data/products'
 import { IMG, pick } from '../data/images'
 import { distanceKm } from '../data/areas'
-import { useSimLoad, useTitle } from '../lib/hooks'
+import { useTitle } from '../lib/hooks'
 import { taka } from '../lib/format'
 import { useT } from '../i18n'
 import { SearchBox } from '../components/SearchBox'
@@ -26,7 +26,7 @@ export default function Home() {
   useTitle('')
   const t = useT()
   const me = useMe()
-  const loading = useSimLoad([])
+  const loading = false
   const { areaId } = useCurrentArea()
   const db = useStore((s) => s.db)
   const recently = useStore((s) => s.recentlyViewed)
@@ -59,10 +59,10 @@ export default function Home() {
 
   const verticals = [
     { to: '/food', label: 'Food', sub: `${db.restaurants.length} restaurants`, icon: UtensilsCrossed, img: IMG.biriyani[0], art: 'kacchi', cls: 'from-coral-500/90' },
-    { to: '/shop?cat=men', label: 'Fashion', sub: "Men's & women's", icon: Shirt, img: IMG.dress[1], art: 'women', cls: 'from-brand-700/90' },
-    { to: '/shop?cat=shoes', label: 'Shoes', sub: 'Sneakers, formal, heels', icon: Footprints, img: IMG.sneakers[0], art: 'shoes', cls: 'from-sky-700/90' },
-    { to: '/shop', label: 'Shopping', sub: 'Bags, gadgets, lifestyle', icon: ShoppingBag, img: IMG.lifestyle[0], art: 'lifestyle', cls: 'from-emerald-700/90' },
-    { to: '/offers', label: 'Offers', sub: `${vouchers.length} live vouchers`, icon: TicketPercent, img: '', art: 'default', cls: 'from-amber-600/90' },
+    { to: '/shop?cat=men', label: 'Fashion', sub: "Men's & women's", icon: Shirt, img: IMG.womenswear[0], art: 'women', cls: 'from-brand-700/90', pos: 'object-[50%_18%]' },
+    { to: '/shop?cat=shoes', label: 'Shoes', sub: 'Sneakers, formal, heels', icon: Footprints, img: IMG.shoes[0], art: 'shoes', cls: 'from-sky-700/90' },
+    { to: '/shop', label: 'Shopping', sub: 'Bags, gadgets, lifestyle', icon: ShoppingBag, img: IMG.bags[0], art: 'bags', cls: 'from-emerald-700/90' },
+    { to: '/offers', label: 'Offers', sub: `${vouchers.length} live vouchers`, icon: TicketPercent, img: IMG.desserts[0], art: 'default', cls: 'from-amber-600/90' },
   ]
 
   return (
@@ -88,7 +88,7 @@ export default function Home() {
         <section className="-mt-16 relative grid grid-cols-2 sm:grid-cols-5 gap-3">
           {verticals.map((v, i) => (
             <Link key={v.label} to={v.to} className={`group relative overflow-hidden rounded-2xl shadow-lift h-32 sm:h-40 ${i === 0 ? 'col-span-2 sm:col-span-1' : ''}`}>
-              <Img src={v.img} alt={v.label} art={v.art} className="absolute inset-0 size-full" imgClassName="group-hover:scale-105 transition-transform duration-500" />
+              <Img src={v.img} alt={v.label} art={v.art} className="absolute inset-0 size-full" imgClassName={`group-hover:scale-105 transition-transform duration-500 ${'pos' in v ? v.pos : ''}`} />
               <div className={`absolute inset-0 bg-gradient-to-t ${v.cls} via-black/10 to-transparent`} />
               <div className="absolute inset-x-0 bottom-0 p-3.5 text-white">
                 <v.icon className="size-5 mb-1" />
@@ -140,7 +140,7 @@ export default function Home() {
           <div className="grid grid-cols-2 sm:grid-cols-4 lg:grid-cols-7 gap-3">
             {SHOP_CATEGORIES.map((c) => (
               <Link key={c.id} to={`/shop?cat=${c.id}`} className="group relative overflow-hidden rounded-2xl h-28 sm:h-36 shadow-card">
-                <Img src={pick(c.pool, c.idx)} alt={c.label} art={c.id} className="absolute inset-0 size-full" imgClassName="group-hover:scale-105 transition-transform duration-500" />
+                <Img src={c.image} alt={c.label} art={c.id} className="absolute inset-0 size-full" imgClassName="group-hover:scale-105 transition-transform duration-500" />
                 <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-black/10 to-transparent" />
                 <span className="absolute bottom-2.5 left-3 right-3 font-bold text-white text-sm leading-tight">{c.label}</span>
               </Link>

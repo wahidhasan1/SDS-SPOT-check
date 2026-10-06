@@ -6,7 +6,7 @@ import { useStore } from '../store/store'
 import { SHOP_CATEGORIES } from '../data/products'
 import { IMG } from '../data/images'
 import { cx, discounted, taka } from '../lib/format'
-import { useSimLoad, useTitle } from '../lib/hooks'
+import { useTitle } from '../lib/hooks'
 import { ProductCard } from '../components/cards'
 import { EmptyState, FilterGroup, GridSkeleton, Img, Modal } from '../components/ui'
 
@@ -41,7 +41,7 @@ export default function Shop() {
   const brands = useStore((s) => s.db.brands)
   const [f, setF] = useState<ShopFilters>(() => ({ ...EMPTY_SHOP, brands: params.get('brand') ? [params.get('brand')!] : [] }))
   const [sheet, setSheet] = useState<'filters' | 'sort' | null>(null)
-  const loading = useSimLoad([cat])
+  const loading = false
   const catLabel = SHOP_CATEGORIES.find((c) => c.id === cat)?.label
   useTitle(catLabel ?? 'Shop')
 
@@ -59,7 +59,7 @@ export default function Shop() {
   return (
     <div className="animate-fade-in">
       <section className="relative overflow-hidden">
-        <Img src={IMG.fashionHero[0]} alt="Shop" art="streetwear" className="absolute inset-0 size-full" />
+        <Img src={IMG.fashionHero[0]} alt="Shop" art="streetwear" className="absolute inset-0 size-full" imgClassName="object-[70%_20%]" />
         <div className="absolute inset-0 bg-gradient-to-r from-ink-900/90 via-brand-900/70 to-transparent" />
         <div className="relative mx-auto max-w-7xl px-4 py-10 sm:py-14 text-white">
           <p className="badge bg-white/15 text-white backdrop-blur">Next-day (simulated) delivery across Dhaka</p>

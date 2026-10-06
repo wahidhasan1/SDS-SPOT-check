@@ -11,6 +11,7 @@ import { areaById } from '../data/areas'
 import { cx } from '../lib/format'
 import { isActive, minutesLeft, stageLabel } from '../lib/sim'
 import { useT } from '../i18n'
+import { useNow } from '../lib/hooks'
 import { Logo, LogoMark } from './Logo'
 import { AddressFormModal, LocationModal } from './location'
 import { SearchBox } from './SearchBox'
@@ -143,6 +144,7 @@ function BottomNav() {
 }
 
 function ActiveOrderPill({ hasBottomNav }: { hasBottomNav: boolean }) {
+  useNow(10000)
   const { pathname } = useLocation()
   const uid = useStore((s) => s.currentUserId)
   const orders = useStore((s) => s.db.orders)

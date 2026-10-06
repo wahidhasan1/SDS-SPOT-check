@@ -6,7 +6,7 @@ import { FOOD_CATEGORIES } from '../data/restaurants'
 import { SHOP_CATEGORIES } from '../data/products'
 import { POPULAR_SEARCHES, searchAll } from '../lib/search'
 import { cx, discounted } from '../lib/format'
-import { useSimLoad, useTitle } from '../lib/hooks'
+import { useTitle } from '../lib/hooks'
 import { SearchBox } from '../components/SearchBox'
 import { BrandChip, ProductCard, RestaurantCard } from '../components/cards'
 import { EmptyState, GridSkeleton, Img, Price, Tabs } from '../components/ui'
@@ -25,7 +25,7 @@ export default function SearchPage() {
   const [topRated, setTopRated] = useState(false)
   const [openOnly, setOpenOnly] = useState(false)
   const [onSale, setOnSale] = useState(false)
-  const loading = useSimLoad([q], 400)
+  const loading = false
   useTitle(q ? `“${q}”` : 'Search')
 
   const hits = useMemo(() => searchAll(q, db), [q, db])

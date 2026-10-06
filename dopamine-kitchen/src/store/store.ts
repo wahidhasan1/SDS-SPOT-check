@@ -1,5 +1,5 @@
 import { create } from 'zustand'
-import { persist, createJSONStorage } from 'zustand/middleware'
+import { persist, type PersistStorage, type StorageValue } from 'zustand/middleware'
 import type {
   Address, AppNotification, Brand, CartKind, CartLine, DeliveryMethod, Favorites, MenuItem, Order, OrderItem,
   OrderStatus, PaymentMethodId, Product, RecentItem, Restaurant, SavedPayment, Settings, User, Voucher,
@@ -9,9 +9,52 @@ import { SEED_MENU, SEED_RESTAURANTS } from '../data/restaurants'
 import { SEED_ADDRESSES, SEED_USERS, makeRider, seedNotifications, seedOrders, seedVouchers } from '../data/seed'
 import { areaById } from '../data/areas'
 import { checkVoucher, subtotalOf } from '../lib/pricing'
-import { STAGE_AT, STAGES, isActive, progressOf, stageForProgress, stageLabel } from '../lib/sim'
+import { STAGE_AT, STAGES, isActive, liveElapsed, progressOf, setSimSpeed, stageForProgress, stageLabel } from '../lib/sim'
 import { uid } from '../lib/format'
 import { toast } from './toast'
+
+/** localStorage persistence that batches writes: serialising ~250 KB on every state change
+ *  made the UI janky, so writes are coalesced and flushed when the page is hidden. */
+function batchedStorage<S>(): PersistStorage<S> {
+  let pending: { name: string; value: StorageValue<S> } | null = null
+  let timer: ReturnType<typeof setTimeout> | undefined
+  const flush = () => {
+    clearTimeout(timer)
+    if (!pending) return
+    try {
+      localStorage.setItem(pending.name, JSON.stringify(pending.value))
+    } catch {
+      /* storage full or unavailable: the app keeps working in memory */
+    }
+    pending = null
+  }
+  if (typeof window !== 'undefined') {
+    window.addEventListener('pagehide', flush)
+    document.addEventListener('visibilitychange', () => document.visibilityState === 'hidden' && flush())
+  }
+  return {
+    getItem: (name) => {
+      try {
+        const raw = localStorage.getItem(name)
+        return raw ? (JSON.parse(raw) as StorageValue<S>) : null
+      } catch {
+        return null
+      }
+    },
+    setItem: (name, value) => {
+      pending = { name, value }
+      clearTimeout(timer)
+      timer = setTimeout(flush, 600)
+    },
+    removeItem: (name) => {
+      try {
+        localStorage.removeItem(name)
+      } catch {
+        /* ignore */
+      }
+    },
+  }
+}
 
 export interface DB {
   restaurants: Restaurant[]
@@ -348,26 +391,21 @@ export const useStore = create<State>()(
         },
 
         tick: () => {
+          // Progress is derived from the clock; only commit when an order reaches a new stage.
           const s = get()
-          const active = s.db.orders.filter(isActive)
-          if (!active.length) return
           const now = Date.now()
-          const speed = s.settings.simSpeed
           const changes: [Order, OrderStatus][] = []
           const orders = s.db.orders.map((o) => {
             if (!isActive(o)) return o
-            const dt = Math.max(0, now - o.lastTickAt)
-            const simElapsedMs = o.simElapsedMs + dt * speed
-            const next = { ...o, simElapsedMs, lastTickAt: now }
-            const st = stageForProgress(progressOf(next))
-            if (st !== o.status) {
-              const stageTimes = { ...o.stageTimes }
-              for (const x of STAGES) if (STAGE_AT[x] <= progressOf(next) && !stageTimes[x]) stageTimes[x] = now
-              changes.push([o, st])
-              return { ...next, status: st, stageTimes }
-            }
-            return next
+            const p = progressOf(o, now)
+            const st = stageForProgress(p)
+            if (st === o.status) return o
+            const stageTimes = { ...o.stageTimes }
+            for (const x of STAGES) if (STAGE_AT[x] <= p && !stageTimes[x]) stageTimes[x] = now
+            changes.push([o, st])
+            return { ...o, simElapsedMs: liveElapsed(o, now), lastTickAt: now, status: st, stageTimes }
           })
+          if (!changes.length) return
           set({ db: { ...s.db, orders } })
           for (const [o, st] of changes) stageNotice(o, st)
         },
@@ -389,7 +427,7 @@ export const useStore = create<State>()(
           updateOrder(id, (o) => {
             // Keep the current progress fraction so the stage doesn't jump unexpectedly.
             const p = progressOf(o)
-            return { ...o, etaMinutes: m, simElapsedMs: p * m * 60000 }
+            return { ...o, etaMinutes: m, simElapsedMs: p * m * 60000, lastTickAt: Date.now() }
           })
         },
         cancelOrder: (id) => {
@@ -455,7 +493,15 @@ export const useStore = create<State>()(
         markAllRead: () => patchDB((db) => ({ notifications: db.notifications.map((n) => (n.userId === me() ? { ...n, read: true } : n)) })),
         clearNotifications: () => patchDB((db) => ({ notifications: db.notifications.filter((n) => n.userId !== me()) })),
 
-        updateSettings: (patch) => set((s) => ({ settings: { ...s.settings, ...patch } })),
+        updateSettings: (patch) => {
+          if (patch.simSpeed && patch.simSpeed !== get().settings.simSpeed) {
+            // Lock in progress made at the old speed before switching.
+            const now = Date.now()
+            patchDB((db) => ({ orders: db.orders.map((o) => (isActive(o) ? { ...o, simElapsedMs: liveElapsed(o, now), lastTickAt: now } : o)) }))
+            setSimSpeed(patch.simSpeed)
+          }
+          set((s) => ({ settings: { ...s.settings, ...patch } }))
+        },
 
         upsertRestaurant: (r) => patchDB((db) => ({ restaurants: db.restaurants.some((x) => x.id === r.id) ? db.restaurants.map((x) => (x.id === r.id ? r : x)) : [r, ...db.restaurants] })),
         deleteRestaurant: (id) => patchDB((db) => ({ restaurants: db.restaurants.filter((r) => r.id !== id), menu: db.menu.filter((m) => m.restaurantId !== id) })),
@@ -483,11 +529,19 @@ export const useStore = create<State>()(
     },
     {
       name: 'dopamine-kitchen-v1',
-      version: 1,
-      storage: createJSONStorage(() => localStorage),
+      version: 2,
+      // v2 bundled the catalog photos locally and refreshed the shop catalog: reseed demo data, keep settings/session.
+      migrate: (persisted, version) => {
+        const p = persisted as Partial<State>
+        if (version < 2) return { ...p, db: freshDB(), cart: [], saved: [], vouchersApplied: {}, recentlyViewed: [] } as unknown as State
+        return p as State
+      },
+      storage: batchedStorage<State>(),
     },
   ),
 )
+
+setSimSpeed(useStore.getState().settings.simSpeed)
 
 // ---------- Selectors / hooks ----------
 export const useMe = () => {

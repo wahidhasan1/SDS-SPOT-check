@@ -11,7 +11,7 @@ export function Img({ src, alt, art, className, imgClassName }: { src: string; a
   const fa = FALLBACK_ART[art ?? ''] ?? FALLBACK_ART.default
   const hue = (fa.hue + (hashStr(alt) % 30) - 15 + 360) % 360
   return (
-    <div className={cx('relative overflow-hidden bg-ink-100', className)}>
+    <div className={cx(!className?.includes('absolute') && 'relative', 'overflow-hidden bg-ink-100', className)}>
       {state !== 'ok' && (
         <div
           aria-hidden

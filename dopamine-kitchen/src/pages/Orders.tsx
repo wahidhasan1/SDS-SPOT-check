@@ -3,7 +3,7 @@ import { Link } from 'react-router-dom'
 import { Search } from 'lucide-react'
 import { useStore } from '../store/store'
 import { isActive } from '../lib/sim'
-import { useSimLoad, useTitle } from '../lib/hooks'
+import { useTitle } from '../lib/hooks'
 import { taka } from '../lib/format'
 import { OrderCard } from '../components/cards'
 import { useReorder } from '../components/reorder'
@@ -14,7 +14,7 @@ export default function Orders() {
   const uid = useStore((s) => s.currentUserId)
   const all = useStore((s) => s.db.orders)
   const reorder = useReorder()
-  const loading = useSimLoad([])
+  const loading = false
   const mine = useMemo(() => all.filter((o) => o.userId === uid).sort((a, b) => b.placedAt - a.placedAt), [all, uid])
   const active = mine.filter(isActive)
   const [tab, setTab] = useState<'active' | 'past' | 'cancelled'>(() => (active.length ? 'active' : 'past'))

@@ -1,30 +1,34 @@
 import type { Brand, ColorOption, Product, ShopCategory } from './types'
-import { IMG, pick, type ImagePool } from './images'
+import { PRODUCT_PHOTOS } from './photos'
 
-// All brands are FICTIONAL demo labels created for this simulation.
+// All brands are FICTIONAL demo labels created for this simulation. Product photos are bundled
+// demo photography (see public/img/CREDITS.md); names, prices and descriptions are invented.
+
+const photo = (code: string, i = 0) => {
+  const p = PRODUCT_PHOTOS[code]
+  return Object.values(p.colors)[i] ?? Object.values(p.colors)[0]
+}
 
 export const SEED_BRANDS: Brand[] = [
-  { id: 'b-nokshi', name: 'Nokshi Threads', tagline: 'Handcrafted ethnic wear', about: 'Contemporary kurtis, sarees and three-pieces inspired by nakshi kantha motifs. (Fictional demo brand.)', initials: 'NT', logoBg: '#9D174D', cover: pick('dress', 5), rating: 4.7, followers: 48200, categories: ['women'], areaId: 'dhanmondi' },
-  { id: 'b-urban-tiger', name: 'Urban Tiger Co.', tagline: 'Streetwear from the city of rickshaws', about: 'Oversized tees, hoodies and caps with bold Dhaka graphics. (Fictional demo brand.)', initials: 'UT', logoBg: '#EA580C', cover: pick('hoodie', 0), rating: 4.6, followers: 61500, categories: ['streetwear', 'men'], areaId: 'banani' },
-  { id: 'b-buriganga', name: 'Buriganga Denim', tagline: 'Denim that survives monsoon', about: 'Rigid & stretch denim cut for everyday Dhaka life. (Fictional demo brand.)', initials: 'BD', logoBg: '#1E3A8A', cover: pick('jeans', 0), rating: 4.5, followers: 22900, categories: ['men', 'women'], areaId: 'tejgaon' },
-  { id: 'b-kolpo', name: 'Kolpo Leather', tagline: 'Full-grain leather goods', about: 'Formal shoes, belts, wallets and bags crafted from full-grain leather. (Fictional demo brand.)', initials: 'KL', logoBg: '#78350F', cover: pick('bags', 0), rating: 4.8, followers: 30400, categories: ['shoes', 'bags', 'accessories'], areaId: 'motijheel' },
-  { id: 'b-monsoon', name: 'Monsoon Kicks', tagline: 'Sneakers for humid streets', about: 'Breathable sneakers and runners tested on Dhaka pavements. (Fictional demo brand.)', initials: 'MK', logoBg: '#0E7490', cover: pick('sneakers', 0), rating: 4.5, followers: 39800, categories: ['shoes', 'streetwear'], areaId: 'gulshan-1' },
-  { id: 'b-lalbagh', name: 'Lalbagh Lane', tagline: 'Accessories with heritage', about: 'Watches, eyewear and jewellery with a vintage Dhaka twist. (Fictional demo brand.)', initials: 'LL', logoBg: '#6D28D9', cover: pick('watches', 0), rating: 4.4, followers: 17600, categories: ['accessories'], areaId: 'lalbagh' },
-  { id: 'b-padma', name: 'Padma Loom', tagline: 'Panjabis & menswear', about: 'Cotton panjabis, casual shirts and polos woven for the tropics. (Fictional demo brand.)', initials: 'PL', logoBg: '#047857', cover: pick('shirt', 0), rating: 4.6, followers: 26700, categories: ['men'], areaId: 'uttara' },
-  { id: 'b-shapla', name: 'Shapla Home & Living', tagline: 'Everyday lifestyle essentials', about: 'Audio, drinkware, skincare and fragrance for calm living. (Fictional demo brand.)', initials: 'SH', logoBg: '#0F766E', cover: pick('lifestyle', 3), rating: 4.5, followers: 14300, categories: ['lifestyle'], areaId: 'bashundhara' },
-  { id: 'b-neon-rickshaw', name: 'Neon Rickshaw', tagline: 'Loud colours. Louder streets.', about: 'Graphic streetwear inspired by rickshaw art. (Fictional demo brand.)', initials: 'NR', logoBg: '#DB2777', cover: pick('tshirt', 2), rating: 4.3, followers: 33100, categories: ['streetwear'], areaId: 'mirpur' },
-  { id: 'b-dhaka-basics', name: 'Dhaka Basics', tagline: 'Wardrobe essentials, fair prices', about: 'Plain tees, chinos and basics at honest prices. (Fictional demo brand.)', initials: 'DB', logoBg: '#334155', cover: pick('tshirt', 0), rating: 4.4, followers: 52000, categories: ['men', 'women'], areaId: 'farmgate' },
+  { id: 'b-nokshi', name: 'Nokshi Threads', tagline: "Women's everyday & athleisure", about: 'Soft jersey tees, cowl tops and layering pieces cut for Dhaka humidity, finished with small nakshi-inspired details. (Fictional demo brand.)', initials: 'NT', logoBg: '#9D174D', cover: photo('wh03'), rating: 4.7, followers: 48200, categories: ['women'], areaId: 'dhanmondi' },
+  { id: 'b-urban-tiger', name: 'Urban Tiger Co.', tagline: 'Streetwear from the city of rickshaws', about: 'Hoodies, tanks and caps with bold Dhaka energy. (Fictional demo brand.)', initials: 'UT', logoBg: '#EA580C', cover: photo('mh12'), rating: 4.6, followers: 61500, categories: ['streetwear', 'men', 'bags'], areaId: 'banani' },
+  { id: 'b-buriganga', name: 'Buriganga Outfitters', tagline: 'Trousers & outerwear that survive monsoon', about: 'Quick-dry trousers, cargos and shells for everyday commutes. (Fictional demo brand.)', initials: 'BO', logoBg: '#1E3A8A', cover: photo('mp11'), rating: 4.5, followers: 22900, categories: ['men', 'women'], areaId: 'tejgaon' },
+  { id: 'b-kolpo', name: 'Kolpo Leather', tagline: 'Leather shoes & bags', about: 'Formal shoes, sandals and carry-alls with a focus on durable materials. (Fictional demo brand.)', initials: 'KL', logoBg: '#78350F', cover: photo('mb05'), rating: 4.8, followers: 30400, categories: ['shoes', 'bags'], areaId: 'motijheel' },
+  { id: 'b-monsoon', name: 'Monsoon Kicks', tagline: 'Sneakers & rainwear for humid streets', about: 'Breathable sneakers, slides and packable rain layers tested on Dhaka pavements. (Fictional demo brand.)', initials: 'MK', logoBg: '#0E7490', cover: photo('wj04'), rating: 4.5, followers: 39800, categories: ['shoes', 'women'], areaId: 'gulshan-1' },
+  { id: 'b-lalbagh', name: 'Lalbagh Lane', tagline: 'Watches & accessories', about: 'Watches, caps and everyday carry with a vintage Dhaka twist. (Fictional demo brand.)', initials: 'LL', logoBg: '#6D28D9', cover: photo('mg05'), rating: 4.4, followers: 17600, categories: ['accessories', 'bags'], areaId: 'lalbagh' },
+  { id: 'b-padma', name: 'Padma Loom', tagline: 'Menswear for the tropics', about: 'Tees, hoodies and jackets made for hot days and air-conditioned offices. (Fictional demo brand.)', initials: 'PL', logoBg: '#047857', cover: photo('mj03'), rating: 4.6, followers: 26700, categories: ['men'], areaId: 'uttara' },
+  { id: 'b-shapla', name: 'Shapla Fit & Living', tagline: 'Fitness & wellness essentials', about: 'Bottles, yoga kits and home-workout gear for calmer, healthier routines. (Fictional demo brand.)', initials: 'SF', logoBg: '#0F766E', cover: photo('yogakit'), rating: 4.5, followers: 14300, categories: ['lifestyle'], areaId: 'bashundhara' },
+  { id: 'b-neon-rickshaw', name: 'Neon Rickshaw', tagline: 'Loud colours. Louder streets.', about: 'Colour-block sweatshirts, joggers and jackets inspired by rickshaw art. (Fictional demo brand.)', initials: 'NR', logoBg: '#DB2777', cover: photo('mh05'), rating: 4.3, followers: 33100, categories: ['streetwear', 'men'], areaId: 'mirpur' },
+  { id: 'b-dhaka-basics', name: 'Dhaka Basics', tagline: 'Wardrobe essentials, fair prices', about: 'Plain tees, joggers and leggings at honest prices. (Fictional demo brand.)', initials: 'DB', logoBg: '#334155', cover: photo('ms04'), rating: 4.4, followers: 52000, categories: ['men', 'women'], areaId: 'farmgate' },
 ]
 
-const C = {
-  black: { name: 'Black', hex: '#111827' }, white: { name: 'White', hex: '#F9FAFB' }, navy: { name: 'Navy', hex: '#1E3A8A' },
-  maroon: { name: 'Maroon', hex: '#7F1D1D' }, olive: { name: 'Olive', hex: '#4D5B2B' }, beige: { name: 'Beige', hex: '#D6C3A3' },
-  grey: { name: 'Grey', hex: '#9CA3AF' }, blue: { name: 'Indigo Blue', hex: '#3B5BA9' }, lightBlue: { name: 'Light Wash', hex: '#93B4DB' },
-  pink: { name: 'Blush Pink', hex: '#F9A8D4' }, mustard: { name: 'Mustard', hex: '#CA8A04' }, green: { name: 'Bottle Green', hex: '#065F46' },
-  brown: { name: 'Tan Brown', hex: '#92400E' }, red: { name: 'Crimson', hex: '#B91C1C' }, purple: { name: 'Plum', hex: '#6B21A8' },
-  orange: { name: 'Sunset Orange', hex: '#EA580C' }, gold: { name: 'Gold', hex: '#D4A017' }, silver: { name: 'Silver', hex: '#C0C0C0' },
-  teal: { name: 'Teal', hex: '#0F766E' }, cream: { name: 'Cream', hex: '#FEF3C7' },
-} satisfies Record<string, ColorOption>
+const COLOR: Record<string, ColorOption> = {
+  black: { name: 'Black', hex: '#111827' }, bk: { name: 'Black', hex: '#111827' }, gray: { name: 'Heather Grey', hex: '#9CA3AF' },
+  orange: { name: 'Sunset Orange', hex: '#F97316' }, red: { name: 'Crimson', hex: '#DC2626' }, blue: { name: 'Ocean Blue', hex: '#2563EB' },
+  green: { name: 'Mint Green', hex: '#34D399' }, yellow: { name: 'Mustard', hex: '#EAB308' }, purple: { name: 'Plum', hex: '#8B5CF6' },
+  white: { name: 'White', hex: '#F3F4F6' }, brown: { name: 'Olive Brown', hex: '#6B5B3E' }, br: { name: 'Tan Brown', hex: '#92400E' },
+  lb: { name: 'Clear Blue', hex: '#7DD3FC' }, gr: { name: 'Graphite', hex: '#4B5563' }, pink: { name: 'Pink', hex: '#EC4899' },
+}
 
 const S = {
   apparel: ['S', 'M', 'L', 'XL', 'XXL'],
@@ -33,78 +37,94 @@ const S = {
   shoes: ['39', '40', '41', '42', '43', '44'],
   womenShoes: ['36', '37', '38', '39', '40'],
   one: ['One size'],
-  panjabi: ['38', '40', '42', '44', '46'],
 }
 
 type P = {
-  brand: string; name: string; cat: ShopCategory; sub: string; pool: ImagePool; i: number; price: number; off: number
-  desc: string; hl: string[]; sizes: string[]; colors: ColorOption[]; rating: number; reviews: number; stock: number; tags?: string[]
+  brand: string; name: string; cat: ShopCategory; sub: string; photo: string; price: number; off: number
+  desc: string; hl: string[]; sizes: string[]; rating: number; reviews: number; stock: number; tags?: string[]
+  /** Colour name for single-photo items (whose photo key is "default"). */
+  color?: ColorOption
 }
 
 const RAW: P[] = [
-  // Men
-  { brand: 'b-padma', name: 'Handloom Cotton Panjabi', cat: 'men', sub: 'Panjabi', pool: 'shirt', i: 0, price: 2450, off: 15, desc: 'A breathable handloom cotton panjabi with a mandarin collar and subtle self-stripe. Perfect for Jummah, weddings and Eid get-togethers.', hl: ['100% handloom cotton', 'Mandarin collar', 'Regular fit', 'Hand wash recommended'], sizes: S.panjabi, colors: [C.white, C.navy, C.maroon], rating: 4.7, reviews: 412, stock: 34, tags: ['Bestseller'] },
-  { brand: 'b-padma', name: 'Linen Blend Casual Shirt', cat: 'men', sub: 'Shirts', pool: 'shirt', i: 1, price: 1890, off: 10, desc: 'Lightweight linen-blend shirt with a relaxed fit that keeps you cool through Dhaka summers.', hl: ['55% linen, 45% cotton', 'Relaxed fit', 'Coconut buttons'], sizes: S.apparel, colors: [C.beige, C.white, C.olive], rating: 4.5, reviews: 238, stock: 52 },
-  { brand: 'b-padma', name: 'Piqué Polo Shirt', cat: 'men', sub: 'Polos', pool: 'shirt', i: 3, price: 1290, off: 0, desc: 'Classic piqué polo with ribbed collar and two-button placket.', hl: ['Cotton piqué', 'Ribbed collar', 'Slim fit'], sizes: S.apparel, colors: [C.navy, C.white, C.green, C.maroon], rating: 4.4, reviews: 190, stock: 80 },
-  { brand: 'b-dhaka-basics', name: 'Everyday Crew Tee (Pack of 2)', cat: 'men', sub: 'T-Shirts', pool: 'tshirt', i: 0, price: 990, off: 20, desc: 'Soft 180 GSM combed cotton tees — a two-pack of your new daily uniform.', hl: ['180 GSM combed cotton', 'Pre-shrunk', 'Pack of 2'], sizes: S.apparel, colors: [C.white, C.black, C.grey], rating: 4.6, reviews: 1290, stock: 140, tags: ['Bestseller'] },
-  { brand: 'b-dhaka-basics', name: 'Stretch Chino Trousers', cat: 'men', sub: 'Trousers', pool: 'jeans', i: 2, price: 1650, off: 12, desc: 'Comfort-stretch chinos with a tapered leg — office to evening.', hl: ['98% cotton, 2% elastane', 'Tapered fit', 'Wrinkle resistant'], sizes: S.waist, colors: [C.beige, C.navy, C.olive, C.black], rating: 4.3, reviews: 342, stock: 61 },
-  { brand: 'b-buriganga', name: 'Slim Fit Selvedge Jeans', cat: 'men', sub: 'Jeans', pool: 'jeans', i: 0, price: 3200, off: 18, desc: 'Japanese-style selvedge denim in a slim fit that fades beautifully over time.', hl: ['13.5 oz selvedge denim', 'Slim fit', 'Copper rivets'], sizes: S.waist, colors: [C.blue, C.black], rating: 4.6, reviews: 288, stock: 22 },
-  { brand: 'b-buriganga', name: 'Relaxed Light-Wash Jeans', cat: 'men', sub: 'Jeans', pool: 'jeans', i: 1, price: 2400, off: 25, desc: 'Relaxed, vintage-washed denim with a little stretch.', hl: ['Comfort stretch', 'Relaxed fit', 'Vintage wash'], sizes: S.waist, colors: [C.lightBlue, C.blue], rating: 4.4, reviews: 176, stock: 4, tags: ['Low stock'] },
-  { brand: 'b-buriganga', name: 'Denim Trucker Jacket', cat: 'men', sub: 'Jackets', pool: 'jacket', i: 1, price: 3900, off: 15, desc: 'The timeless trucker jacket in rigid indigo denim — layer it for Dhaka winters.', hl: ['Rigid denim', 'Button front', 'Chest pockets'], sizes: S.apparel, colors: [C.blue, C.black], rating: 4.5, reviews: 98, stock: 18 },
-  // Women
-  { brand: 'b-nokshi', name: 'Embroidered Cotton Kurti', cat: 'women', sub: 'Kurtis', pool: 'dress', i: 5, price: 2150, off: 20, desc: 'A-line cotton kurti with hand-embroidered nakshi motifs on the yoke.', hl: ['Pure cotton', 'Hand embroidery', 'A-line silhouette', 'Side pockets'], sizes: S.women, colors: [C.mustard, C.teal, C.pink], rating: 4.8, reviews: 521, stock: 40, tags: ['Bestseller'] },
-  { brand: 'b-nokshi', name: 'Jamdani-Inspired Saree', cat: 'women', sub: 'Sarees', pool: 'dress', i: 4, price: 6800, off: 10, desc: 'Lightweight saree with jamdani-inspired woven motifs. Comes with unstitched blouse piece. (Demo listing.)', hl: ['Cotton-silk blend', '5.5 m + blouse piece', 'Woven motifs'], sizes: S.one, colors: [C.red, C.cream, C.purple], rating: 4.9, reviews: 143, stock: 9, tags: ['Premium'] },
-  { brand: 'b-nokshi', name: 'Three-Piece Lawn Set', cat: 'women', sub: 'Three-piece', pool: 'dress', i: 0, price: 3450, off: 30, desc: 'Printed lawn kameez, trousers and chiffon orna — unstitched no more, ready to wear.', hl: ['Lawn cotton kameez', 'Chiffon orna', 'Ready to wear'], sizes: S.women, colors: [C.pink, C.green, C.cream], rating: 4.6, reviews: 389, stock: 27, tags: ['Eid edit'] },
-  { brand: 'b-nokshi', name: 'Floral Midi Dress', cat: 'women', sub: 'Dresses', pool: 'dress', i: 1, price: 2890, off: 15, desc: 'Flowing floral midi with tie waist and flutter sleeves.', hl: ['Viscose', 'Tie waist', 'Midi length'], sizes: S.women, colors: [C.pink, C.navy], rating: 4.5, reviews: 211, stock: 33 },
-  { brand: 'b-dhaka-basics', name: 'Relaxed Linen Co-ord Set', cat: 'women', sub: 'Co-ords', pool: 'dress', i: 2, price: 3150, off: 10, desc: 'Breezy linen shirt and wide-leg trouser set.', hl: ['Linen blend', 'Wide-leg trousers', 'Elastic waist'], sizes: S.women, colors: [C.beige, C.white, C.olive], rating: 4.4, reviews: 97, stock: 0, tags: ['Sold out'] },
-  { brand: 'b-buriganga', name: 'High-Rise Mom Jeans', cat: 'women', sub: 'Jeans', pool: 'jeans', i: 1, price: 2550, off: 20, desc: 'High-rise, tapered mom jeans with a vintage wash.', hl: ['High rise', 'Tapered leg', 'Rigid cotton'], sizes: ['26', '28', '30', '32', '34'], colors: [C.lightBlue, C.blue], rating: 4.5, reviews: 264, stock: 38 },
-  { brand: 'b-nokshi', name: 'Printed Georgette Orna', cat: 'women', sub: 'Ornas & Scarves', pool: 'dress', i: 3, price: 890, off: 0, desc: 'Soft georgette orna with block-print border.', hl: ['Georgette', '2.5 m length'], sizes: S.one, colors: [C.mustard, C.pink, C.teal, C.white], rating: 4.3, reviews: 77, stock: 64 },
-  // Shoes
-  { brand: 'b-monsoon', name: 'AirFlow Knit Runner', cat: 'shoes', sub: 'Sneakers', pool: 'sneakers', i: 0, price: 4200, off: 20, desc: 'Featherweight knit runner with a cushioned foam midsole and quick-dry upper — built for humid mornings.', hl: ['Breathable knit upper', 'EVA foam midsole', 'Quick-dry lining', '220 g per shoe'], sizes: S.shoes, colors: [C.black, C.white, C.teal], rating: 4.6, reviews: 642, stock: 45, tags: ['Bestseller'] },
-  { brand: 'b-monsoon', name: 'Court Classic Leather Sneaker', cat: 'shoes', sub: 'Sneakers', pool: 'sneakers', i: 3, price: 3600, off: 10, desc: 'Clean white leather court sneaker that goes with literally everything.', hl: ['Faux leather upper', 'Rubber cupsole', 'Padded collar'], sizes: S.shoes, colors: [C.white, C.black], rating: 4.5, reviews: 418, stock: 51 },
-  { brand: 'b-monsoon', name: 'Retro Suede Trainer', cat: 'shoes', sub: 'Sneakers', pool: 'sneakers', i: 1, price: 3900, off: 25, desc: '80s-inspired suede trainer with gum sole.', hl: ['Suede overlays', 'Gum rubber sole'], sizes: S.shoes, colors: [C.grey, C.navy, C.beige], rating: 4.4, reviews: 233, stock: 12 },
-  { brand: 'b-monsoon', name: 'Monsoon Rain Slides', cat: 'shoes', sub: 'Sandals', pool: 'sneakers', i: 6, price: 990, off: 0, desc: 'Waterproof cushioned slides for rainy days and rooftop hangouts.', hl: ['Waterproof EVA', 'Contoured footbed'], sizes: S.shoes, colors: [C.black, C.olive, C.pink], rating: 4.2, reviews: 512, stock: 120 },
-  { brand: 'b-kolpo', name: 'Oxford Leather Formal Shoe', cat: 'shoes', sub: 'Formal', pool: 'formalShoes', i: 0, price: 5600, off: 15, desc: 'Hand-lasted full-grain leather oxfords with a leather sole.', hl: ['Full-grain leather', 'Leather lining', 'Goodyear-style welt (demo)'], sizes: S.shoes, colors: [C.black, C.brown], rating: 4.8, reviews: 301, stock: 20, tags: ['Premium'] },
-  { brand: 'b-kolpo', name: 'Suede Chelsea Boots', cat: 'shoes', sub: 'Boots', pool: 'formalShoes', i: 3, price: 6200, off: 20, desc: 'Elastic-gusset chelsea boots in soft suede.', hl: ['Suede upper', 'Pull tab', 'Rubber sole'], sizes: S.shoes, colors: [C.brown, C.black], rating: 4.6, reviews: 122, stock: 7 },
-  { brand: 'b-kolpo', name: 'Block Heel Leather Sandal', cat: 'shoes', sub: 'Heels', pool: 'heels', i: 0, price: 2950, off: 10, desc: 'Comfortable 2-inch block heel with padded footbed.', hl: ['Genuine leather straps', '2" block heel', 'Padded insole'], sizes: S.womenShoes, colors: [C.beige, C.black, C.red], rating: 4.5, reviews: 187, stock: 26 },
-  { brand: 'b-kolpo', name: 'Embellished Flat Nagra', cat: 'shoes', sub: 'Flats', pool: 'heels', i: 2, price: 1650, off: 0, desc: 'Festive flat nagra with zari embellishment.', hl: ['Zari work', 'Cushioned sole'], sizes: S.womenShoes, colors: [C.gold, C.silver], rating: 4.4, reviews: 96, stock: 30, tags: ['Eid edit'] },
-  // Bags
-  { brand: 'b-kolpo', name: 'Structured Leather Tote', cat: 'bags', sub: 'Totes', pool: 'bags', i: 0, price: 6900, off: 20, desc: 'Roomy structured tote in pebbled leather with laptop sleeve.', hl: ['Pebbled leather', 'Fits 14" laptop', 'Magnetic closure'], sizes: S.one, colors: [C.brown, C.black, C.beige], rating: 4.7, reviews: 156, stock: 14 },
-  { brand: 'b-kolpo', name: 'Mini Crossbody Bag', cat: 'bags', sub: 'Crossbody', pool: 'bags', i: 1, price: 3400, off: 15, desc: 'Compact crossbody with adjustable strap — phone, cards, keys, done.', hl: ['Adjustable strap', 'Zip closure'], sizes: S.one, colors: [C.maroon, C.black, C.cream], rating: 4.5, reviews: 210, stock: 40 },
-  { brand: 'b-urban-tiger', name: 'Commuter Backpack 22L', cat: 'bags', sub: 'Backpacks', pool: 'bags', i: 2, price: 2800, off: 25, desc: 'Water-resistant backpack with padded laptop compartment and hidden pocket — CNG-proof.', hl: ['Water-resistant', '15.6" laptop sleeve', 'Anti-theft pocket'], sizes: S.one, colors: [C.black, C.olive, C.grey], rating: 4.6, reviews: 388, stock: 66, tags: ['Bestseller'] },
-  { brand: 'b-kolpo', name: 'Bifold Leather Wallet', cat: 'bags', sub: 'Wallets', pool: 'bags', i: 4, price: 1450, off: 0, desc: 'Slim bifold wallet with 6 card slots.', hl: ['Full-grain leather', '6 card slots', 'RFID lining (demo)'], sizes: S.one, colors: [C.brown, C.black], rating: 4.6, reviews: 274, stock: 90 },
-  // Accessories
-  { brand: 'b-lalbagh', name: 'Heritage Analog Watch', cat: 'accessories', sub: 'Watches', pool: 'watches', i: 0, price: 5400, off: 20, desc: 'Minimal analog watch with sapphire-coated glass and leather strap.', hl: ['Japanese quartz movement', '40 mm case', '3 ATM water resistance'], sizes: S.one, colors: [C.brown, C.black], rating: 4.6, reviews: 189, stock: 23 },
-  { brand: 'b-lalbagh', name: 'Steel Chronograph Watch', cat: 'accessories', sub: 'Watches', pool: 'watches', i: 1, price: 7900, off: 15, desc: 'Stainless steel chronograph with date window.', hl: ['Chronograph', 'Steel bracelet', '42 mm'], sizes: S.one, colors: [C.silver, C.gold], rating: 4.5, reviews: 88, stock: 11, tags: ['Premium'] },
-  { brand: 'b-lalbagh', name: 'Polarised Aviator Sunglasses', cat: 'accessories', sub: 'Eyewear', pool: 'eyewear', i: 0, price: 1990, off: 30, desc: 'Metal-frame aviators with UV400 polarised lenses.', hl: ['UV400 protection', 'Polarised lenses', 'Case included'], sizes: S.one, colors: [C.gold, C.black], rating: 4.3, reviews: 301, stock: 70 },
-  { brand: 'b-lalbagh', name: 'Square Acetate Sunglasses', cat: 'accessories', sub: 'Eyewear', pool: 'eyewear', i: 1, price: 1750, off: 10, desc: 'Bold square acetate frames.', hl: ['Acetate frame', 'UV400'], sizes: S.one, colors: [C.black, C.brown], rating: 4.2, reviews: 144, stock: 39 },
-  { brand: 'b-lalbagh', name: 'Oxidised Silver Jhumka', cat: 'accessories', sub: 'Jewellery', pool: 'jewelry', i: 1, price: 850, off: 0, desc: 'Lightweight oxidised jhumkas with bead drops.', hl: ['Oxidised finish', 'Lightweight'], sizes: S.one, colors: [C.silver], rating: 4.6, reviews: 412, stock: 85 },
-  { brand: 'b-lalbagh', name: 'Layered Pendant Necklace', cat: 'accessories', sub: 'Jewellery', pool: 'jewelry', i: 0, price: 1250, off: 15, desc: 'Delicate layered chain with crescent pendant.', hl: ['Gold-tone plating', 'Adjustable length'], sizes: S.one, colors: [C.gold, C.silver], rating: 4.4, reviews: 133, stock: 48 },
-  // Streetwear
-  { brand: 'b-urban-tiger', name: 'Rickshaw Art Oversized Tee', cat: 'streetwear', sub: 'Graphic Tees', pool: 'tshirt', i: 2, price: 1190, off: 15, desc: 'Drop-shoulder tee with a hand-drawn rickshaw art back print.', hl: ['220 GSM heavy cotton', 'Oversized fit', 'Puff print'], sizes: S.apparel, colors: [C.black, C.cream], rating: 4.7, reviews: 803, stock: 95, tags: ['Bestseller'] },
-  { brand: 'b-urban-tiger', name: 'Tiger Logo Hoodie', cat: 'streetwear', sub: 'Hoodies', pool: 'hoodie', i: 0, price: 2650, off: 20, desc: 'Heavyweight fleece hoodie with embroidered tiger.', hl: ['380 GSM fleece', 'Embroidered chest logo', 'Kangaroo pocket'], sizes: S.apparel, colors: [C.black, C.grey, C.maroon], rating: 4.6, reviews: 455, stock: 31 },
-  { brand: 'b-urban-tiger', name: 'Six-Panel Dad Cap', cat: 'streetwear', sub: 'Caps', pool: 'caps', i: 0, price: 690, off: 0, desc: 'Washed cotton cap with curved brim.', hl: ['Washed cotton', 'Adjustable strap'], sizes: S.one, colors: [C.black, C.beige, C.navy], rating: 4.4, reviews: 266, stock: 110 },
-  { brand: 'b-neon-rickshaw', name: 'Neon Bloom Graphic Tee', cat: 'streetwear', sub: 'Graphic Tees', pool: 'tshirt', i: 3, price: 990, off: 10, desc: 'Fluorescent shapla print tee — glows (metaphorically).', hl: ['Cotton jersey', 'Regular fit'], sizes: S.apparel, colors: [C.white, C.black, C.purple], rating: 4.3, reviews: 172, stock: 58 },
-  { brand: 'b-neon-rickshaw', name: 'Cargo Joggers', cat: 'streetwear', sub: 'Bottoms', pool: 'jeans', i: 2, price: 1990, off: 20, desc: 'Utility joggers with six pockets and cuffed hem.', hl: ['Cotton twill', 'Elastic cuffs', '6 pockets'], sizes: S.apparel, colors: [C.olive, C.black, C.beige], rating: 4.4, reviews: 208, stock: 44 },
-  { brand: 'b-neon-rickshaw', name: 'Varsity Bomber Jacket', cat: 'streetwear', sub: 'Jackets', pool: 'jacket', i: 2, price: 4500, off: 25, desc: 'Wool-blend varsity bomber with chenille patches.', hl: ['Wool blend body', 'Faux leather sleeves', 'Chenille patches'], sizes: S.apparel, colors: [C.maroon, C.navy], rating: 4.5, reviews: 91, stock: 15 },
-  { brand: 'b-neon-rickshaw', name: 'Knit Beanie', cat: 'streetwear', sub: 'Caps', pool: 'caps', i: 1, price: 590, off: 0, desc: 'Ribbed knit beanie for chilly December nights.', hl: ['Acrylic rib knit', 'Fold-over cuff'], sizes: S.one, colors: [C.orange, C.black, C.grey], rating: 4.2, reviews: 64, stock: 72 },
-  // Lifestyle
-  { brand: 'b-shapla', name: 'Noise-Cancelling Headphones', cat: 'lifestyle', sub: 'Audio', pool: 'lifestyle', i: 0, price: 8900, off: 22, desc: 'Over-ear wireless headphones with ANC and 40-hour battery — for when the horns get too loud.', hl: ['Active noise cancelling', '40 h battery', 'USB-C fast charge'], sizes: S.one, colors: [C.black, C.cream], rating: 4.6, reviews: 356, stock: 19, tags: ['Bestseller'] },
-  { brand: 'b-shapla', name: 'Portable Bluetooth Speaker', cat: 'lifestyle', sub: 'Audio', pool: 'lifestyle', i: 1, price: 3900, off: 15, desc: 'Splash-proof speaker with punchy bass for rooftop adda.', hl: ['IPX5 splash-proof', '12 h playtime'], sizes: S.one, colors: [C.black, C.teal, C.red], rating: 4.4, reviews: 211, stock: 36 },
-  { brand: 'b-shapla', name: 'Insulated Steel Bottle 750ml', cat: 'lifestyle', sub: 'Drinkware', pool: 'lifestyle', i: 2, price: 1290, off: 10, desc: 'Keeps water cold for 24 hours — even in a Dhaka June.', hl: ['Double-wall vacuum', '24 h cold / 12 h hot', 'BPA free'], sizes: S.one, colors: [C.teal, C.black, C.white, C.pink], rating: 4.7, reviews: 690, stock: 150 },
-  { brand: 'b-shapla', name: 'Stoneware Mug Set (2)', cat: 'lifestyle', sub: 'Drinkware', pool: 'lifestyle', i: 3, price: 1150, off: 0, desc: 'Hand-glazed stoneware mugs for your morning cha.', hl: ['Stoneware', '350 ml each', 'Microwave safe'], sizes: S.one, colors: [C.cream, C.teal], rating: 4.5, reviews: 132, stock: 47 },
-  { brand: 'b-shapla', name: 'Vitamin C Glow Serum', cat: 'lifestyle', sub: 'Skincare', pool: 'lifestyle', i: 5, price: 1450, off: 20, desc: 'Lightweight brightening serum. (Demo product — not a real cosmetic.)', hl: ['30 ml', 'Fragrance free', 'Dermatologist-style packaging'], sizes: S.one, colors: [C.orange], rating: 4.3, reviews: 245, stock: 88 },
-  { brand: 'b-shapla', name: 'Oud & Amber Eau de Parfum', cat: 'lifestyle', sub: 'Fragrance', pool: 'lifestyle', i: 7, price: 3450, off: 15, desc: 'Warm oud and amber with a hint of rose. (Demo product.)', hl: ['50 ml EDP', 'Long-lasting'], sizes: S.one, colors: [C.gold], rating: 4.6, reviews: 158, stock: 25 },
-  { brand: 'b-shapla', name: 'Smart Fitness Watch', cat: 'lifestyle', sub: 'Wearables', pool: 'watches', i: 3, price: 4990, off: 25, desc: 'AMOLED fitness watch with heart-rate, SpO2 and 10-day battery.', hl: ['1.4" AMOLED', '10-day battery', '5 ATM'], sizes: S.one, colors: [C.black, C.pink, C.silver], rating: 4.4, reviews: 517, stock: 3, tags: ['Low stock'] },
+  // ---------------- Men ----------------
+  { brand: 'b-dhaka-basics', name: 'Everyday Performance Tee', cat: 'men', sub: 'T-Shirts', photo: 'ms04', price: 990, off: 20, desc: 'A soft, quick-dry crew tee that keeps its shape wash after wash. Your new daily uniform for Dhaka heat.', hl: ['Moisture-wicking jersey', 'Regular fit', 'Pre-shrunk', 'Machine wash cold'], sizes: S.apparel, rating: 4.6, reviews: 1290, stock: 140, tags: ['Bestseller'] },
+  { brand: 'b-dhaka-basics', name: 'Breeze V-Neck Tee', cat: 'men', sub: 'T-Shirts', photo: 'ms11', price: 850, off: 10, desc: 'Lightweight V-neck in a breathable blend, cut slightly longer for tucking in or wearing loose.', hl: ['Breathable blend', 'V-neck', 'Slim fit'], sizes: S.apparel, rating: 4.4, reviews: 512, stock: 80 },
+  { brand: 'b-padma', name: 'Long-Sleeve Training Tee', cat: 'men', sub: 'T-Shirts', photo: 'ms07', price: 1290, off: 0, desc: 'Long-sleeve tee with flatlock seams for morning runs around Hatirjheel or a cool office.', hl: ['Flatlock seams', 'Thumbholes', 'UPF 30 (demo claim)'], sizes: S.apparel, rating: 4.5, reviews: 238, stock: 52 },
+  { brand: 'b-urban-tiger', name: 'Sleeveless Gym Tank', cat: 'men', sub: 'Tanks', photo: 'mt01', price: 690, off: 0, desc: 'Relaxed muscle tank with dropped armholes. Built for leg day, worn every day.', hl: ['Cotton-poly blend', 'Dropped armholes', 'Relaxed fit'], sizes: S.apparel, rating: 4.3, reviews: 190, stock: 64 },
+  { brand: 'b-dhaka-basics', name: 'Commuter Track Pants', cat: 'men', sub: 'Trousers', photo: 'mp04', price: 1650, off: 12, desc: 'Tapered track pants with a soft brushed inside and zip pockets that keep your phone safe on a CNG.', hl: ['Zip pockets', 'Tapered leg', 'Elastic waist with drawcord'], sizes: S.waist, rating: 4.3, reviews: 342, stock: 61 },
+  { brand: 'b-buriganga', name: 'Utility Cargo Trousers', cat: 'men', sub: 'Trousers', photo: 'mp11', price: 2400, off: 25, desc: 'Quick-dry ripstop cargos with six pockets — ready for monsoon puddles.', hl: ['Ripstop fabric', 'Quick-dry', '6 pockets'], sizes: S.waist, rating: 4.4, reviews: 176, stock: 4, tags: ['Low stock'] },
+  { brand: 'b-urban-tiger', name: 'Run Club Shorts', cat: 'men', sub: 'Shorts', photo: 'msh03', price: 990, off: 15, desc: '7-inch running shorts with a built-in liner and a back key pocket.', hl: ['7" inseam', 'Built-in liner', 'Reflective trims'], sizes: S.apparel, rating: 4.5, reviews: 264, stock: 38 },
+  { brand: 'b-padma', name: 'Monsoon Puffer Jacket', cat: 'men', sub: 'Jackets', photo: 'mj03', price: 4900, off: 15, desc: 'A lightweight quilted puffer for December evenings and over-cooled offices. Packs into its own pocket.', hl: ['Synthetic insulation', 'Water-repellent shell', 'Packable'], sizes: S.apparel, rating: 4.6, reviews: 98, stock: 18, tags: ['Premium'] },
+  { brand: 'b-neon-rickshaw', name: 'Full-Zip Track Jacket', cat: 'men', sub: 'Jackets', photo: 'mj06', price: 3200, off: 20, desc: 'Retro track jacket with a stand collar and contrast piping.', hl: ['Stand collar', 'Zip pockets', 'Regular fit'], sizes: S.apparel, rating: 4.4, reviews: 122, stock: 26 },
+  { brand: 'b-neon-rickshaw', name: 'City Bomber Jacket', cat: 'men', sub: 'Jackets', photo: 'mj11', price: 4500, off: 25, desc: 'Clean bomber with ribbed cuffs and a smooth satin-feel finish.', hl: ['Ribbed collar & cuffs', 'Two hand pockets', 'Lined'], sizes: S.apparel, rating: 4.5, reviews: 91, stock: 15 },
+  { brand: 'b-padma', name: 'Colour-Block Hooded Pullover', cat: 'men', sub: 'Hoodies', photo: 'mh01', price: 2650, off: 10, desc: 'Lightweight hooded pullover with contrast sleeves and a chest pocket.', hl: ['French terry', 'Chest pocket', 'Contrast sleeves'], sizes: S.apparel, rating: 4.6, reviews: 412, stock: 34, tags: ['Bestseller'] },
+  // ---------------- Women ----------------
+  { brand: 'b-nokshi', name: 'Ruched Jersey Tee', cat: 'women', sub: 'Tops', photo: 'ws03', price: 1190, off: 20, desc: 'Fitted tee with side ruching that flatters without clinging.', hl: ['Stretch jersey', 'Side ruching', 'Scoop neck'], sizes: S.women, rating: 4.7, reviews: 521, stock: 40, tags: ['Bestseller'] },
+  { brand: 'b-dhaka-basics', name: 'Relaxed V-Neck Tee', cat: 'women', sub: 'Tops', photo: 'ws06', price: 890, off: 10, desc: 'Slub-knit V-neck tee with a relaxed drape.', hl: ['Slub knit', 'Relaxed fit'], sizes: S.women, rating: 4.4, reviews: 389, stock: 77 },
+  { brand: 'b-dhaka-basics', name: 'Everyday Scoop Tee', cat: 'women', sub: 'Tops', photo: 'ws11', price: 850, off: 0, desc: 'Breathable scoop-neck tee for workouts and weekends.', hl: ['Breathable mesh back', 'Scoop neck'], sizes: S.women, rating: 4.3, reviews: 211, stock: 0, tags: ['Sold out'] },
+  { brand: 'b-nokshi', name: 'Cowl-Neck Draped Top', cat: 'women', sub: 'Tops', photo: 'wh03', price: 1890, off: 15, desc: 'Draped cowl-neck top with soft dolman sleeves — dressy enough for dawat, comfy enough for adda.', hl: ['Modal blend', 'Cowl neck', 'Dolman sleeves'], sizes: S.women, rating: 4.8, reviews: 143, stock: 9, tags: ['Premium'] },
+  { brand: 'b-urban-tiger', name: 'Zip-Up Hoodie', cat: 'women', sub: 'Hoodies', photo: 'wh05', price: 2450, off: 20, desc: 'Brushed-fleece zip hoodie with thumbholes and a fitted hem.', hl: ['Brushed fleece', 'Thumbholes', 'Full zip'], sizes: S.women, rating: 4.6, reviews: 455, stock: 31 },
+  { brand: 'b-nokshi', name: 'Drawstring Cowl Hoodie', cat: 'women', sub: 'Hoodies', photo: 'wh01', price: 2290, off: 30, desc: 'Lightweight pullover with a drawstring cowl and raglan sleeves.', hl: ['Raglan sleeves', 'Drawstring cowl'], sizes: S.women, rating: 4.5, reviews: 196, stock: 27, tags: ['Eid edit'] },
+  { brand: 'b-dhaka-basics', name: 'Quilted Puffer Jacket', cat: 'women', sub: 'Jackets', photo: 'wj06', price: 4900, off: 20, desc: 'Featherlight quilted puffer with a stand collar — winter warmth without bulk.', hl: ['Synthetic down', 'Water-repellent', 'Zip pockets'], sizes: S.women, rating: 4.6, reviews: 164, stock: 12 },
+  { brand: 'b-monsoon', name: 'Packable Windbreaker', cat: 'women', sub: 'Jackets', photo: 'wj04', price: 3300, off: 15, desc: 'A packable shell for sudden showers. Folds into its own pocket and lives in your bag.', hl: ['Water-repellent', 'Packable', 'Adjustable hood'], sizes: S.women, rating: 4.5, reviews: 132, stock: 22 },
+  { brand: 'b-dhaka-basics', name: 'High-Rise Leggings', cat: 'women', sub: 'Bottoms', photo: 'wp02', price: 1490, off: 10, desc: 'Squat-proof high-rise leggings with a wide waistband and hidden pocket.', hl: ['Squat-proof', 'High rise', 'Hidden waistband pocket'], sizes: S.women, rating: 4.6, reviews: 690, stock: 85 },
+  { brand: 'b-buriganga', name: 'Relaxed Jogger Pants', cat: 'women', sub: 'Bottoms', photo: 'wp03', price: 1890, off: 20, desc: 'Lightweight joggers with ruched cuffs and deep pockets.', hl: ['Quick-dry', 'Cuffed hem', 'Deep pockets'], sizes: S.women, rating: 4.4, reviews: 264, stock: 38 },
+  { brand: 'b-nokshi', name: 'Two-in-One Active Shorts', cat: 'women', sub: 'Bottoms', photo: 'wsh04', price: 1090, off: 0, desc: 'Running shorts with an inner bike-short layer.', hl: ['Inner short', 'Phone pocket'], sizes: S.women, rating: 4.3, reviews: 77, stock: 64 },
+  { brand: 'b-nokshi', name: 'Racerback Tank', cat: 'women', sub: 'Tops', photo: 'wt02', price: 750, off: 0, desc: 'Breathable racerback tank for yoga, gym or layering.', hl: ['Racerback', 'Breathable knit'], sizes: S.women, rating: 4.4, reviews: 158, stock: 48 },
+  { brand: 'b-nokshi', name: 'Ruched Training Tank', cat: 'women', sub: 'Tops', photo: 'wt05', price: 790, off: 15, desc: 'Fitted tank with centre ruching and a longer hem.', hl: ['Centre ruching', 'Longline'], sizes: S.women, rating: 4.5, reviews: 133, stock: 33 },
+  // ---------------- Streetwear ----------------
+  { brand: 'b-urban-tiger', name: 'Olive Pullover Hoodie', cat: 'streetwear', sub: 'Hoodies', photo: 'mh08', price: 2650, off: 20, desc: 'Heavyweight pullover hoodie with a kangaroo pocket. The one you will live in.', hl: ['380 GSM fleece', 'Kangaroo pocket', 'Relaxed fit'], sizes: S.apparel, rating: 4.7, reviews: 803, stock: 95, tags: ['Bestseller'] },
+  { brand: 'b-urban-tiger', name: 'Striped Zip Hoodie', cat: 'streetwear', sub: 'Hoodies', photo: 'mh12', price: 2850, off: 15, desc: 'Marled stripe zip hoodie with ribbed trims.', hl: ['Cotton blend', 'Full zip', 'Ribbed trims'], sizes: S.apparel, rating: 4.5, reviews: 266, stock: 41 },
+  { brand: 'b-neon-rickshaw', name: 'Raglan Colour-Block Sweatshirt', cat: 'streetwear', sub: 'Sweatshirts', photo: 'mh05', price: 2250, off: 25, desc: 'Retro raglan crew in bold rickshaw-art colour blocks.', hl: ['Brushed back fleece', 'Raglan sleeves'], sizes: S.apparel, rating: 4.4, reviews: 172, stock: 58 },
+  { brand: 'b-neon-rickshaw', name: 'Mustard Crew Sweatshirt', cat: 'streetwear', sub: 'Sweatshirts', photo: 'mh11', price: 1990, off: 10, desc: 'Garment-dyed crew sweatshirt with contrast cover-stitching.', hl: ['Garment dyed', 'Contrast stitching'], sizes: S.apparel, rating: 4.3, reviews: 208, stock: 44 },
+  { brand: 'b-neon-rickshaw', name: 'Heather Jogger Pants', cat: 'streetwear', sub: 'Bottoms', photo: 'mp06', price: 1990, off: 20, desc: 'Soft heather joggers with a tapered leg and cuffed hem.', hl: ['Cotton-rich fleece', 'Cuffed hem', 'Drawcord waist'], sizes: S.apparel, rating: 4.4, reviews: 302, stock: 72 },
+  { brand: 'b-urban-tiger', name: 'Six-Panel Dad Cap', cat: 'streetwear', sub: 'Caps', photo: 'cap-dad', price: 690, off: 0, desc: 'Washed cotton cap with a curved brim and adjustable strap.', hl: ['Washed cotton', 'Adjustable strap'], sizes: S.one, rating: 4.4, reviews: 266, stock: 110, color: { name: 'Charcoal', hex: '#374151' } },
+  { brand: 'b-neon-rickshaw', name: 'Fair-Isle Knit Beanie', cat: 'streetwear', sub: 'Caps', photo: 'cap-beanie', price: 590, off: 0, desc: 'Patterned knit beanie for chilly December nights.', hl: ['Acrylic knit', 'Fold-over cuff'], sizes: S.one, rating: 4.2, reviews: 64, stock: 72, color: { name: 'Sky Pattern', hex: '#93C5FD' } },
+  // ---------------- Shoes ----------------
+  { brand: 'b-monsoon', name: 'AirFlow Knit Runner', cat: 'shoes', sub: 'Sneakers', photo: 'shoe-knit', price: 4200, off: 20, desc: 'Featherweight knit runner with a cushioned foam midsole and quick-dry upper — built for humid mornings.', hl: ['Breathable knit upper', 'EVA foam midsole', 'Quick-dry lining', '220 g per shoe'], sizes: S.shoes, rating: 4.6, reviews: 642, stock: 45, tags: ['Bestseller'], color: { name: 'Charcoal Knit', hex: '#3F3F55' } },
+  { brand: 'b-monsoon', name: 'Court Classic Sneaker', cat: 'shoes', sub: 'Sneakers', photo: 'shoe-court', price: 3600, off: 10, desc: 'Clean white low-top sneaker with a glitter-flecked upper.', hl: ['Faux leather upper', 'Rubber cupsole', 'Padded collar'], sizes: S.shoes, rating: 4.5, reviews: 418, stock: 51, color: { name: 'White Glitter', hex: '#E5E7EB' } },
+  { brand: 'b-monsoon', name: 'Canvas Slip-On', cat: 'shoes', sub: 'Sneakers', photo: 'shoe-slipon', price: 1890, off: 15, desc: 'Easy canvas slip-ons with elastic gores.', hl: ['Canvas upper', 'Elastic gores', 'Cushioned insole'], sizes: S.womenShoes, rating: 4.3, reviews: 233, stock: 30, color: { name: 'Lilac', hex: '#A78BFA' } },
+  { brand: 'b-monsoon', name: 'Monsoon Rain Slides', cat: 'shoes', sub: 'Sandals', photo: 'shoe-slides', price: 590, off: 0, desc: 'Waterproof flip-flops for rainy days and rooftop hangouts.', hl: ['Waterproof EVA', 'Soft toe post'], sizes: S.shoes, rating: 4.2, reviews: 512, stock: 120, color: { name: 'Aqua', hex: '#67E8F9' } },
+  { brand: 'b-kolpo', name: 'Leather Derby Boots', cat: 'shoes', sub: 'Boots', photo: 'shoe-boots', price: 5600, off: 15, desc: 'Lace-up leather boots with a rugged sole that ages beautifully.', hl: ['Full-grain leather', 'Rubber lug sole'], sizes: S.shoes, rating: 4.8, reviews: 301, stock: 20, tags: ['Premium'], color: { name: 'Dark Brown', hex: '#3F2A1E' } },
+  { brand: 'b-kolpo', name: 'Hand-Stitched Loafer', cat: 'shoes', sub: 'Formal', photo: 'shoe-loafer', price: 4900, off: 20, desc: 'Moc-toe leather loafer with woven detailing.', hl: ['Genuine leather', 'Hand-stitched moc toe'], sizes: S.shoes, rating: 4.6, reviews: 122, stock: 7, color: { name: 'Cognac', hex: '#8B4513' } },
+  { brand: 'b-kolpo', name: 'Bow Block-Heel Pumps', cat: 'shoes', sub: 'Heels', photo: 'shoe-pumps', price: 2950, off: 10, desc: 'Comfortable 2-inch block heel with a bow detail.', hl: ['Faux leather', '2" block heel', 'Padded insole'], sizes: S.womenShoes, rating: 4.5, reviews: 187, stock: 26, color: { name: 'Black', hex: '#111827' } },
+  { brand: 'b-kolpo', name: 'Classic Stiletto', cat: 'shoes', sub: 'Heels', photo: 'shoe-stiletto', price: 3450, off: 0, desc: 'Glossy platform stiletto for weddings and holud nights.', hl: ['Patent finish', '4" heel', 'Hidden platform'], sizes: S.womenShoes, rating: 4.4, reviews: 96, stock: 14, tags: ['Eid edit'], color: { name: 'Black Patent', hex: '#0B0B0F' } },
+  { brand: 'b-kolpo', name: 'Comfort Strap Sandals', cat: 'shoes', sub: 'Sandals', photo: 'shoe-sandal', price: 1650, off: 0, desc: 'Adjustable three-strap sandals with a contoured cork-style footbed.', hl: ['Adjustable straps', 'Contoured footbed'], sizes: S.shoes, rating: 4.4, reviews: 210, stock: 40, color: { name: 'Brown', hex: '#78350F' } },
+  { brand: 'b-kolpo', name: 'Patent Ballet Flats', cat: 'shoes', sub: 'Flats', photo: 'shoe-flats', price: 1990, off: 15, desc: 'Glossy ballet flats for office-to-evening.', hl: ['Patent finish', 'Cushioned sole'], sizes: S.womenShoes, rating: 4.3, reviews: 144, stock: 39, color: { name: 'Black Patent', hex: '#0B0B0F' } },
+  // ---------------- Bags ----------------
+  { brand: 'b-urban-tiger', name: 'Trail Backpack 22L', cat: 'bags', sub: 'Backpacks', photo: 'mb02', price: 2800, off: 25, desc: 'Water-resistant daypack with padded straps and a hidden pocket — CNG-proof.', hl: ['Water-resistant', '22 L', 'Hidden back pocket'], sizes: S.one, rating: 4.6, reviews: 388, stock: 66, tags: ['Bestseller'] },
+  { brand: 'b-urban-tiger', name: 'Commuter Laptop Backpack', cat: 'bags', sub: 'Backpacks', photo: 'mb03', price: 3400, off: 15, desc: 'Structured backpack with a padded 15.6" laptop sleeve and organiser panel.', hl: ['15.6" laptop sleeve', 'Organiser panel'], sizes: S.one, rating: 4.7, reviews: 156, stock: 14 },
+  { brand: 'b-kolpo', name: 'Weekender Duffle', cat: 'bags', sub: 'Duffles', photo: 'mb01', price: 3900, off: 20, desc: 'Roomy duffle for Cox’s Bazar weekends and gym days.', hl: ['40 L', 'Shoulder strap', 'Shoe pocket'], sizes: S.one, rating: 4.5, reviews: 210, stock: 40 },
+  { brand: 'b-lalbagh', name: 'Crossbody Sling Pack', cat: 'bags', sub: 'Slings', photo: 'mb04', price: 1950, off: 15, desc: 'Compact one-strap sling — phone, wallet, keys, done.', hl: ['Adjustable strap', 'Quick-access pocket'], sizes: S.one, rating: 4.5, reviews: 274, stock: 90 },
+  { brand: 'b-kolpo', name: 'Office Messenger Bag', cat: 'bags', sub: 'Messengers', photo: 'mb05', price: 4200, off: 10, desc: 'Flap-over messenger with a padded laptop compartment.', hl: ['Padded laptop slot', 'Magnetic buckles'], sizes: S.one, rating: 4.6, reviews: 119, stock: 23 },
+  { brand: 'b-kolpo', name: 'Canvas Field Satchel', cat: 'bags', sub: 'Messengers', photo: 'mb06', price: 2950, off: 0, desc: 'Washed canvas satchel with leather-look buckles.', hl: ['Washed canvas', 'Two front pockets'], sizes: S.one, rating: 4.4, reviews: 88, stock: 31 },
+  // ---------------- Accessories ----------------
+  { brand: 'b-lalbagh', name: 'Digital Sport Watch', cat: 'accessories', sub: 'Watches', photo: 'mg01', price: 3900, off: 20, desc: 'Chunky digital watch with stopwatch, alarm and backlight.', hl: ['Stopwatch & alarm', 'Backlight', '5 ATM (demo)'], sizes: S.one, rating: 4.5, reviews: 189, stock: 23 },
+  { brand: 'b-lalbagh', name: 'Outdoor Compass Watch', cat: 'accessories', sub: 'Watches', photo: 'mg03', price: 5400, off: 15, desc: 'Rugged outdoor watch with compass bezel.', hl: ['Compass bezel', 'Silicone strap'], sizes: S.one, rating: 4.4, reviews: 88, stock: 11, tags: ['Premium'] },
+  { brand: 'b-lalbagh', name: 'Minimal Analog Watch', cat: 'accessories', sub: 'Watches', photo: 'mg04', price: 4500, off: 10, desc: 'Clean analog dial on a soft silicone strap.', hl: ['Japanese quartz (demo)', '42 mm'], sizes: S.one, rating: 4.6, reviews: 301, stock: 70 },
+  { brand: 'b-lalbagh', name: 'Dual-Time Leather Watch', cat: 'accessories', sub: 'Watches', photo: 'mg05', price: 6900, off: 20, desc: 'Two time zones on a stitched leather cuff — Dhaka and wherever your family is.', hl: ['Dual time', 'Leather cuff strap'], sizes: S.one, rating: 4.7, reviews: 144, stock: 3, tags: ['Low stock'] },
+  { brand: 'b-lalbagh', name: 'Leather Flat Cap', cat: 'accessories', sub: 'Caps', photo: 'cap-flat', price: 1250, off: 15, desc: 'Classic flat cap in soft faux leather.', hl: ['Faux leather', 'Quilted lining'], sizes: S.one, rating: 4.3, reviews: 133, stock: 48, color: { name: 'Olive Black', hex: '#3F4637' } },
+  // ---------------- Lifestyle ----------------
+  { brand: 'b-shapla', name: 'Hydro Bottle 1L', cat: 'lifestyle', sub: 'Drinkware', photo: 'ug06', price: 990, off: 10, desc: 'BPA-free 1-litre bottle with a carabiner lid. Hydration for a Dhaka June.', hl: ['BPA free', '1 L', 'Carabiner loop'], sizes: S.one, rating: 4.7, reviews: 690, stock: 150 },
+  { brand: 'b-shapla', name: 'Anti-Burst Exercise Ball', cat: 'lifestyle', sub: 'Fitness', photo: 'ball', price: 1850, off: 20, desc: '65 cm anti-burst stability ball with pump included.', hl: ['65 cm', 'Anti-burst', 'Pump included'], sizes: S.one, rating: 4.5, reviews: 245, stock: 36 },
+  { brand: 'b-shapla', name: 'Foam Roller', cat: 'lifestyle', sub: 'Recovery', photo: 'roller', price: 1290, off: 0, desc: 'High-density foam roller for post-workout recovery.', hl: ['High-density foam', '45 cm'], sizes: S.one, rating: 4.4, reviews: 132, stock: 47, color: { name: 'Blue', hex: '#3B82F6' } },
+  { brand: 'b-shapla', name: 'Yoga Starter Kit', cat: 'lifestyle', sub: 'Yoga', photo: 'yogakit', price: 3450, off: 25, desc: 'Ball, brick, strap and roller — everything for a calm home practice.', hl: ['4-piece kit', 'Carry bag'], sizes: S.one, rating: 4.6, reviews: 158, stock: 25, tags: ['Bestseller'], color: { name: 'Blue', hex: '#3B82F6' } },
+  { brand: 'b-shapla', name: 'Yoga Strap Set (3)', cat: 'lifestyle', sub: 'Yoga', photo: 'strap', price: 790, off: 0, desc: 'Three cotton yoga straps with metal D-rings.', hl: ['Cotton webbing', 'Metal D-ring'], sizes: S.one, rating: 4.3, reviews: 66, stock: 88, color: { name: 'Multicolour', hex: '#22C55E' } },
+  { brand: 'b-shapla', name: 'Yoga Block', cat: 'lifestyle', sub: 'Yoga', photo: 'brick', price: 590, off: 0, desc: 'Lightweight EVA foam block for support and alignment.', hl: ['EVA foam', 'Non-slip'], sizes: S.one, rating: 4.4, reviews: 97, stock: 120, color: { name: 'Blue', hex: '#3B82F6' } },
+  { brand: 'b-shapla', name: 'Speed Jump Rope', cat: 'lifestyle', sub: 'Fitness', photo: 'ug04', price: 650, off: 10, desc: 'Ball-bearing jump rope with foam grips — cardio in a small flat.', hl: ['Ball bearings', 'Adjustable length'], sizes: S.one, rating: 4.3, reviews: 211, stock: 64 },
+  { brand: 'b-shapla', name: 'Push-Up Bars', cat: 'lifestyle', sub: 'Fitness', photo: 'ug05', price: 1150, off: 0, desc: 'Non-slip push-up handles that go easy on your wrists.', hl: ['Non-slip base', 'Foam grips'], sizes: S.one, rating: 4.4, reviews: 76, stock: 0, tags: ['Sold out'] },
+  { brand: 'b-shapla', name: 'Resistance Band Set', cat: 'lifestyle', sub: 'Fitness', photo: 'ug01', price: 1450, off: 15, desc: 'Tube resistance band with cushioned handles for full-body workouts.', hl: ['Cushioned handles', 'Door anchor'], sizes: S.one, rating: 4.5, reviews: 154, stock: 58 },
 ]
 
 const T0 = Date.UTC(2026, 3, 1)
 
 export const SEED_PRODUCTS: Product[] = RAW.map((p, n) => {
-  const pl = IMG[p.pool]
-  // 3 gallery images: the hero plus two others from the same pool.
-  const images = [0, 1, 2].map((k) => pick(p.pool, p.i + k)).filter((v, idx, arr) => arr.indexOf(v) === idx)
-  if (images.length < 2 && pl.length) images.push(pl[0])
+  const ph = PRODUCT_PHOTOS[p.photo]
+  const entries = Object.entries(ph.colors)
+  const colors = entries.map(([key]) => (key === 'default' ? p.color ?? { name: 'Default', hex: '#9CA3AF' } : COLOR[key] ?? { name: key, hex: '#9CA3AF' }))
+  const colorImages = Object.fromEntries(entries.map(([, src], i) => [colors[i].name, src]))
+  const images = [...entries.map(([, src]) => src), ...(ph.back ? [ph.back] : [])]
   return {
     id: `p-${String(n + 1).padStart(3, '0')}`,
     brandId: p.brand,
@@ -112,28 +132,29 @@ export const SEED_PRODUCTS: Product[] = RAW.map((p, n) => {
     category: p.cat,
     subcategory: p.sub,
     images,
+    colorImages,
     price: p.price,
     discountPct: p.off,
     description: p.desc,
     highlights: p.hl,
     sizes: p.sizes,
-    colors: p.colors,
+    colors,
     rating: p.rating,
     reviewCount: p.reviews,
     stock: p.stock,
     deliveryHours: 24,
-    expressAvailable: p.price < 7000,
+    expressAvailable: p.price < 6000,
     tags: p.tags ?? [],
     createdAt: T0 + n * 36e5 * 20,
   }
 })
 
-export const SHOP_CATEGORIES: { id: ShopCategory; label: string; pool: ImagePool; idx: number }[] = [
-  { id: 'men', label: "Men's Fashion", pool: 'shirt', idx: 0 },
-  { id: 'women', label: "Women's Fashion", pool: 'dress', idx: 0 },
-  { id: 'shoes', label: 'Shoes', pool: 'sneakers', idx: 0 },
-  { id: 'bags', label: 'Bags', pool: 'bags', idx: 0 },
-  { id: 'accessories', label: 'Accessories', pool: 'watches', idx: 0 },
-  { id: 'streetwear', label: 'Streetwear', pool: 'hoodie', idx: 0 },
-  { id: 'lifestyle', label: 'Lifestyle', pool: 'lifestyle', idx: 0 },
+export const SHOP_CATEGORIES: { id: ShopCategory; label: string; image: string }[] = [
+  { id: 'men', label: "Men's Fashion", image: photo('mj03') },
+  { id: 'women', label: "Women's Fashion", image: photo('wh03') },
+  { id: 'shoes', label: 'Shoes', image: photo('shoe-knit') },
+  { id: 'bags', label: 'Bags', image: photo('mb02') },
+  { id: 'accessories', label: 'Accessories', image: photo('mg05') },
+  { id: 'streetwear', label: 'Streetwear', image: photo('mh08') },
+  { id: 'lifestyle', label: 'Lifestyle', image: photo('yogakit') },
 ]

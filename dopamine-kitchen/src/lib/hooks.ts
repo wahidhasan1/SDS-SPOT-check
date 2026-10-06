@@ -1,17 +1,5 @@
 import { useEffect, useState } from 'react'
 
-/** Simulates network latency so skeleton loaders are visible, like a real API-backed app. */
-export function useSimLoad(deps: unknown[] = [], ms = 550) {
-  const [loading, setLoading] = useState(true)
-  useEffect(() => {
-    setLoading(true)
-    const t = setTimeout(() => setLoading(false), ms + Math.random() * 250)
-    return () => clearTimeout(t)
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, deps)
-  return loading
-}
-
 export function useTitle(title: string) {
   useEffect(() => {
     document.title = title ? `${title} · Dopamine Kitchen` : 'Dopamine Kitchen — Feed the craving. Skip the delivery.'
