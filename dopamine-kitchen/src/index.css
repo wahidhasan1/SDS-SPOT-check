@@ -1,44 +1,47 @@
 @import 'tailwindcss';
 
-/* ===== Dopamine Kitchen design tokens ===== */
+/* ===== pikk design tokens ===== */
 @theme {
-  --font-sans: 'Plus Jakarta Sans', ui-sans-serif, system-ui, -apple-system, 'Segoe UI', Roboto, 'Noto Sans Bengali', sans-serif;
-  --font-display: 'Bricolage Grotesque', 'Plus Jakarta Sans', ui-sans-serif, system-ui, sans-serif;
+  /* One family, weight-driven hierarchy. */
+  --font-sans: 'Figtree', ui-sans-serif, system-ui, -apple-system, 'Segoe UI', Roboto, 'Noto Sans Bengali', sans-serif;
+  --font-display: 'Figtree', ui-sans-serif, system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif;
 
-  /* Dopa Violet — primary */
-  --color-brand-50: #f6f1ff;
-  --color-brand-100: #ede3ff;
-  --color-brand-200: #dac8ff;
-  --color-brand-300: #bd9dff;
-  --color-brand-400: #9f6dfb;
-  --color-brand-500: #7c3aed;
-  --color-brand-600: #6d28d9;
-  --color-brand-700: #5b21b6;
-  --color-brand-800: #4c1d95;
-  --color-brand-900: #2e1065;
+  /* Jade — primary actions, navigation, success */
+  --color-brand-50: #ecf8f2;
+  --color-brand-100: #d3f0e2;
+  --color-brand-200: #a8e0c6;
+  --color-brand-300: #6fc9a3;
+  --color-brand-400: #34ad7e;
+  --color-brand-500: #0f9466;
+  --color-brand-600: #0a7f57;
+  --color-brand-700: #086648;
+  --color-brand-800: #08513a;
+  --color-brand-900: #063b2b;
 
-  /* Craving Coral — accent */
-  --color-coral-50: #fff4f0;
-  --color-coral-100: #ffe3d9;
-  --color-coral-200: #ffc5b2;
-  --color-coral-300: #ff9c7f;
-  --color-coral-400: #ff7a57;
-  --color-coral-500: #ff5a36;
-  --color-coral-600: #e8431f;
-  --color-coral-700: #c13415;
+  /* Sun — rewards, discounts, highlights (always with dark text) */
+  --color-sun-50: #fff9e6;
+  --color-sun-100: #fff0c2;
+  --color-sun-200: #ffe08a;
+  --color-sun-300: #ffd15c;
+  --color-sun-400: #ffc233;
+  --color-sun-500: #f5ad0a;
+  --color-sun-600: #d18e00;
+  --color-sun-700: #a36e00;
+  --color-sun-800: #7a5200;
 
-  --color-ink-900: #17121f;
-  --color-ink-700: #3b3447;
-  --color-ink-500: #6b6478;
-  --color-ink-400: #8e879b;
-  --color-ink-300: #bdb7c8;
-  --color-ink-200: #e4e0ea;
-  --color-ink-100: #f0edf4;
-  --color-ink-50: #f8f6fb;
+  /* Neutrals with a faint jade bias */
+  --color-ink-900: #121513;
+  --color-ink-700: #333a36;
+  --color-ink-500: #5c655f;
+  --color-ink-400: #838b86;
+  --color-ink-300: #b9c0bb;
+  --color-ink-200: #dfe3e0;
+  --color-ink-100: #eef1ef;
+  --color-ink-50: #f6f8f6;
 
   --shadow-card: 0 1px 2px rgb(23 18 31 / 0.04), 0 4px 16px rgb(23 18 31 / 0.06);
   --shadow-lift: 0 2px 4px rgb(23 18 31 / 0.05), 0 12px 32px rgb(23 18 31 / 0.12);
-  --shadow-glow: 0 8px 24px rgb(124 58 237 / 0.35);
+  --shadow-glow: 0 8px 24px rgb(10 127 87 / 0.28);
 
   --animate-fade-in: fade-in 0.25s ease-out both;
   --animate-slide-up: slide-up 0.32s cubic-bezier(0.2, 0.9, 0.3, 1.1) both;
@@ -73,9 +76,8 @@
   html { -webkit-tap-highlight-color: transparent; scroll-behavior: smooth; }
   body {
     @apply bg-ink-50 text-ink-900 font-sans antialiased;
-    font-feature-settings: 'ss01', 'cv11';
   }
-  h1, h2, h3, .font-display { font-family: var(--font-display); letter-spacing: -0.02em; }
+  h1, h2, h3, .font-display { font-family: var(--font-display); letter-spacing: -0.025em; text-wrap: balance; }
   button { cursor: pointer; }
   button:disabled { cursor: not-allowed; }
   :focus-visible { outline: 2px solid var(--color-brand-500); outline-offset: 2px; border-radius: 6px; }
@@ -84,12 +86,13 @@
 
 @layer components {
   .btn {
-    @apply inline-flex items-center justify-center gap-2 rounded-xl px-4 h-11 text-sm font-semibold transition-all duration-150 select-none whitespace-nowrap active:scale-[0.98] disabled:opacity-50 disabled:active:scale-100;
+    @apply inline-flex items-center justify-center gap-2 rounded-xl px-4 h-11 text-sm font-bold transition-all duration-150 select-none whitespace-nowrap active:scale-[0.97] disabled:opacity-45 disabled:active:scale-100 disabled:shadow-none;
   }
   .btn-sm { @apply h-9 px-3 text-[13px] rounded-lg; }
   .btn-lg { @apply h-13 px-6 text-base rounded-2xl; }
-  .btn-primary { @apply bg-brand-600 text-white hover:bg-brand-700 shadow-[0_6px_18px_-6px_rgb(109_40_217/0.6)]; }
-  .btn-accent { @apply bg-coral-500 text-white hover:bg-coral-600 shadow-[0_6px_18px_-6px_rgb(255_90_54/0.6)]; }
+  .btn-primary { @apply bg-brand-600 text-white hover:bg-brand-700 shadow-[0_6px_16px_-8px_rgb(10_127_87/0.7)]; }
+  .btn-accent { @apply bg-sun-400 text-ink-900 hover:bg-sun-300 shadow-[0_6px_16px_-8px_rgb(209_142_0/0.7)]; }
+  .btn-dark { @apply bg-ink-900 text-white hover:bg-ink-700; }
   .btn-secondary { @apply bg-white text-ink-900 border border-ink-200 hover:border-ink-300 hover:bg-ink-50; }
   .btn-soft { @apply bg-brand-50 text-brand-700 hover:bg-brand-100; }
   .btn-ghost { @apply text-ink-700 hover:bg-ink-100; }
@@ -114,7 +117,7 @@
 
   .skeleton {
     @apply rounded-xl;
-    background: linear-gradient(90deg, #efecf3 0px, #f8f6fb 120px, #efecf3 240px);
+    background: linear-gradient(90deg, #eef1ef 0px, #f6f8f6 120px, #eef1ef 240px);
     background-size: 800px 100%;
     animation: var(--animate-shimmer);
   }
@@ -122,11 +125,8 @@
   .section-title { @apply font-display text-xl sm:text-2xl font-bold text-ink-900; }
   .scrollbar-none { scrollbar-width: none; }
   .scrollbar-none::-webkit-scrollbar { display: none; }
-  .bg-brand-gradient { background-image: linear-gradient(135deg, #6d28d9 0%, #a43ee0 48%, #ff5a36 100%); }
-  .text-brand-gradient {
-    background-image: linear-gradient(120deg, #6d28d9, #c026d3 50%, #ff5a36);
-    -webkit-background-clip: text; background-clip: text; color: transparent;
-  }
+  /* Signature surface: solid jade with a soft light bloom (no multi-hue gradients). */
+  .bg-brand-surface { background: radial-gradient(120% 140% at 100% 0%, #0f9466 0%, #0a7f57 45%, #086648 100%); }
   .map-grid {
     background-color: #eef0e8;
     background-image:
@@ -137,3 +137,9 @@
 }
 
 .pb-safe { padding-bottom: env(safe-area-inset-bottom); }
+
+@keyframes bump { 0% { transform: scale(1); } 35% { transform: scale(1.35); } 100% { transform: scale(1); } }
+.animate-bump { animation: bump 0.35s ease-out; }
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after { animation-duration: 0.01ms !important; animation-iteration-count: 1 !important; transition-duration: 0.01ms !important; scroll-behavior: auto !important; }
+}

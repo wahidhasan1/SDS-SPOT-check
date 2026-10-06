@@ -1,6 +1,6 @@
 import { useMemo, useState } from 'react'
 import { Link, useNavigate, useSearchParams } from 'react-router-dom'
-import { ArrowLeft, Clock, Star, Tag, TrendingUp, Trash2, DoorOpen } from 'lucide-react'
+import { ArrowLeft, Clock, Star, Tag, TrendingUp, Trash2, DoorOpen, SearchX } from 'lucide-react'
 import { useStore } from '../store/store'
 import { FOOD_CATEGORIES } from '../data/restaurants'
 import { SHOP_CATEGORIES } from '../data/products'
@@ -69,7 +69,7 @@ export default function SearchPage() {
               </div>
             )}
             <h2 className="font-display text-lg font-bold mb-3">Popular searches</h2>
-            <div className="flex flex-wrap gap-2">{POPULAR_SEARCHES.map((p) => <Link key={p} to={`/search?q=${encodeURIComponent(p)}`} className="chip"><TrendingUp className="size-3.5 text-coral-500" /> {p}</Link>)}</div>
+            <div className="flex flex-wrap gap-2">{POPULAR_SEARCHES.map((p) => <Link key={p} to={`/search?q=${encodeURIComponent(p)}`} className="chip"><TrendingUp className="size-3.5 text-sun-600" /> {p}</Link>)}</div>
           </div>
           <div>
             <h2 className="font-display text-lg font-bold mb-3">Browse categories</h2>
@@ -106,7 +106,7 @@ export default function SearchPage() {
           </div>
 
           {loading ? <GridSkeleton count={6} className="mt-5 grid gap-4 sm:grid-cols-2 lg:grid-cols-3" /> : count(tab) === 0 ? (
-            <EmptyState emoji="🤷" title={`No results for “${q}”`} body={hits.length ? 'Try removing a filter.' : 'Check the spelling or try something more general — like “burger”, “kacchi” or “sneakers”.'}
+            <EmptyState icon={SearchX} title={`No results for “${q}”`} body={hits.length ? 'Try removing a filter.' : 'Check the spelling or try something more general — like “burger”, “kacchi” or “sneakers”.'}
               action={<>{POPULAR_SEARCHES.slice(0, 4).map((p) => <Link key={p} to={`/search?q=${encodeURIComponent(p)}`} className="chip">{p}</Link>)}</>} />
           ) : (
             <div className="mt-5 space-y-10">

@@ -1,6 +1,6 @@
 import { useMemo, useState } from 'react'
 import { Link } from 'react-router-dom'
-import { Search } from 'lucide-react'
+import { Bike, ReceiptText, Search } from 'lucide-react'
 import { useStore } from '../store/store'
 import { isActive } from '../lib/sim'
 import { useTitle } from '../lib/hooks'
@@ -46,7 +46,7 @@ export default function Orders() {
       </div>
       <div className="mt-4 space-y-3">
         {loading ? Array.from({ length: 3 }).map((_, i) => <Skeleton key={i} className="h-36" />) : list.length === 0 ? (
-          <EmptyState emoji={tab === 'active' ? '🛵' : '🧾'} title={q ? 'No orders match your search' : tab === 'active' ? 'No active orders' : tab === 'past' ? 'No delivered orders yet' : 'No cancelled orders'} body={tab === 'active' ? 'Got a craving? Place a simulated order and track it here.' : undefined}
+          <EmptyState icon={tab === 'active' ? Bike : ReceiptText} title={q ? 'No orders match your search' : tab === 'active' ? 'No active orders' : tab === 'past' ? 'No delivered orders yet' : 'No cancelled orders'} body={tab === 'active' ? 'Got a craving? Place a simulated order and track it here.' : undefined}
             action={tab === 'active' && !q ? <><Link to="/food" className="btn btn-primary">Order food</Link><Link to="/shop" className="btn btn-secondary">Go shopping</Link></> : undefined} />
         ) : list.map((o) => <OrderCard key={o.id} o={o} onReorder={isActive(o) ? undefined : () => reorder(o)} />)}
       </div>

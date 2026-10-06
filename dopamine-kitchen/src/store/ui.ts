@@ -2,6 +2,8 @@ import { create } from 'zustand'
 import type { Address } from '../data/types'
 
 interface UIState {
+  howOpen: boolean
+  setHowOpen: (v: boolean) => void
   locationOpen: boolean
   setLocationOpen: (v: boolean) => void
   addressForm: { open: boolean; editing?: Address; onSaved?: (id: string) => void }
@@ -10,6 +12,8 @@ interface UIState {
 }
 
 export const useUI = create<UIState>((set) => ({
+  howOpen: false,
+  setHowOpen: (v) => set({ howOpen: v }),
   locationOpen: false,
   setLocationOpen: (v) => set({ locationOpen: v }),
   addressForm: { open: false },

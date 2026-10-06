@@ -1,10 +1,10 @@
 import { useMemo, useState, type ReactNode } from 'react'
 import { Link, useNavigate, useSearchParams } from 'react-router-dom'
-import { Bookmark, ChevronRight, Clock, ShoppingBag, TicketPercent, Trash2, TriangleAlert, X } from 'lucide-react'
+import { Bookmark, ChevronRight, Clock, ShoppingBag, TicketPercent, Trash2, TriangleAlert, X, ShoppingCart } from 'lucide-react'
 import type { CartKind, CartLine } from '../data/types'
 import { useCurrentArea, useStore, artFor } from '../store/store'
 import { toast } from '../store/toast'
-import { checkVoucher, foodDelivery, PLATFORM_FEE_FOOD, shopDeliveryMethods, subtotalOf } from '../lib/pricing'
+import { checkVoucher, foodDelivery, PLATFORM_FEE_FOOD, shopDeliveryMethods, subtotalOf, visibleTo } from '../lib/pricing'
 import { cx, taka } from '../lib/format'
 import { useTitle } from '../lib/hooks'
 import { VoucherCard } from '../components/cards'
@@ -26,7 +26,7 @@ export function useBill(kind: CartKind, deliveryFeeOverride?: number) {
     const deliveryFee = deliveryFeeOverride ?? (kind === 'food' ? fd?.fee ?? 0 : shopDeliveryMethods(subtotal)[0].fee)
     const platformFee = kind === 'food' && lines.length ? PLATFORM_FEE_FOOD : 0
     const v = code ? vouchers.find((x) => x.code === code) : undefined
-    const check = v ? checkVoucher(v, kind, subtotal, deliveryFee, { now: Date.now(), isFirstOrder: !orders.some((o) => o.userId === uid && o.status !== 'cancelled') }) : null
+    const check = v ? checkVoucher(v, kind, subtotal, deliveryFee, { now: Date.now(), isFirstOrder: !orders.some((o) => o.userId === uid && o.status !== 'cancelled'), userId: uid }) : null
     const discount = check?.ok ? check.discount : 0
     const total = Math.max(0, subtotal + deliveryFee + platformFee - discount)
     const belowMin = restaurant ? Math.max(0, restaurant.minOrder - subtotal) : 0
@@ -48,7 +48,7 @@ export default function Cart() {
   if (!cart.length && !saved.length)
     return (
       <div className="mx-auto max-w-3xl px-4">
-        <EmptyState emoji="🛒" title="Your cart is empty" body="Find something you're craving — the full checkout experience awaits, minus the bill." action={<><Link to="/food" className="btn btn-primary">Browse food</Link><Link to="/shop" className="btn btn-secondary">Go shopping</Link></>} />
+        <EmptyState icon={ShoppingCart} title="Your cart is empty" body="Find something you're craving — the full checkout experience awaits, minus the bill." action={<><Link to="/food" className="btn btn-primary">Browse food</Link><Link to="/shop" className="btn btn-secondary">Go shopping</Link></>} />
       </div>
     )
 
@@ -112,7 +112,7 @@ function CartBody({ kind, onCheckout }: { kind: CartKind; onCheckout: () => void
         <VoucherBox kind={kind} deliveryFee={bill.deliveryFee} />
         <BillCard bill={bill} kind={kind} />
         <button disabled={bill.belowMin > 0} onClick={onCheckout} className="btn btn-primary btn-lg w-full">
-          Proceed to checkout · {taka(bill.total)}
+          Checkout · {taka(bill.total)}
         </button>
         <p className="text-center text-xs text-ink-500">You won't be charged. Payments on the next steps are simulated.</p>
       </div>
@@ -137,10 +137,10 @@ function LineRow({ l }: { l: CartLine }) {
         {(l.size || l.color) && <p className="text-xs text-ink-500 mt-0.5">{[l.size && `Size ${l.size}`, l.color].filter(Boolean).join(' · ')}</p>}
         {l.optionLabels?.length ? <p className="text-xs text-ink-500 mt-0.5 line-clamp-2">{l.optionLabels.join(', ')}</p> : null}
         <p className="text-xs text-ink-400 mt-0.5">{taka(l.unitPrice)} each</p>
-        <div className="mt-2 flex flex-wrap items-center gap-2">
+        <div className="mt-2 flex flex-wrap items-center gap-1">
           <QtyStepper size="sm" value={l.qty} min={1} onChange={(v) => setQty(l.key, v)} />
-          <button onClick={() => { saveForLater(l.key); toast('info', 'Saved for later') }} className="btn btn-ghost btn-sm"><Bookmark className="size-4" /> Save for later</button>
-          <button onClick={() => { const r = removeLine(l.key); if (r) toast('info', `Removed ${l.name}`, undefined, { label: 'Undo', onClick: () => restoreLine(r) }) }} className="btn btn-ghost btn-sm text-red-600"><Trash2 className="size-4" /> Remove</button>
+          <button onClick={() => { saveForLater(l.key); toast('info', 'Saved for later') }} className="btn btn-ghost btn-sm px-2" aria-label={`Save ${l.name} for later`}><Bookmark className="size-4" /> Save</button>
+          <button onClick={() => { const r = removeLine(l.key); if (r) toast('info', `Removed ${l.name}`, undefined, { label: 'Undo', onClick: () => restoreLine(r) }) }} className="btn btn-ghost btn-sm px-2 text-red-600" aria-label={`Remove ${l.name}`}><Trash2 className="size-4" /> Remove</button>
         </div>
       </div>
     </div>
@@ -156,14 +156,15 @@ export function VoucherBox({ kind, deliveryFee }: { kind: CartKind; deliveryFee:
   const [err, setErr] = useState('')
   const [open, setOpen] = useState(false)
   const bill = useBill(kind, deliveryFee)
-  const available = vouchers.filter((v) => v.active && v.expiresAt > Date.now() && (v.scope === 'all' || v.scope === kind))
+  const uid = useStore((s) => s.currentUserId)
+  const available = vouchers.filter((v) => visibleTo(v, uid) && v.active && !v.usedAt && v.expiresAt > Date.now() && (v.scope === 'all' || v.scope === kind))
   const apply = (c: string) => {
     const res = applyVoucher(kind, c, deliveryFee)
     if (res.ok) {
       setErr('')
       setInput('')
       setOpen(false)
-      toast('success', `Voucher ${c.toUpperCase()} applied 🎉`)
+      toast('success', `Voucher ${c.toUpperCase()} applied`)
     } else {
       setErr(res.error ?? 'Invalid voucher')
       if (open) toast('error', 'Voucher not applicable', res.error)

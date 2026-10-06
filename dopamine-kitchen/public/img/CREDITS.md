@@ -1,6 +1,6 @@
 # Photo credits
 
-All photos are bundled, resized and re-encoded as WebP for the Dopamine Kitchen demo. Restaurant, brand and product
+All photos are bundled, resized and re-encoded as WebP for the pikk demo. Restaurant, brand and product
 names, prices and descriptions in the app are fictional and are not affiliated with the sources below.
 
 | Folder | Source | Licence / terms |

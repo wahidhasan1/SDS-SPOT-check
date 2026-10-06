@@ -67,7 +67,7 @@ export default function SupportChat() {
     }
     if (pendingCancel && /^(no|keep)/.test(t)) {
       setPendingCancel(null)
-      return reply('No problem, your order stays on track. 🛵', ['Where is my order?'])
+      return reply('No problem, your order stays on track.', ['Where is my order?'])
     }
     if (/where|status|track|late|eta/.test(t)) {
       if (!o) return reply("I couldn't find any orders on this demo account. Want to place one?", ['Talk to an agent'])
@@ -100,7 +100,7 @@ export default function SupportChat() {
       reply('Connecting you to a support agent…', [], 'bot', 300)
       setTimeout(() => {
         push({ from: 'system', text: 'Nadia (simulated agent) joined the chat' })
-        reply(`Assalamu alaikum, this is Nadia from Dopamine Kitchen support (a simulated agent). ${o ? `I have ${o.id} open in front of me. ` : ''}How can I make this better for you?`, ['Where is my order?', 'Request a refund', 'Thanks!'], 'agent')
+        reply(`Assalamu alaikum, this is Nadia from pikk support (a simulated agent). ${o ? `I have ${o.id} open in front of me. ` : ''}How can I make this better for you?`, ['Where is my order?', 'Request a refund', 'Thanks!'], 'agent')
       }, 2600)
       return
     }
@@ -115,7 +115,7 @@ export default function SupportChat() {
     <div className="mx-auto flex h-[calc(100dvh-32px)] max-w-3xl flex-col">
       <div className="flex items-center gap-3 border-b border-ink-100 bg-white px-4 py-3">
         <button onClick={() => nav(-1)} className="icon-btn -ml-2" aria-label="Back"><ArrowLeft className="size-5" /></button>
-        {agent ? <span className="grid size-10 place-items-center rounded-full bg-coral-500 font-bold text-white">N</span> : <LogoMark size={40} />}
+        {agent ? <span className="grid size-10 place-items-center rounded-full bg-sun-400 font-bold text-ink-900">N</span> : <LogoMark size={40} />}
         <div className="flex-1">
           <p className="font-bold leading-tight">{agent ? 'Nadia · Support' : 'Dopa Support'}</p>
           <p className="text-xs text-emerald-600 font-semibold">● Online <span className="font-normal text-amber-700">· simulated</span></p>

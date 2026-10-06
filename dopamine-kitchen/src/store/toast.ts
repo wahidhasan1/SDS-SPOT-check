@@ -21,7 +21,7 @@ export const useToasts = create<ToastState>((set, get) => ({
   push: (t) => {
     const id = seq++
     set((s) => ({ items: [...s.items.filter((x) => x.title !== t.title).slice(-2), { ...t, id }] }))
-    setTimeout(() => get().dismiss(id), t.action ? 6000 : 3800)
+    setTimeout(() => get().dismiss(id), t.action ? 5000 : t.body ? 3200 : 2200)
   },
   dismiss: (id) => set((s) => ({ items: s.items.filter((x) => x.id !== id) })),
 }))

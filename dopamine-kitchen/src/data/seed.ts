@@ -23,14 +23,14 @@ export function seedVouchers(now: number): Voucher[] {
 }
 
 export const SEED_USERS = (now: number): User[] => [
-  { id: 'u-ayesha', name: 'Ayesha Rahman', phone: '+8801712345678', email: 'ayesha.demo@example.com', avatarColor: '#7C3AED', joinedAt: now - 210 * DAY, role: 'admin',
+  { id: 'u-ayesha', name: 'Ayesha Rahman', phone: '+8801712345678', email: 'ayesha.demo@example.com', avatarColor: '#0A7F57', joinedAt: now - 210 * DAY, role: 'admin',
     savedPayments: [
       { id: 'pm-1', method: 'bkash', label: 'bKash (test wallet)', masked: '01700-000000' },
       { id: 'pm-2', method: 'card', label: 'Demo Visa', masked: '•••• 4242' },
     ] },
   { id: 'u-tanvir', name: 'Tanvir Hossain', phone: '+8801819876543', email: 'tanvir.demo@example.com', avatarColor: '#EA580C', joinedAt: now - 120 * DAY, role: 'customer',
     savedPayments: [{ id: 'pm-3', method: 'nagad', label: 'Nagad (test wallet)', masked: '01800-000000' }] },
-  { id: 'u-nusrat', name: 'Nusrat Jahan', phone: '+8801911223344', email: 'nusrat.demo@example.com', avatarColor: '#DB2777', joinedAt: now - 60 * DAY, role: 'customer', savedPayments: [] },
+  { id: 'u-nusrat', name: 'Nusrat Jahan', phone: '+8801911223344', email: 'nusrat.demo@example.com', avatarColor: '#B45309', joinedAt: now - 60 * DAY, role: 'customer', savedPayments: [] },
   { id: 'u-arif', name: 'Arif Chowdhury', phone: '+8801556677889', email: 'arif.demo@example.com', avatarColor: '#0E7490', joinedAt: now - 30 * DAY, role: 'customer', savedPayments: [] },
   { id: 'u-mim', name: 'Sadia Mim', phone: '+8801633445566', email: 'mim.demo@example.com', avatarColor: '#15803D', joinedAt: now - 2 * DAY, role: 'customer', savedPayments: [] },
 ]
@@ -151,7 +151,7 @@ export function seedNotifications(now: number, orders: Order[]): AppNotification
     add(uid, 'voucher', 'New voucher: MIDNIGHT30 🌙', 'Late-night craving? 30% off food (up to ৳150). Expires in 2 days.', 2 * 36e5, false, '/offers')
     add(uid, 'promo', 'Kacchi Week is here 🍛', 'Explore Kacchi Corner and Old Dhaka Bhoj — browse as much as you like, spend nothing.', 26 * 36e5, uid !== 'u-ayesha', '/food?cat=kacchi')
     add(uid, 'promo', 'New drops from Urban Tiger Co.', 'Rickshaw Art oversized tees are back in (simulated) stock.', 3 * 864e5, true, '/store/b-urban-tiger')
-    add(uid, 'system', 'Welcome to Dopamine Kitchen', 'Everything here is a simulation: no real payments, orders or deliveries. Enjoy the ride.', 5 * 864e5, true, '/help')
+    add(uid, 'system', 'Welcome to pikk', 'Everything here is a simulation: no real payments, orders or deliveries. Enjoy the ride.', 5 * 864e5, true, '/help')
   }
   return n.sort((a, b) => b.createdAt - a.createdAt)
 }

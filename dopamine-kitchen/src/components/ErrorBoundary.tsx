@@ -18,7 +18,7 @@ export class ErrorBoundary extends Component<{ children: ReactNode }, { error: E
           <pre className="mt-4 max-h-24 overflow-auto rounded-xl bg-ink-100 p-3 text-left text-xs text-ink-700">{this.state.error.message}</pre>
           <div className="mt-6 flex justify-center gap-2">
             <button className="btn btn-secondary" onClick={() => window.location.reload()}>Reload</button>
-            <button className="btn btn-primary" onClick={() => { try { localStorage.removeItem('dopamine-kitchen-v1') } catch { /* storage unavailable */ } window.location.hash = '#/'; window.location.reload() }}>Reset demo data</button>
+            <button className="btn btn-primary" onClick={() => { try { localStorage.removeItem('pikk-v1') } catch { /* storage unavailable */ } window.location.hash = '#/'; window.location.reload() }}>Reset demo data</button>
           </div>
         </div>
       </div>

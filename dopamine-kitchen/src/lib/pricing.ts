@@ -37,9 +37,11 @@ export function checkVoucher(
   kind: CartKind,
   subtotal: number,
   deliveryFee: number,
-  ctx: { now: number; isFirstOrder: boolean },
+  ctx: { now: number; isFirstOrder: boolean; userId?: string | null },
 ): VoucherCheck {
   if (!v) return { ok: false, error: 'This voucher code does not exist.' }
+  if (v.ownerId && v.ownerId !== ctx.userId) return { ok: false, error: 'This voucher belongs to another account.' }
+  if (v.usedAt) return { ok: false, error: 'You have already used this voucher.' }
   if (!v.active) return { ok: false, error: 'This voucher is no longer active.' }
   if (v.expiresAt < ctx.now) return { ok: false, error: 'This voucher has expired.' }
   if (v.scope !== 'all' && v.scope !== kind)
@@ -59,3 +61,9 @@ export function voucherHeadline(v: Voucher) {
   if (v.type === 'percent') return `${v.value}% OFF`
   return 'FREE DELIVERY'
 }
+
+/** Public vouchers, plus personal vouchers owned by this user. */
+export const visibleTo = (v: Voucher, userId: string | null | undefined) => !v.ownerId || v.ownerId === userId
+
+/** Where "Use voucher" should take the user for a voucher's scope. */
+export const voucherDestination = (v: Pick<Voucher, 'scope'>) => (v.scope === 'food' ? '/food' : v.scope === 'shop' ? '/shop' : '/')

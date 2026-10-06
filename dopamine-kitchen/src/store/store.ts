@@ -2,7 +2,7 @@ import { create } from 'zustand'
 import { persist, type PersistStorage, type StorageValue } from 'zustand/middleware'
 import type {
   Address, AppNotification, Brand, CartKind, CartLine, DeliveryMethod, Favorites, MenuItem, Order, OrderItem,
-  OrderStatus, PaymentMethodId, Product, RecentItem, Restaurant, SavedPayment, Settings, User, Voucher,
+  OrderStatus, PaymentMethodId, Product, RecentItem, Restaurant, RewardEvent, SavedPayment, Settings, User, Voucher,
 } from '../data/types'
 import { SEED_BRANDS, SEED_PRODUCTS } from '../data/products'
 import { SEED_MENU, SEED_RESTAURANTS } from '../data/restaurants'
@@ -11,6 +11,7 @@ import { areaById } from '../data/areas'
 import { checkVoucher, subtotalOf } from '../lib/pricing'
 import { STAGE_AT, STAGES, isActive, liveElapsed, progressOf, setSimSpeed, stageForProgress, stageLabel } from '../lib/sim'
 import { uid } from '../lib/format'
+import { pickSegment, voucherFromSegment, WHEEL_SEGMENTS } from '../lib/rewards'
 import { toast } from './toast'
 
 /** localStorage persistence that batches writes: serialising ~250 KB on every state change
@@ -66,6 +67,7 @@ export interface DB {
   addresses: Address[]
   orders: Order[]
   notifications: AppNotification[]
+  rewardEvents: RewardEvent[]
   nextOrderNo: number
 }
 
@@ -83,6 +85,7 @@ function freshDB(): DB {
     addresses,
     orders,
     notifications: seedNotifications(now, orders),
+    rewardEvents: [],
     nextOrderNo: next + 40,
   }
 }
@@ -163,6 +166,10 @@ export interface State {
   deleteOrder: (id: string) => void
   createDemoOrder: (p: { userId: string; kind: CartKind; storeId: string; status: OrderStatus; etaMinutes: number }) => Order | null
 
+  // rewards
+  /** Spins the one-time welcome wheel for the current user. Returns the existing result if already spun. */
+  spinWelcomeWheel: () => { segmentIndex: number; voucher: Voucher; headline: string } | null
+
   // favourites, recents
   toggleFavorite: (type: keyof Favorites, id: string) => boolean
   addRecentSearch: (q: string) => void
@@ -240,9 +247,9 @@ export const useStore = create<State>()(
 
       return {
         db: freshDB(),
-        currentUserId: 'u-ayesha',
+        currentUserId: null,
         guestAreaId: 'banani',
-        selectedAddressId: 'a-1',
+        selectedAddressId: null,
         cart: [],
         saved: [],
         vouchersApplied: {},
@@ -261,7 +268,7 @@ export const useStore = create<State>()(
             get().login(existing.id)
             return existing.id
           }
-          const id = get().addUser({ name: name || 'Demo Guest', phone, email: '', avatarColor: '#7C3AED', role: 'customer' })
+          const id = get().addUser({ name: name || 'Demo Guest', phone, email: '', avatarColor: '#0A7F57', role: 'customer' })
           get().login(id)
           pushNotification({ userId: id, type: 'voucher', title: 'Your FIRSTORDER voucher is ready 🎁', body: '40% off (up to ৳200) your first simulated order.', link: '/offers' })
           return id
@@ -351,7 +358,7 @@ export const useStore = create<State>()(
           const c = code.trim().toUpperCase()
           const v = s.db.vouchers.find((x) => x.code === c)
           const lines = s.cart.filter((l) => l.kind === kind)
-          const res = checkVoucher(v, kind, subtotalOf(lines), deliveryFee, { now: Date.now(), isFirstOrder: !s.db.orders.some((o) => o.userId === s.currentUserId && o.status !== 'cancelled') })
+          const res = checkVoucher(v, kind, subtotalOf(lines), deliveryFee, { now: Date.now(), isFirstOrder: !s.db.orders.some((o) => o.userId === s.currentUserId && o.status !== 'cancelled'), userId: s.currentUserId })
           if (!res.ok) return { ok: false, error: res.error }
           set({ vouchersApplied: { ...s.vouchersApplied, [kind]: c } })
           return { ok: true }
@@ -377,7 +384,7 @@ export const useStore = create<State>()(
           const platformFee = input.kind === 'food' ? 9 : 0
           const code = s.vouchersApplied[input.kind]
           const v = code ? s.db.vouchers.find((x) => x.code === code) : undefined
-          const vr = v ? checkVoucher(v, input.kind, subtotal, input.delivery.fee, { now: Date.now(), isFirstOrder: !s.db.orders.some((o) => o.userId === userId && o.status !== 'cancelled') }) : null
+          const vr = v ? checkVoucher(v, input.kind, subtotal, input.delivery.fee, { now: Date.now(), isFirstOrder: !s.db.orders.some((o) => o.userId === userId && o.status !== 'cancelled'), userId }) : null
           const discount = vr && vr.ok ? vr.discount : 0
           const now = Date.now()
           const id = `DK-${s.db.nextOrderNo}`
@@ -393,8 +400,14 @@ export const useStore = create<State>()(
             status: 'confirmed', stageTimes: { confirmed: now }, rider: makeRider(now % 100000, input.kind),
             cravingBefore: input.cravingBefore, isTest: true,
           }
+          const usedCode = vr && vr.ok && v?.ownerId ? v.code : null
           set((st) => ({
-            db: { ...st.db, orders: [order, ...st.db.orders], nextOrderNo: st.db.nextOrderNo + 1 + Math.floor(Math.random() * 3) },
+            db: {
+              ...st.db,
+              orders: [order, ...st.db.orders],
+              nextOrderNo: st.db.nextOrderNo + 1 + Math.floor(Math.random() * 3),
+              vouchers: usedCode ? st.db.vouchers.map((x) => (x.code === usedCode ? { ...x, usedAt: now, usedOnOrder: id } : x)) : st.db.vouchers,
+            },
             cart: st.cart.filter((l) => l.kind !== input.kind),
             vouchersApplied: { ...st.vouchersApplied, [input.kind]: undefined },
           }))
@@ -482,6 +495,26 @@ export const useStore = create<State>()(
           return get().db.orders.find((o) => o.id === id) ?? order
         },
 
+        spinWelcomeWheel: () => {
+          const s = get()
+          const userId = s.currentUserId
+          if (!userId) return null
+          const prior = s.db.rewardEvents.find((e) => e.userId === userId && e.kind === 'welcome_spin')
+          if (prior) {
+            const v = s.db.vouchers.find((x) => x.code === prior.voucherCode)
+            const idx = Math.max(0, WHEEL_SEGMENTS.findIndex((g) => g.id === prior.id.split(':')[1]))
+            return v ? { segmentIndex: idx, voucher: v, headline: prior.title } : null
+          }
+          const forced = WHEEL_SEGMENTS.findIndex((g) => g.id === s.settings.nextSpin)
+          const segmentIndex = forced >= 0 ? forced : pickSegment()
+          if (forced >= 0) set((st) => ({ settings: { ...st.settings, nextSpin: null } }))
+          const { voucher, headline } = voucherFromSegment(WHEEL_SEGMENTS[segmentIndex], userId)
+          const ev: RewardEvent = { id: `${uid('rw')}:${WHEEL_SEGMENTS[segmentIndex].id}`, userId, kind: 'welcome_spin', title: headline, voucherCode: voucher.code, at: Date.now() }
+          patchDB((db) => ({ vouchers: [voucher, ...db.vouchers], rewardEvents: [ev, ...db.rewardEvents] }))
+          pushNotification({ userId, type: 'voucher', title: `You won ${headline}`, body: `Voucher ${voucher.code} is in My vouchers. Valid for 14 days.`, link: '/account/vouchers' })
+          return { segmentIndex, voucher, headline }
+        },
+
         toggleFavorite: (type, id) => {
           const userId = me() ?? 'guest'
           const fav = get().favorites[userId] ?? emptyFav()
@@ -540,7 +573,7 @@ export const useStore = create<State>()(
       }
     },
     {
-      name: 'dopamine-kitchen-v1',
+      name: 'pikk-v1',
       version: 3,
       // v2 bundled the catalog photos locally and refreshed the shop catalog; v3 added extra gallery views.
       // Both reseed the demo data and keep settings/session.

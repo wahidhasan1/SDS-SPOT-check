@@ -3,7 +3,7 @@ import { Link, useNavigate } from 'react-router-dom'
 import { Gift, Tag } from 'lucide-react'
 import { useStore } from '../store/store'
 import { toast } from '../store/toast'
-import { foodDelivery, shopDeliveryMethods, subtotalOf } from '../lib/pricing'
+import { foodDelivery, shopDeliveryMethods, subtotalOf, visibleTo } from '../lib/pricing'
 import { useCurrentArea } from '../store/store'
 import { cx } from '../lib/format'
 import { useTitle } from '../lib/hooks'
@@ -22,8 +22,9 @@ export default function Offers() {
   const [tab, setTab] = useState<'all' | 'food' | 'shop'>('all')
   const [code, setCode] = useState('')
   const now = Date.now()
-  const live = vouchers.filter((v) => v.active && v.expiresAt > now && (tab === 'all' || v.scope === tab || v.scope === 'all'))
-  const expired = vouchers.filter((v) => !v.active || v.expiresAt <= now)
+  const uid = useStore((s) => s.currentUserId)
+  const live = vouchers.filter((v) => visibleTo(v, uid) && v.active && !v.usedAt && v.expiresAt > now && (tab === 'all' || v.scope === tab || v.scope === 'all')).sort((a, b) => Number(!!b.ownerId) - Number(!!a.ownerId))
+  const expired = vouchers.filter((v) => !v.ownerId && (!v.active || v.expiresAt <= now))
 
   const apply = (c: string, scope: 'all' | 'food' | 'shop') => {
     const hasFood = cart.some((l) => l.kind === 'food')
@@ -42,11 +43,11 @@ export default function Offers() {
 
   return (
     <div className="mx-auto max-w-5xl px-4 py-6 animate-fade-in">
-      <div className="relative overflow-hidden rounded-3xl bg-brand-gradient p-6 sm:p-10 text-white">
+      <div className="relative overflow-hidden rounded-3xl bg-brand-surface p-6 sm:p-10 text-white">
         <Gift className="absolute -right-4 -bottom-6 size-40 text-white/10" />
         <DemoTag label="Demo vouchers" />
         <h1 className="mt-3 font-display text-3xl sm:text-4xl font-extrabold">Offers & vouchers</h1>
-        <p className="mt-2 max-w-lg text-white/85">Stack up savings on money you were never going to spend. Apply any code at checkout.</p>
+        <p className="mt-2 max-w-lg text-white/85">Save on money you were never going to spend. One voucher per order — apply it at checkout.</p>
         <form onSubmit={(e) => { e.preventDefault(); if (code.trim()) apply(code.trim().toUpperCase(), vouchers.find((v) => v.code === code.trim().toUpperCase())?.scope ?? 'all') }} className="mt-5 flex max-w-md gap-2">
           <input value={code} onChange={(e) => setCode(e.target.value.toUpperCase())} placeholder="Enter voucher code" className="input h-12 font-mono uppercase text-ink-900" />
           <button className="btn btn-lg bg-white text-brand-700 hover:bg-brand-50">Apply</button>

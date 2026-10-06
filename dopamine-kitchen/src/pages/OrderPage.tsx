@@ -13,7 +13,7 @@ import { useNow, useTitle } from '../lib/hooks'
 import { PAYMENT_META, PaymentLogo } from '../components/PaymentGateway'
 import { useReorder } from '../components/reorder'
 import { StatusBadge } from '../components/cards'
-import { Avatar, Badge, EmptyState, Img, Stars } from '../components/ui'
+import { Avatar, Badge, Confetti, EmptyState, Img, Stars } from '../components/ui'
 
 export default function OrderPage() {
   const { id = '' } = useParams()
@@ -25,28 +25,29 @@ export default function OrderPage() {
   useTitle(o ? `Order ${o.id}` : 'Order')
   useNow(1000)
   if (!o || (o.userId !== uid && me?.role !== 'admin'))
-    return <div className="mx-auto max-w-3xl px-4"><EmptyState emoji="🧾" title="Order not found" body="This test order doesn't exist or belongs to another demo account." action={<Link to="/orders" className="btn btn-primary">My orders</Link>} /></div>
+    return <div className="mx-auto max-w-3xl px-4"><EmptyState icon={ReceiptText} title="Order not found" body="This test order doesn't exist or belongs to another demo account." action={<Link to="/orders" className="btn btn-primary">My orders</Link>} /></div>
   const placed = params.get('placed') === '1'
 
   return (
     <div className="mx-auto max-w-6xl px-4 py-5 animate-fade-in">
-      <div className="flex items-center gap-2">
-        <button onClick={() => nav('/orders')} className="icon-btn -ml-2" aria-label="Back to orders"><ArrowLeft className="size-5" /></button>
-        <div className="min-w-0">
-          <h1 className="font-display text-xl sm:text-2xl font-bold leading-tight">Order #{o.id}</h1>
+      <div className="flex items-start gap-2">
+        <button onClick={() => nav('/orders')} className="icon-btn -ml-2 shrink-0" aria-label="Back to orders"><ArrowLeft className="size-5" /></button>
+        <div className="min-w-0 flex-1">
+          <h1 className="text-xl sm:text-2xl font-extrabold leading-tight tracking-tight">Order #{o.id}</h1>
           <p className="text-xs text-ink-500">{o.storeName} · {fmtDateTime(o.placedAt)}</p>
+          <div className="mt-1.5 flex flex-wrap gap-1.5 sm:hidden"><StatusBadge order={o} /><Badge tone="sun">Test order</Badge></div>
         </div>
-        <div className="ml-auto flex items-center gap-2"><Badge tone="warning">Test order</Badge><StatusBadge order={o} /></div>
+        <div className="hidden sm:flex items-center gap-2"><Badge tone="sun">Test order</Badge><StatusBadge order={o} /></div>
       </div>
 
       {placed && o.status !== 'cancelled' && (
-        <div className="relative mt-4 overflow-hidden rounded-3xl bg-brand-gradient p-5 sm:p-6 text-white animate-pop">
+        <div className="relative mt-4 overflow-hidden rounded-3xl bg-brand-surface p-5 sm:p-6 text-white animate-pop" role="status">
           <Confetti />
           <div className="relative flex items-start gap-4">
             <span className="grid size-12 shrink-0 place-items-center rounded-2xl bg-white/20"><PartyPopper className="size-6" /></span>
             <div className="flex-1">
-              <p className="font-display text-2xl font-extrabold">Test order placed!</p>
-              <p className="text-white/85 text-sm">Order #{o.id} was confirmed by {o.storeName} (simulated). {taka(o.total)} was <b>not</b> charged. Sit back and track the journey.</p>
+              <p className="text-2xl font-extrabold tracking-tight">Order confirmed!</p>
+              <p className="text-white/85 text-sm">Order #{o.id} is with {o.storeName}. {taka(o.total)} was <b>not</b> charged — it’s a simulated test order. Track it below.</p>
             </div>
             <button onClick={() => setParams({}, { replace: true })} className="text-white/70 hover:text-white text-sm">Dismiss</button>
           </div>
@@ -94,7 +95,7 @@ function LivePanel({ o }: { o: Order }) {
           </div>
         </div>
         <div className="mt-4 h-2 overflow-hidden rounded-full bg-ink-100">
-          <div className="h-full rounded-full bg-gradient-to-r from-brand-500 to-coral-500 transition-all duration-1000" style={{ width: `${Math.max(3, p * 100)}%` }} />
+          <div className="h-full rounded-full bg-brand-600 transition-all duration-1000" style={{ width: `${Math.max(3, p * 100)}%` }} />
         </div>
         <div className="mt-4 flex flex-wrap items-center gap-2">
           <span className="text-xs font-semibold text-ink-500">Simulation speed</span>
@@ -124,24 +125,29 @@ function DeliveredPanel({ o }: { o: Order }) {
   const [after, setAfter] = useState(o.cravingAfter ?? 0)
   return (
     <div className="card overflow-hidden">
-      <div className="relative bg-gradient-to-br from-emerald-500 to-teal-600 p-6 text-white">
+      <div className="relative bg-brand-surface p-6 text-white">
         <Confetti />
         <CircleCheck className="relative size-12" />
-        <p className="relative mt-3 font-display text-2xl sm:text-3xl font-extrabold">Simulation Complete</p>
+        <p className="relative mt-3 text-2xl sm:text-3xl font-extrabold tracking-tight">That’s a wrap! Simulation Complete</p>
         <p className="relative text-lg font-semibold text-white/95">No real product was delivered.</p>
-        <p className="relative mt-1 text-sm text-white/80">Your “{o.items[0]?.name}” journey finished {o.stageTimes.delivered ? `at ${fmtTime(o.stageTimes.delivered)}` : ''}. You rode the craving from browse to doorstep — without spending a taka.</p>
+        <p className="relative mt-1 text-sm text-white/80">Your {o.items[0]?.name} journey finished{o.stageTimes.delivered ? ` at ${fmtTime(o.stageTimes.delivered)}` : ''}. You went all the way from craving to doorstep, without spending a taka.</p>
+        <ul className="relative mt-4 grid gap-1.5 text-sm sm:grid-cols-2">
+          {['No money was charged', 'No real order was placed', `No ${o.kind === 'food' ? 'food' : 'product'} was delivered`, 'The whole journey was simulated'].map((t) => (
+            <li key={t} className="flex items-center gap-2"><Check className="size-4 shrink-0 rounded-full bg-white/20 p-0.5" /> {t}</li>
+          ))}
+        </ul>
       </div>
       <div className="grid gap-4 p-5 sm:grid-cols-2">
         <div className="rounded-2xl bg-ink-900 p-4 text-white">
-          <PiggyBank className="size-6 text-coral-300" />
+          <PiggyBank className="size-6 text-sun-300" />
           <p className="mt-2 text-xs text-white/70">Money not spent</p>
           <p className="font-display text-3xl font-extrabold">{taka(o.total)}</p>
         </div>
         {mindful && (
           <div className="rounded-2xl bg-brand-50 p-4">
-            <p className="font-bold text-sm">Craving check-in 🧠</p>
+            <p className="font-bold text-sm">Craving check-in</p>
             <p className="text-xs text-ink-500">How strong is the craving now?{o.cravingBefore ? ` (Before: ${o.cravingBefore}/5)` : ''}</p>
-            <div className="mt-2"><Stars value={after} onChange={(v) => { setAfter(v); patch(o.id, { cravingAfter: v }); toast('success', !o.cravingBefore ? `Craving logged at ${v}/5` : v < o.cravingBefore ? 'Nice — the craving eased off 🎉' : 'Logged. Cravings come in waves; this one will pass too.') }} size={26} /></div>
+            <div className="mt-2"><Stars value={after} onChange={(v) => { setAfter(v); patch(o.id, { cravingAfter: v }); toast('success', !o.cravingBefore ? `Craving logged at ${v}/5` : v < o.cravingBefore ? 'Nice — the craving eased off' : 'Logged. Cravings come in waves; this one will pass too.') }} size={26} /></div>
           </div>
         )}
         <div className="rounded-2xl border border-ink-100 p-4">
@@ -226,7 +232,7 @@ function RiderCard({ o }: { o: Order }) {
       ) : (
         <>
           <div className="flex items-center gap-3">
-            <Avatar name={r.name} color="#6D28D9" size={48} />
+            <Avatar name={r.name} color="#0A7F57" size={48} />
             <div className="min-w-0 flex-1">
               <p className="font-bold">{r.name} <span className="text-xs font-medium text-amber-700">(fictional)</span></p>
               <p className="text-xs text-ink-500">{r.vehicle} · {r.plate}</p>
@@ -324,10 +330,10 @@ function MapSim({ o }: { o: Order }) {
       <svg viewBox="0 0 600 300" preserveAspectRatio="xMidYMid slice" className="absolute inset-0 size-full">
         {blocks.map(([x, y, park], i) => <rect key={i} x={x} y={y} width="38" height="38" rx="6" fill={park ? '#cfe8c6' : '#e2e4dc'} />)}
         <path d="M0 260 C 150 230, 260 290, 600 250" stroke="#bfdcf2" strokeWidth="22" fill="none" />
-        <polyline points={line(leg1)} fill="none" stroke="#c4b5fd" strokeWidth="5" strokeDasharray="2 9" strokeLinecap="round" />
-        <polyline points={line(leg2)} fill="none" stroke="#7c3aed" strokeWidth="5" strokeLinecap="round" strokeLinejoin="round" opacity=".85" />
+        <polyline points={line(leg1)} fill="none" stroke="#6FC9A3" strokeWidth="5" strokeDasharray="2 9" strokeLinecap="round" />
+        <polyline points={line(leg2)} fill="none" stroke="#0A7F57" strokeWidth="5" strokeLinecap="round" strokeLinejoin="round" opacity=".85" />
       </svg>
-      <Pin x={store[0]} y={store[1]} color="#ff5a36" icon={o.kind === 'food' ? <Store className="size-4" /> : <Warehouse className="size-4" />} label={o.kind === 'food' ? o.storeName : 'Warehouse'} />
+      <Pin x={store[0]} y={store[1]} color="#FFC233" dark icon={o.kind === 'food' ? <Store className="size-4" /> : <Warehouse className="size-4" />} label={o.kind === 'food' ? o.storeName : 'Warehouse'} />
       <Pin x={home[0]} y={home[1]} color="#17121f" icon={<House className="size-4" />} label={o.address.label} />
       {o.status !== 'delivered' && (
         <div className="absolute -translate-x-1/2 -translate-y-1/2 transition-all duration-1000 ease-linear" style={{ left: `${(rider[0] / 600) * 100}%`, top: `${(rider[1] / 300) * 100}%` }}>
@@ -340,22 +346,12 @@ function MapSim({ o }: { o: Order }) {
   )
 }
 
-function Pin({ x, y, color, icon, label }: { x: number; y: number; color: string; icon: ReactNode; label: string }) {
+function Pin({ x, y, color, icon, label, dark }: { x: number; y: number; color: string; icon: ReactNode; label: string; dark?: boolean }) {
   return (
     <div className="absolute -translate-x-1/2 -translate-y-full flex flex-col items-center" style={{ left: `${(x / 600) * 100}%`, top: `${(y / 300) * 100}%` }}>
       <span className="mb-1 max-w-[120px] truncate rounded-md bg-white px-1.5 py-0.5 text-[10px] font-bold shadow">{label}</span>
-      <span className="grid size-8 place-items-center rounded-full text-white shadow-lift ring-2 ring-white" style={{ background: color }}>{icon}</span>
+      <span className={`grid size-8 place-items-center rounded-full shadow-lift ring-2 ring-white ${dark ? 'text-ink-900' : 'text-white'}`} style={{ background: color }}>{icon}</span>
       <span className="h-2 w-0.5" style={{ background: color }} />
-    </div>
-  )
-}
-
-function Confetti() {
-  const pieces = useMemo(() => Array.from({ length: 24 }, (_, i) => ({ left: (i * 37) % 100, delay: (i % 8) * 0.15, color: ['#fde68a', '#fff', '#fca5a5', '#c4b5fd', '#6ee7b7'][i % 5], rot: (i * 47) % 360 })), [])
-  return (
-    <div aria-hidden className="pointer-events-none absolute inset-0 overflow-hidden">
-      <style>{`@keyframes dk-fall{0%{transform:translateY(-20px) rotate(0)}100%{transform:translateY(260px) rotate(540deg);opacity:0}}`}</style>
-      {pieces.map((p, i) => <span key={i} className="absolute top-0 h-2.5 w-1.5 rounded-sm" style={{ left: `${p.left}%`, background: p.color, transform: `rotate(${p.rot}deg)`, animation: `dk-fall 2.4s ${p.delay}s ease-in forwards` }} />)}
     </div>
   )
 }

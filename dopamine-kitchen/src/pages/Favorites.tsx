@@ -1,3 +1,4 @@
+import { Heart } from 'lucide-react'
 import { useState } from 'react'
 import { Link } from 'react-router-dom'
 import { useFavorites, useStore } from '../store/store'
@@ -14,7 +15,7 @@ export default function Favorites() {
   const foods = db.menu.filter((m) => fav.foods.includes(m.id))
   const products = db.products.filter((p) => fav.products.includes(p.id))
   const brands = db.brands.filter((b) => fav.brands.includes(b.id))
-  const empty = (what: string, to: string, cta: string) => <EmptyState emoji="💜" title={`No favourite ${what} yet`} body="Tap the heart on anything you love to save it here." action={<Link to={to} className="btn btn-primary">{cta}</Link>} />
+  const empty = (what: string, to: string, cta: string) => <EmptyState icon={Heart} title={`No favourite ${what} yet`} body="Tap the heart on anything you love to save it here." action={<Link to={to} className="btn btn-primary">{cta}</Link>} />
   return (
     <div className="mx-auto max-w-6xl px-4 py-6 animate-fade-in">
       <h1 className="font-display text-3xl font-extrabold">Favourites</h1>
@@ -38,7 +39,7 @@ export default function Favorites() {
               </Link>
             ))}
           </div>
-        ) : <EmptyState emoji="💜" title="No favourite dishes yet" body="Open any dish and tap the heart to save it." action={<Link to="/food" className="btn btn-primary">Find dishes</Link>} />)}
+        ) : <EmptyState icon={Heart} title="No favourite dishes yet" body="Open any dish and tap the heart to save it." action={<Link to="/food" className="btn btn-primary">Find dishes</Link>} />)}
         {tab === 'products' && (products.length ? <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-3 sm:gap-4">{products.map((p) => <ProductCard key={p.id} p={p} brand={db.brands.find((b) => b.id === p.brandId)} />)}</div> : empty('products', '/shop', 'Start shopping'))}
         {tab === 'brands' && (brands.length ? <div className="flex flex-wrap gap-3">{brands.map((b) => <div key={b.id} className="relative"><BrandChip b={b} /><FavButton type="brands" id={b.id} size="sm" className="absolute -right-2 -top-2" /></div>)}</div> : empty('stores', '/shop', 'Discover stores'))}
       </div>

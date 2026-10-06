@@ -1,5 +1,5 @@
 import { useNavigate } from 'react-router-dom'
-import { Bell, CheckCheck, Gift, Megaphone, Package, Settings2, Headphones, Trash2 } from 'lucide-react'
+import { Bell, CheckCheck, Gift, Megaphone, Package, Settings2, Headphones, Trash2, BellOff } from 'lucide-react'
 import type { AppNotification } from '../data/types'
 import { useStore } from '../store/store'
 import { confirmDialog } from '../store/toast'
@@ -8,7 +8,7 @@ import { useTitle } from '../lib/hooks'
 import { EmptyState } from '../components/ui'
 
 const ICON = { order: Package, voucher: Gift, promo: Megaphone, system: Settings2, support: Headphones }
-const COLOR = { order: 'bg-brand-100 text-brand-700', voucher: 'bg-coral-100 text-coral-700', promo: 'bg-amber-100 text-amber-800', system: 'bg-ink-100 text-ink-700', support: 'bg-sky-100 text-sky-700' }
+const COLOR = { order: 'bg-brand-100 text-brand-700', voucher: 'bg-sun-100 text-sun-800', promo: 'bg-amber-100 text-amber-800', system: 'bg-ink-100 text-ink-700', support: 'bg-sky-100 text-sky-700' }
 
 export default function Notifications() {
   useTitle('Notifications')
@@ -43,7 +43,7 @@ export default function Notifications() {
                   </span>
                   <span className="block text-[13px] text-ink-500">{n.body}</span>
                 </span>
-                {!n.read && <span className="mt-1.5 size-2 shrink-0 rounded-full bg-coral-500" />}
+                {!n.read && <span className="mt-1.5 size-2 shrink-0 rounded-full bg-red-500" />}
               </button>
             )
           })}
@@ -61,7 +61,7 @@ export default function Notifications() {
           </div>
         )}
       </div>
-      {mine.length === 0 ? <EmptyState emoji="🔔" title="You're all caught up" body="Order updates, voucher drops and promos will appear here." /> : (
+      {mine.length === 0 ? <EmptyState icon={BellOff} title="You're all caught up" body="Order updates, voucher drops and promos will appear here." /> : (
         <>
           <Group title="Today" items={today} />
           <Group title="Earlier" items={earlier} />

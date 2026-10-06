@@ -1,81 +1,79 @@
-# Dopamine Kitchen
+# pikk
 
-**Feed the craving. Skip the delivery.**
+**Pick anything. Pay nothing.**
 
-Dopamine Kitchen is a craving-reduction **simulation** for Bangladeshi consumers. Users browse realistic food and fashion catalogs, add to cart, apply vouchers, check out with a *demo* payment flow, then track a simulated rider until the order is "delivered". The full dopamine loop happens, but no money is spent and nothing arrives.
+pikk is a craving simulator for Bangladeshi consumers. Browse food and fashion, add to cart, apply a voucher, pay with a *demo* payment, and track your order to the door. The whole dopamine loop happens, but no money is spent and nothing arrives.
 
-> ⚠️ **Everything is simulated.** No real payments, orders or deliveries. All restaurants, brands, riders and users are fictional. The demo payment gateway accepts only published test credentials and rejects anything that looks like a real wallet or card.
+> **Everything is simulated.** No real payments, orders or deliveries. All restaurants, brands, riders and users are fictional. The demo gateway accepts only published test credentials and rejects anything that looks like a real wallet or card.
 
 ## Run it
 
 ```bash
-cd dopamine-kitchen
+cd dopamine-kitchen   # project folder (app is branded pikk)
 npm install
 npm run dev        # http://localhost:5173
-npm run build      # static build in dist/ (HashRouter + relative base, so it can be hosted anywhere)
+npm run build      # static build in dist/ (HashRouter + relative base: host it anywhere)
 ```
 
 ## Demo credentials
 
 | What | Value |
 |---|---|
-| Login OTP | `123456` (or pick a demo user on the login screen) |
-| bKash / Nagad wallet | `01700000000` / `01800000000` → success · `01700000001` → insufficient balance |
-| Wallet OTP / PIN | `123456` / `12345` |
-| Cards | `4242 4242 4242 4242`, `5555 5555 5555 4444` → success · `4000 0000 0000 0002` → declined · `4000 0000 0000 9995` → insufficient funds (any future expiry, any CVC, 3-D Secure OTP `123456`) |
-| Vouchers | `WELCOME50`, `FIRSTORDER` (first order only), `FOOD20`, `SHOP100`, `FREEDEL`, `STYLE15`, `CAFE100`, `MIDNIGHT30`, `EID25` (expired) |
+| Sign up / log in code | `123456` (or pick a demo account under **Log in**) |
+| bKash / Nagad | Test wallet `01700000000` / `01800000000` → succeeds, `01700000001` → low balance. PIN `12345`. One-tap "Test" chips in the payment sheet |
+| Cards | `4242 4242 4242 4242` → succeeds, `4000 0000 0000 0002` → declined (one-tap chips at checkout) |
+| Public vouchers | `WELCOME50`, `FIRSTORDER` (first order only), `FOOD20`, `SHOP100`, `FREEDEL`, `STYLE15`, `CAFE100`, `MIDNIGHT30`, `EID25` (expired) |
 
-The default signed-in account is **Ayesha Rahman** (admin). The **Demo Control Panel** is at `#/admin`.
+A first visit starts logged out so you see the sign-up → Lucky Wheel flow. The demo admin account is **Ayesha Rahman**; the **Demo control panel** is at `#/admin` (it can also force the next wheel result).
 
-## Simulation
+## Brand
 
-* Food orders target **~30 minutes**; shopping targets **within 1 day** (express: 6 hours).
-* Stages: Order Confirmed → Preparing/Packing → Picked Up → On the Way → Delivered → *"Simulation Complete — No real product was delivered."*
-* Progress is derived from the clock (nothing is written every second) and continues while the tab is closed. On the tracking screen (or in Settings) you can switch between **Real-time, 10× and 60×** speed, or **skip to the next stage**. Admins can set any status or ETA.
-* Optional craving check-ins before ordering and after "delivery" show whether the urge eased.
+* **Name: pikk.** Short, says itself, and works for food *and* fashion: "Let's use pikk." "I'm craving something, I'll check pikk." Alternatives explored: Crave/Cravy (food-coded), Dopa (sounds medical), Grab (taken), Zoop (childish).
+* **Logo:** a lowercase "p" (stem + ring) on a jade tile with a sun dot, readable at 16 px. The wordmark puts the same sun dot on the "i".
+* **Colour:** Jade `#0A7F57` is the single primary (actions, navigation, success). Sun `#FFC233` is reserved for rewards and discounts, always with dark text for contrast. Neutrals carry a faint jade bias, and red is only used for errors, notification counts and the favourite heart. There's no pink/purple/baby blue and no multi-hue gradients, so the palette reads gender-neutral.
+* **Type:** one family (Figtree), hierarchy by weight and size, tabular numbers for prices.
+
+## UX review → what changed
+
+| Problem in the previous version | Change |
+|---|---|
+| Name sounded clinical and food-only; purple→coral gradients felt dated | Rebrand to pikk with a calm jade/sun system |
+| Black "DEMO" banner on every page | A small **Demo** chip opens "How pikk works"; simulation is stated where it matters (payment, tracking, completion) |
+| Home page had 11 sections with no priority | Search → value proposition → Food / Fashion → categories → popular → recommended → deals → recently viewed |
+| Orders were not in the bottom nav | Home · Food · Shop · **Orders** · Account; the cart moved to the header with a live count |
+| Checkout: 4 steps, an "I understand" checkbox, a pre-order check-in, OTP + PIN screens | **One page**: address, delivery option, voucher (best one suggested), payment, one button. Wallet payment is number + PIN on one sheet |
+| New users never saw onboarding (app started signed in) | First visit is logged out; sign up leads into the welcome **Lucky Wheel** |
+| Paying with no address opened an empty list | Opens the add-address form directly |
+| A won voucher that didn't fit the cart simply disappeared at checkout | Every owned voucher is listed, with the exact reason when it can't be used |
+| Emoji everywhere, toasts that lingered and stacked | Icon-based empty states, shorter toasts, at most two on phones |
+
+## Lucky Wheel & rewards
+
+* **Flow:** Sign up → account created → welcome screen → spin → "You won" card (code, discount, cap, minimum order, scope, expiry) → voucher saved in **Account → My vouchers** and suggested at checkout.
+* **Responsible by design:** one spin per account, optional ("Maybe later" keeps it waiting), every slice is a real reward, and the real odds are one tap away. No countdowns, no fake scarcity, 14-day validity, one use, no cash value.
+* **Rewards:** 5%, 10%, 15% food, 20%, 25% fashion, 30% food (each capped), free delivery, and a mystery flat ৳100–200.
+* **Built to extend:** `src/lib/rewards.ts` (segments, weighted pick, voucher factory) + `RewardEvent` history + `Voucher.ownerId/source/usedAt`. Daily spins, streaks, referrals and badges can be added as new `RewardSource`s without changing checkout.
 
 ## Architecture
 
-* **React 19 + TypeScript + Vite**, **Tailwind CSS v4** design tokens (`src/index.css`), **Zustand** store persisted to `localStorage`, **lucide-react** icons.
-* `src/data/` holds the typed data model (`types.ts`) and seed data: 14 restaurants, 158 dishes, 10 brands, 61 products, 9 vouchers, 5 users, 8 addresses and 18 orders covering every status. The modules are plain JSON-shaped arrays, so they can be swapped for authorised partner data or an API later.
-* `src/store/store.ts` holds all app state and actions (cart, vouchers, orders, the simulation ticker, favourites, notifications and admin CRUD).
-* `src/lib/` contains pricing (delivery fee/ETA from area distance, voucher rules), the order simulation, search, deterministic review generation and formatting (BDT, +880 phone numbers).
-* `src/i18n/` has English strings plus a Bangla (beta) dictionary; missing keys fall back to English.
-* **Photos are bundled with the app** (`public/img`, about 300 compressed WebP files, ~7 MB, lazy-loaded), so they load quickly and work on any host, including ones that block third-party images. Sources and licences are in [`public/img/CREDITS.md`](public/img/CREDITS.md). The food photos come from a community placeholder dataset whose original sources are unclear, so replace them with licensed photography before any public launch. If a photo is missing, `<Img>` renders a generated illustration.
-
-## Requirements coverage
-
-| # | Brief section | Where it lives |
-|---|---|---|
-| 1 | Landing page | `#/` — logo, location, search, Food / Fashion / Shoes / Shopping / Offers tiles, "What are you craving?", offers, popular nearby, trending dishes, shop categories, recommended products, popular stores, recently viewed |
-| 2 | Location system | Header location picker: simulated GPS, area search (Dhaka live, other cities "coming soon"), saved Home / Office / Other addresses, default address; Account → Saved addresses |
-| 3 | Restaurants & menus | `#/food`, `#/restaurant/:id` — cover, logo, rating, reviews, cuisine, ETA, fee, minimum order, offer, distance, open/closed; menu with photos, customisation modal, quantity steppers |
-| 4–5 | Shopping & product pages | `#/shop`, `#/store/:id`, `#/product/:id` — gallery (≥2 images each, colour swatches switch photo), sizes, colours, stock, discount, vouchers, delivery estimate, reviews, Add to cart / Buy now |
-| 6 | Cart | `#/cart` — separate food / shopping carts, quantities, remove + undo, save for later, vouchers, full bill, ETA |
-| 7 | Checkout | `#/checkout` — address → delivery method → payment → review, with the Demo Payment gateway (test credentials only) |
-| 8–9 | Confirmation & tracking | `#/orders/:id` — order number, items, total, address, ETA, auto-progressing status, simulated map and rider, timeline, speed controls, "Simulation Complete — No real product was delivered." |
-| 10 | Vouchers & offers | `#/offers` + cart voucher box: amount, minimum order, expiry, scope, first-order rule, apply |
-| 11 | Account | `#/account` — profile, phone, addresses, orders, favourites, vouchers, payment methods, notifications, help, settings, logout |
-| 12 | Order history | `#/orders` — active / delivered / cancelled tabs, search, reorder, view details |
-| 13 | Favourites | `#/favorites` — restaurants, food, products, stores |
-| 14–15 | Search & filters | Header search suggestions + recent searches; `#/search` tabs, filters, sorting, no-result state; food filters (rating, time, price, cuisine, offers) and shop filters (category, brand, size, colour, price, rating, express delivery) |
-| 16 | Notifications | `#/notifications` — order stages, voucher drops, promotions |
-| 17 | Support | `#/help` (FAQ by topic, contact options) and `#/help/chat` (simulated assistant and agent, simulated refunds) |
-| 18–19 | UI/UX & branding | Design tokens in `src/index.css`; logo, favicon, components in `src/components`; skeletons, empty, error, toast and confirmation states |
-| 20 | Admin | `#/admin` — restaurants, food items, products, prices, vouchers, demo orders, status / ETA, users, settings |
-| 21 | Seed data | Checked by `scripts/requirements.mjs` |
-| 22 | Simulation rule | Demo banner on every page, "Test order" labels, Demo Payment gateway that rejects real-looking credentials |
+* **React 19 + TypeScript + Vite**, **Tailwind CSS v4** tokens in `src/index.css`, **Zustand** store persisted to `localStorage` (writes are batched), **lucide-react** icons.
+* `src/data/`: typed model and seed data. That's 14 restaurants, 159 dishes, 10 brands, 61 products (≥2 photos each), 9 public vouchers, 5 users, 8 addresses and 18 orders in every status. The JSON-shaped arrays can be swapped for authorised partner data.
+* `src/lib/`: pricing and voucher rules, order simulation (progress derived from the clock; ~30 min food, ~1 day shopping; 1×/10×/60× speed), rewards, search, reviews, formatting (BDT, +880).
+* `src/i18n/`: English plus Bangla (beta) dictionary.
+* Photos are bundled as compressed WebP (`public/img`, ~7 MB, lazy-loaded). Sources and licences are in [`public/img/CREDITS.md`](public/img/CREDITS.md); replace the food photos with licensed photography before a public launch.
 
 ## Walkthrough scripts
 
 With a preview server running (`npm run build && npx vite preview --port 4173`):
 
 ```bash
-node scripts/requirements.mjs  # data requirements: ≥10 restaurants, ≥100 dishes, ≥30 products, ≥2 photos each, statuses…
-node scripts/routes.mjs      # every route at mobile + desktop: console errors, overflow, empty pages
-node scripts/e2e.mjs         # browse → search → filter → cart → vouchers → checkout → demo payment → tracking → delivered → history → shopping → admin → signup
-node scripts/e2e-extra.mjs   # location, addresses, favourites, save-for-later, Bangla, admin CRUD, guards, 404
+node scripts/e2e.mjs           # signup → wheel → search → filter → cart → voucher → checkout → payment failure + success → tracking → completion → history → fashion → admin
+FORCE_SPIN=p30 node scripts/e2e.mjs   # same journey with a fixed wheel result
+node scripts/rewards.mjs       # forces all 8 wheel outcomes; checks the exact discount and single-use marking for each
+node scripts/e2e-extra.mjs     # location, addresses, favourites, save for later, Bangla, admin CRUD, guards, 404
+node scripts/routes.mjs        # every route at phone + desktop size: errors, overflow, empty pages
+node scripts/requirements.mjs  # seeded data requirements
 VP=desktop node scripts/e2e.mjs
 ```
 
-The scripts use Playwright. Set `CHROME=/path/to/chrome` if Chromium isn't at `/opt/pw-browsers/chromium`.
+Scripts use Playwright. Set `CHROME=/path/to/chrome` if Chromium isn't at `/opt/pw-browsers/chromium`.

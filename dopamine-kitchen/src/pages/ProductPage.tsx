@@ -1,6 +1,6 @@
 import { useEffect, useMemo, useState } from 'react'
 import { Link, useNavigate, useParams } from 'react-router-dom'
-import { ArrowLeft, Check, ChevronLeft, ChevronRight, Package, RotateCcw, Ruler, Share2, ShieldCheck, Star, TicketPercent, Truck, Zap } from 'lucide-react'
+import { ArrowLeft, Check, ChevronLeft, ChevronRight, Package, RotateCcw, Ruler, Share2, ShieldCheck, Star, TicketPercent, Truck, Zap, Shirt } from 'lucide-react'
 import { useCurrentArea, useStore } from '../store/store'
 import { toast } from '../store/toast'
 import { areaById } from '../data/areas'
@@ -42,11 +42,11 @@ export default function ProductPage() {
   }, [p?.id]) // eslint-disable-line react-hooks/exhaustive-deps
 
   const reviews = useMemo(() => (p ? reviewsFor(p.id, 'shop', 10, p.colors.map((c) => `${c.name}${p.sizes.length > 1 ? ` · ${p.sizes[Math.min(2, p.sizes.length - 1)]}` : ''}`)) : []), [p])
-  if (!p) return <div className="mx-auto max-w-3xl px-4"><EmptyState emoji="🧥" title="Product not found" body="It may have been removed from the demo catalog." action={<Link to="/shop" className="btn btn-primary">Continue shopping</Link>} /></div>
+  if (!p) return <div className="mx-auto max-w-3xl px-4"><EmptyState icon={Shirt} title="Product not found" body="It may have been removed from the demo catalog." action={<Link to="/shop" className="btn btn-primary">Continue shopping</Link>} /></div>
 
   const brand = brands.find((b) => b.id === p.brandId)
   const price = discounted(p.price, p.discountPct)
-  const shopVouchers = vouchers.filter((v) => v.active && v.expiresAt > Date.now() && v.scope !== 'food')
+  const shopVouchers = vouchers.filter((v) => !v.ownerId && v.active && v.expiresAt > Date.now() && v.scope !== 'food')
   const similar = products.filter((x) => x.id !== p.id && (x.category === p.category || x.brandId === p.brandId)).slice(0, 8)
   const outOfStock = p.stock === 0
   const tomorrow = new Date(Date.now() + 864e5).toLocaleDateString('en-GB', { weekday: 'long', day: 'numeric', month: 'short' })
@@ -79,7 +79,7 @@ export default function ProductPage() {
           {loading ? <Skeleton className="aspect-[4/5] rounded-3xl" /> : (
             <div className="relative overflow-hidden rounded-3xl bg-white shadow-card">
               <Img key={p.images[img]} src={p.images[img]} alt={`${p.name} image ${img + 1}`} art={p.category} className="aspect-[4/5] animate-fade-in" />
-              {p.discountPct > 0 && <span className="absolute left-4 top-4 rounded-xl bg-coral-500 px-2.5 py-1 text-sm font-extrabold text-white">-{p.discountPct}%</span>}
+              {p.discountPct > 0 && <span className="absolute left-4 top-4 rounded-xl bg-sun-400 px-2.5 py-1 text-sm font-extrabold text-ink-900">-{p.discountPct}%</span>}
               <div className="absolute right-4 top-4 flex flex-col gap-2">
                 <FavButton type="products" id={p.id} />
                 <button onClick={() => { navigator.clipboard?.writeText(window.location.href).catch(() => undefined); toast('success', 'Link copied') }} className="grid size-10 place-items-center rounded-full bg-white/95 shadow-card" aria-label="Share"><Share2 className="size-[18px]" /></button>
@@ -122,7 +122,7 @@ export default function ProductPage() {
             {p.discountPct > 0 && (
               <>
                 <span className="text-lg text-ink-400 line-through">{taka(p.price)}</span>
-                <Badge tone="coral" className="mb-1">Save {taka(p.price - price)}</Badge>
+                <Badge tone="sun" className="mb-1">Save {taka(p.price - price)}</Badge>
               </>
             )}
           </div>
@@ -192,7 +192,7 @@ export default function ProductPage() {
             </div>
             {p.expressAvailable && (
               <div className="flex gap-3 p-4">
-                <Zap className="size-5 text-coral-500 shrink-0" />
+                <Zap className="size-5 text-sun-600 shrink-0" />
                 <div className="text-sm"><p className="font-bold">Same-day express available</p><p className="text-ink-500">Within 6 hours inside Dhaka · ৳120</p></div>
               </div>
             )}

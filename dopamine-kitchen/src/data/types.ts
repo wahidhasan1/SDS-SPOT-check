@@ -1,4 +1,4 @@
-// Core data model for Dopamine Kitchen.
+// Core data model for pikk.
 // Everything here is demo/simulation data. The shapes are deliberately plain JSON so the
 // seed files can later be swapped for authorized real catalog data (e.g. from an API).
 
@@ -174,6 +174,25 @@ export interface Voucher {
   categoriesLabel: string
   firstOrderOnly?: boolean
   active: boolean
+  /** Personal vouchers belong to one user and can be used once. Public vouchers have no owner. */
+  ownerId?: ID
+  source?: RewardSource
+  createdAt?: number
+  usedAt?: number
+  usedOnOrder?: string
+}
+
+/** Where a voucher or reward came from. New reward mechanics add a value here. */
+export type RewardSource = 'promo' | 'welcome_spin' | 'support' | 'daily_spin' | 'streak' | 'referral' | 'badge'
+
+/** Append-only reward history (powers "My rewards" and future streaks/loyalty). */
+export interface RewardEvent {
+  id: ID
+  userId: ID
+  kind: RewardSource
+  title: string
+  voucherCode?: string
+  at: number
 }
 
 export interface User {
@@ -313,4 +332,6 @@ export interface Settings {
   mindfulCheckIn: boolean
   notifyOrders: boolean
   notifyPromos: boolean
+  /** Demo control: force the next welcome-spin result (segment id). Cleared after use. */
+  nextSpin?: string | null
 }

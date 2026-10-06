@@ -1,6 +1,6 @@
 import { useMemo, useState } from 'react'
 import { useSearchParams } from 'react-router-dom'
-import { ArrowUpDown, Check, Clock, SlidersHorizontal, Star, Tag, Bike, DoorOpen } from 'lucide-react'
+import { ArrowUpDown, Check, Clock, SlidersHorizontal, Star, Tag, Bike, DoorOpen, SearchX } from 'lucide-react'
 import { useCurrentArea, useStore } from '../store/store'
 import { FOOD_CATEGORIES } from '../data/restaurants'
 import { pick } from '../data/images'
@@ -120,7 +120,7 @@ export default function Food() {
       {loading ? (
         <GridSkeleton count={6} />
       ) : list.length === 0 ? (
-        <EmptyState emoji="🔍" title="No restaurants match" body="Try removing a filter or picking a different craving." action={<button className="btn btn-primary" onClick={() => { setF(EMPTY); setParam('cat', '') }}>Clear all filters</button>} />
+        <EmptyState icon={SearchX} title="No restaurants match" body="Try removing a filter or picking a different craving." action={<button className="btn btn-primary" onClick={() => { setF(EMPTY); setParam('cat', '') }}>Clear all filters</button>} />
       ) : (
         <div className="grid gap-4 grid-cols-1 sm:grid-cols-2 lg:grid-cols-3">
           {list.map((r) => <RestaurantCard key={r.id} r={r} />)}

@@ -1,6 +1,6 @@
 import { useMemo, useState } from 'react'
 import { Link, useParams } from 'react-router-dom'
-import { ArrowUpDown, MapPin, Users } from 'lucide-react'
+import { ArrowUpDown, MapPin, Users, PackageOpen, Store } from 'lucide-react'
 import { useStore } from '../store/store'
 import { areaById } from '../data/areas'
 import { SHOP_CATEGORIES } from '../data/products'
@@ -20,7 +20,7 @@ export default function StorePage() {
   useTitle(b?.name ?? 'Store')
   const mine = useMemo(() => products.filter((p) => p.brandId === id), [products, id])
   const list = useMemo(() => applyShopFilters(mine.filter((p) => !cat || p.category === cat), EMPTY_SHOP, sort), [mine, cat, sort])
-  if (!b) return <div className="mx-auto max-w-3xl px-4"><EmptyState emoji="🏬" title="Store not found" action={<Link to="/shop" className="btn btn-primary">Back to shop</Link>} /></div>
+  if (!b) return <div className="mx-auto max-w-3xl px-4"><EmptyState icon={Store} title="Store not found" action={<Link to="/shop" className="btn btn-primary">Back to shop</Link>} /></div>
   const cats = [...new Set(mine.map((p) => p.category))]
   return (
     <div className="animate-fade-in">
@@ -63,7 +63,7 @@ export default function StorePage() {
         </div>
         <div className="mt-4">
           {loading ? <GridSkeleton count={8} tall className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-3 sm:gap-4" /> : list.length === 0 ? (
-            <EmptyState emoji="📦" title="No products yet" body="This demo store hasn't listed anything in this category." />
+            <EmptyState icon={PackageOpen} title="No products yet" body="This demo store hasn't listed anything in this category." />
           ) : (
             <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-3 sm:gap-4">{list.map((p) => <ProductCard key={p.id} p={p} brand={b} />)}</div>
           )}

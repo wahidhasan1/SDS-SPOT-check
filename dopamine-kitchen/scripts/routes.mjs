@@ -11,7 +11,7 @@ const ROUTES = [
   '/shop', '/shop?cat=shoes', '/product/p-016', '/product/p-013', '/store/b-urban-tiger', '/search', '/search?q=kacchi', '/search?q=zzzz',
   '/offers', '/cart', '/orders', '/orders/DK-10440', '/orders/DK-10439', '/orders/DK-10434', '/favorites', '/account', '/account/profile',
   '/account/addresses', '/account/payments', '/account/settings', '/notifications', '/help', '/help/chat', '/login', '/admin', '/admin/orders',
-  '/admin/restaurants', '/admin/menu', '/admin/products', '/admin/vouchers', '/admin/users', '/admin/settings', '/nope',
+  '/admin/restaurants', '/admin/menu', '/admin/products', '/admin/vouchers', '/admin/users', '/admin/settings', '/nope', '/account/vouchers', '/welcome',
 ]
 const browser = await chromium.launch({ executablePath: process.env.CHROME ?? '/opt/pw-browsers/chromium' })
 const problems = []
@@ -25,6 +25,10 @@ for (const [name, vp] of [['mobile', { width: 390, height: 844 }], ['desktop', {
     if (/ERR_TUNNEL|ERR_CONNECTION|ERR_NAME|Failed to load resource|net::/.test(t)) return // external images/fonts blocked in sandbox
     problems.push(`[${name}] console.${m.type()} on ${page.url()}: ${t.slice(0, 300)}`)
   })
+  // Sign in as the demo admin so account/order routes render instead of redirecting to login.
+  await page.goto(BASE + '#/login')
+  await page.getByRole('button', { name: /Ayesha Rahman/ }).click()
+  await page.waitForTimeout(500)
   for (const r of ROUTES) {
     await page.goto(BASE + '#' + r, { waitUntil: 'domcontentloaded' })
     await page.waitForTimeout(1100)

@@ -1,6 +1,6 @@
 import { useEffect, useMemo, useRef, useState, type MouseEvent } from 'react'
 import { Link, useNavigate, useParams, useSearchParams } from 'react-router-dom'
-import { ArrowLeft, Bike, ChevronRight, Clock, Flame, Info, Leaf, MapPin, Plus, Search, Share2, ShoppingBag, Star, Tag, X } from 'lucide-react'
+import { ArrowLeft, Bike, ChevronRight, Clock, Flame, Info, Leaf, MapPin, Plus, Search, Share2, ShoppingBag, Star, Tag, X, Store, UtensilsCrossed } from 'lucide-react'
 import type { MenuItem, Restaurant } from '../data/types'
 import { useCurrentArea, useStore } from '../store/store'
 import { confirmDialog, toast } from '../store/toast'
@@ -70,7 +70,7 @@ export default function RestaurantPage() {
     setParams(p, { replace: true })
   }
 
-  if (!r) return <div className="mx-auto max-w-3xl px-4"><EmptyState emoji="🏚️" title="Restaurant not found" body="It may have been removed from the demo catalog." action={<Link to="/food" className="btn btn-primary">Browse restaurants</Link>} /></div>
+  if (!r) return <div className="mx-auto max-w-3xl px-4"><EmptyState icon={Store} title="Restaurant not found" body="It may have been removed from the demo catalog." action={<Link to="/food" className="btn btn-primary">Browse restaurants</Link>} /></div>
 
   const d = foodDelivery(r, areaId)
   const foodLines = cart.filter((l) => l.kind === 'food')
@@ -134,11 +134,11 @@ export default function RestaurantPage() {
                 </button>
               </div>
               {r.offer && (
-                <div className="mt-3 flex items-center gap-3 rounded-xl border border-coral-200 bg-coral-50 p-3">
-                  <span className="grid size-9 place-items-center rounded-lg bg-coral-500 text-white"><Tag className="size-4" /></span>
+                <div className="mt-3 flex items-center gap-3 rounded-xl border border-sun-200 bg-sun-50 p-3">
+                  <span className="grid size-9 place-items-center rounded-lg bg-sun-400 text-ink-900"><Tag className="size-4" /></span>
                   <div className="flex-1 text-sm">
-                    <p className="font-bold text-coral-700">{r.offer.label}</p>
-                    {r.offer.voucherCode && <p className="text-xs text-coral-700/80">Use code <b className="font-mono">{r.offer.voucherCode}</b> at checkout</p>}
+                    <p className="font-bold text-sun-800">{r.offer.label}</p>
+                    {r.offer.voucherCode && <p className="text-xs text-sun-800/80">Use code <b className="font-mono">{r.offer.voucherCode}</b> at checkout</p>}
                   </div>
                 </div>
               )}
@@ -170,11 +170,11 @@ export default function RestaurantPage() {
             {loading ? (
               <div className="mt-6 space-y-3">{Array.from({ length: 5 }).map((_, i) => <div key={i} className="card flex gap-4 p-4"><div className="flex-1 space-y-2"><Skeleton className="h-4 w-1/2" /><Skeleton className="h-3 w-5/6" /><Skeleton className="h-4 w-16" /></div><Skeleton className="size-24 sm:size-28" /></div>)}</div>
             ) : sections.length === 0 ? (
-              <EmptyState emoji="🥢" title={q ? `No dishes match “${q}”` : 'Menu coming soon'} body={q ? 'Try a different dish name.' : 'This demo restaurant has no menu items yet.'} />
+              <EmptyState icon={UtensilsCrossed} title={q ? `No dishes match “${q}”` : 'Menu coming soon'} body={q ? 'Try a different dish name.' : 'This demo restaurant has no menu items yet.'} />
             ) : (
               sections.map((s) => (
                 <section key={s.name} data-section={s.name} ref={(el) => { sectionRefs.current[s.name] = el }} className="mt-7">
-                  <h2 className="font-display text-xl font-bold mb-3 flex items-center gap-2">{s.name === 'Popular' && <Flame className="size-5 text-coral-500" />}{s.name}</h2>
+                  <h2 className="font-display text-xl font-bold mb-3 flex items-center gap-2">{s.name === 'Popular' && <Flame className="size-5 text-sun-600" />}{s.name}</h2>
                   <div className="grid gap-3 sm:grid-cols-2">
                     {s.items.map((m) => <MenuRow key={`${s.name}-${m.id}`} m={m} r={r} onOpen={() => setItem(m.id)} />)}
                   </div>
@@ -279,7 +279,7 @@ function MenuRow({ m, r, onOpen }: { m: MenuItem; r: Restaurant; onOpen: () => v
     <div role="button" tabIndex={0} onClick={onOpen} onKeyDown={(e) => e.key === 'Enter' && onOpen()} className={cx('card card-hover flex gap-3 p-3.5 text-left cursor-pointer', !m.available && 'opacity-60')}>
       <div className="min-w-0 flex-1">
         <div className="flex flex-wrap items-center gap-1.5">
-          {m.popular && <Badge tone="coral"><Flame className="size-3" /> Popular</Badge>}
+          {m.popular && <Badge tone="sun"><Flame className="size-3" /> Popular</Badge>}
           {m.spicy && <span title="Spicy" className="text-xs">🌶️</span>}
           {m.veg && <span title="Vegetarian"><Leaf className="size-3.5 text-emerald-600" /></span>}
         </div>
@@ -333,7 +333,7 @@ function ItemModal({ m, r, onClose }: { m: MenuItem; r: Restaurant; onClose: () 
     if (note.trim()) labels.push(`Note: ${note.trim()}`)
     const ok = await addFoodLine(r, { kind: 'food', refId: m.id, storeId: r.id, name: m.name, image: m.image, unitPrice: unit, qty, optionLabels: labels })
     if (ok) {
-      toast('success', `Added ${qty}× ${m.name}`, 'Your craving is one step closer to being simulated.')
+      toast('success', `Added ${qty}× ${m.name}`)
       onClose()
     }
   }
@@ -349,7 +349,7 @@ function ItemModal({ m, r, onClose }: { m: MenuItem; r: Restaurant; onClose: () 
       <Img src={m.image} alt={m.name} art={m.category} className="-mx-5 -mt-1 aspect-[16/10] sm:rounded-t-none" />
       <div className="mt-4">
         <div className="flex flex-wrap items-center gap-1.5">
-          {m.popular && <Badge tone="coral">Popular</Badge>}
+          {m.popular && <Badge tone="sun">Popular</Badge>}
           {m.spicy && <Badge tone="danger">Spicy</Badge>}
           {m.veg && <Badge tone="success">Vegetarian</Badge>}
         </div>
@@ -364,7 +364,7 @@ function ItemModal({ m, r, onClose }: { m: MenuItem; r: Restaurant; onClose: () 
         <div key={g.id} className="mt-5">
           <div className="flex items-center justify-between rounded-xl bg-ink-50 px-3 py-2">
             <p className="font-bold text-sm">{g.name}</p>
-            <span className={cx('text-[11px] font-bold uppercase', g.required ? 'text-coral-600' : 'text-ink-400')}>{g.required ? 'Required' : g.max ? `Optional · up to ${g.max}` : 'Optional'}</span>
+            <span className={cx('text-[11px] font-bold uppercase', g.required ? 'text-brand-700' : 'text-ink-400')}>{g.required ? 'Required' : g.max ? `Optional · up to ${g.max}` : 'Optional'}</span>
           </div>
           <div className="mt-1 divide-y divide-ink-100">
             {g.options.map((o) => {

@@ -25,7 +25,7 @@ export function FavButton({ type, id, className, size = 'md' }: { type: keyof Fa
       }}
       className={cx('grid place-items-center rounded-full bg-white/95 backdrop-blur shadow-card transition active:scale-90 hover:scale-105', size === 'sm' ? 'size-8' : 'size-10', className)}
     >
-      <Heart className={cx(size === 'sm' ? 'size-4' : 'size-[18px]', on ? 'fill-coral-500 text-coral-500 animate-pop' : 'text-ink-700')} />
+      <Heart className={cx(size === 'sm' ? 'size-4' : 'size-[18px]', on ? 'fill-red-500 text-red-500 animate-pop' : 'text-ink-700')} />
     </button>
   )
 }
@@ -39,7 +39,7 @@ export function RestaurantCard({ r, compact }: { r: Restaurant; compact?: boolea
         <Img src={r.cover} alt={r.name} art={r.categories[0]} className="aspect-[16/9]" imgClassName="group-hover:scale-105 transition-transform duration-500" />
         <div className="absolute inset-0 bg-gradient-to-t from-black/35 via-transparent to-transparent" />
         {r.offer && (
-          <span className="absolute left-3 top-3 inline-flex items-center gap-1 rounded-lg bg-coral-500 px-2 py-1 text-[11px] font-bold text-white shadow">
+          <span className="absolute left-3 top-3 inline-flex items-center gap-1 rounded-lg bg-sun-400 px-2 py-1 text-[11px] font-bold text-ink-900 shadow">
             <Tag className="size-3" /> {r.offer.label}
           </span>
         )}
@@ -79,7 +79,7 @@ export function ProductCard({ p, brand, className }: { p: Product; brand?: Brand
     <Link to={`/product/${p.id}`} className={cx('group card card-hover overflow-hidden block', className)}>
       <div className="relative">
         <Img src={p.images[0]} alt={p.name} art={p.category} className="aspect-[4/5]" imgClassName="group-hover:scale-105 transition-transform duration-500" />
-        {p.discountPct > 0 && <span className="absolute left-2.5 top-2.5 rounded-lg bg-coral-500 px-2 py-0.5 text-[11px] font-extrabold text-white">-{p.discountPct}%</span>}
+        {p.discountPct > 0 && <span className="absolute left-2.5 top-2.5 rounded-lg bg-sun-400 px-2 py-0.5 text-[11px] font-extrabold text-ink-900">-{p.discountPct}%</span>}
         <FavButton type="products" id={p.id} size="sm" className="absolute right-2.5 top-2.5" />
         {p.stock === 0 ? (
           <span className="absolute inset-x-2.5 bottom-2.5 rounded-lg bg-ink-900/85 py-1 text-center text-[11px] font-bold text-white">Out of stock</span>
@@ -132,13 +132,13 @@ export function BrandChip({ b }: { b: Brand }) {
   )
 }
 
-export function VoucherCard({ v, onApply, applied, compact }: { v: Voucher; onApply?: () => void; applied?: boolean; compact?: boolean }) {
-  const expired = v.expiresAt < Date.now() || !v.active
+export function VoucherCard({ v, onApply, applied, compact, actionLabel = 'Apply' }: { v: Voucher; onApply?: () => void; applied?: boolean; compact?: boolean; actionLabel?: string }) {
+  const expired = v.expiresAt < Date.now() || !v.active || !!v.usedAt
   const daysLeft = Math.ceil((v.expiresAt - Date.now()) / 864e5)
-  const accent = v.scope === 'shop' ? 'from-sky-500 to-brand-600' : v.type === 'freeDelivery' ? 'from-emerald-500 to-teal-600' : 'from-brand-600 to-coral-500'
+  const accent = v.type === 'freeDelivery' ? 'bg-sun-400 text-ink-900' : v.scope === 'shop' ? 'bg-ink-900 text-white' : 'bg-brand-600 text-white'
   return (
     <div className={cx('relative flex overflow-hidden rounded-2xl bg-white border border-ink-100 shadow-card', expired && 'opacity-60 grayscale', compact && 'w-[82vw] max-w-[330px] shrink-0 snap-start')}>
-      <div className={cx('relative flex w-28 shrink-0 flex-col items-center justify-center bg-gradient-to-br p-3 text-center text-white', accent)}>
+      <div className={cx('relative flex w-28 shrink-0 flex-col items-center justify-center p-3 text-center', accent)}>
         <TicketPercent className="size-5 opacity-80" />
         <span className="mt-1 font-display text-lg font-extrabold leading-tight">{voucherHeadline(v)}</span>
         {v.maxDiscount && <span className="text-[10px] font-semibold opacity-85">up to ৳{v.maxDiscount}</span>}
@@ -147,13 +147,14 @@ export function VoucherCard({ v, onApply, applied, compact }: { v: Voucher; onAp
       <div className="flex min-w-0 flex-1 flex-col p-3.5 border-l-2 border-dashed border-ink-200">
         <div className="flex items-start justify-between gap-2">
           <p className="font-bold text-[14px] leading-snug">{v.title}</p>
+          {v.ownerId && <Badge tone="sun" className="shrink-0">{v.source === 'welcome_spin' ? 'Welcome spin' : 'Yours'}</Badge>}
         </div>
         <p className="mt-0.5 text-[12px] text-ink-500 line-clamp-2">{v.description}</p>
         <div className="mt-2 flex flex-wrap gap-x-3 gap-y-0.5 text-[11px] text-ink-500">
           <span>Min. order {taka(v.minOrder)}</span>
           <span>{v.categoriesLabel}</span>
-          <span className={cx(!expired && daysLeft <= 2 && 'font-bold text-coral-600')}>
-            {expired ? (v.active ? 'Expired' : 'Inactive') : daysLeft <= 1 ? 'Expires today' : `Expires in ${daysLeft} days`}
+          <span className={cx(!expired && daysLeft <= 2 && 'font-bold text-sun-600')}>
+            {v.usedAt ? `Used${v.usedOnOrder ? ` on ${v.usedOnOrder}` : ''}` : expired ? (v.active ? 'Expired' : 'Inactive') : daysLeft <= 1 ? 'Expires today' : `Valid for ${daysLeft} more days`}
           </span>
           {v.firstOrderOnly && <span className="font-semibold text-brand-700">First order only</span>}
         </div>
@@ -170,7 +171,7 @@ export function VoucherCard({ v, onApply, applied, compact }: { v: Voucher; onAp
           </button>
           {onApply && !expired && (
             <button type="button" onClick={onApply} disabled={applied} className={cx('btn btn-sm', applied ? 'btn-soft' : 'btn-primary')}>
-              {applied ? (<><Check className="size-4" /> Applied</>) : 'Apply'}
+              {applied ? (<><Check className="size-4" /> Applied</>) : actionLabel}
             </button>
           )}
         </div>

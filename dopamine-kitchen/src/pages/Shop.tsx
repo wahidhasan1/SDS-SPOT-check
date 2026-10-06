@@ -1,6 +1,6 @@
 import { useMemo, useState } from 'react'
 import { useSearchParams } from 'react-router-dom'
-import { ArrowUpDown, Check, SlidersHorizontal, Truck, X } from 'lucide-react'
+import { ArrowUpDown, Check, SlidersHorizontal, Truck, X, SearchX } from 'lucide-react'
 import type { ShopCategory } from '../data/types'
 import { useStore } from '../store/store'
 import { SHOP_CATEGORIES } from '../data/products'
@@ -60,7 +60,7 @@ export default function Shop() {
     <div className="animate-fade-in">
       <section className="relative overflow-hidden">
         <Img src={IMG.fashionHero[0]} alt="Shop" art="streetwear" className="absolute inset-0 size-full" imgClassName="object-[70%_20%]" />
-        <div className="absolute inset-0 bg-gradient-to-r from-ink-900/90 via-brand-900/70 to-transparent" />
+        <div className="absolute inset-0 bg-gradient-to-r from-ink-900/90 via-ink-900/60 to-ink-900/10" />
         <div className="relative mx-auto max-w-7xl px-4 py-10 sm:py-14 text-white">
           <p className="badge bg-white/15 text-white backdrop-blur">Next-day (simulated) delivery across Dhaka</p>
           <h1 className="mt-3 font-display text-3xl sm:text-5xl font-extrabold max-w-xl">{catLabel ?? 'Shop the craving'}</h1>
@@ -112,7 +112,7 @@ export default function Shop() {
               {loading ? (
                 <GridSkeleton count={8} tall className="grid grid-cols-2 sm:grid-cols-3 xl:grid-cols-4 gap-3 sm:gap-4" />
               ) : list.length === 0 ? (
-                <EmptyState emoji="🧺" title="Nothing matches those filters" body="Try a different size, colour or price range." action={<button className="btn btn-primary" onClick={() => setF(EMPTY_SHOP)}>Clear filters</button>} />
+                <EmptyState icon={SearchX} title="Nothing matches those filters" body="Try a different size, colour or price range." action={<button className="btn btn-primary" onClick={() => setF(EMPTY_SHOP)}>Clear filters</button>} />
               ) : (
                 <div className="grid grid-cols-2 sm:grid-cols-3 xl:grid-cols-4 gap-3 sm:gap-4">
                   {list.map((p) => <ProductCard key={p.id} p={p} brand={brands.find((b) => b.id === p.brandId)} />)}

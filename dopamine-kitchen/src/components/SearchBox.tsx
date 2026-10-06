@@ -68,7 +68,7 @@ export function SearchBox({ autoFocus, className, initial = '', onDone }: { auto
         className="relative"
         role="search"
       >
-        <Search className="pointer-events-none absolute left-3.5 top-1/2 size-[18px] -translate-y-1/2 text-ink-400" />
+        <Search className="pointer-events-none absolute left-4 top-1/2 size-[18px] -translate-y-1/2 text-ink-500" />
         <input
           autoFocus={autoFocus}
           value={q}
@@ -81,7 +81,7 @@ export function SearchBox({ autoFocus, className, initial = '', onDone }: { auto
           }}
           placeholder={t('search.placeholder')}
           aria-label="Search"
-          className="input h-11 rounded-full bg-ink-50 border-transparent pl-10 pr-10 focus:bg-white"
+          className="input h-12 rounded-full bg-white border-ink-200 shadow-sm pl-11 pr-10"
         />
         {q && (
           <button type="button" aria-label="Clear search" onClick={() => { setQ(''); setActive(-1) }} className="absolute right-2 top-1/2 -translate-y-1/2 grid size-7 place-items-center rounded-full text-ink-400 hover:bg-ink-100">
@@ -112,7 +112,7 @@ export function SearchBox({ autoFocus, className, initial = '', onDone }: { auto
               <p className="px-1 mb-2 text-xs font-bold uppercase tracking-wide text-ink-400">Popular right now</p>
               <div className="flex flex-wrap gap-2 px-1 pb-1">
                 {POPULAR_SEARCHES.map((p) => (
-                  <button key={p} onClick={() => go(p)} className="chip h-8"><TrendingUp className="size-3.5 text-coral-500" /> {p}</button>
+                  <button key={p} onClick={() => go(p)} className="chip h-8"><TrendingUp className="size-3.5 text-sun-600" /> {p}</button>
                 ))}
               </div>
             </div>

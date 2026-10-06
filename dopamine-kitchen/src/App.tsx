@@ -28,6 +28,7 @@ const loaders = {
   Login: () => import('./pages/Login'),
   NotFound: () => import('./pages/NotFound'),
   Admin: () => import('./pages/admin/Admin'),
+  Welcome: () => import('./pages/Welcome'),
 }
 
 function usePreloadRoutes() {
@@ -59,6 +60,7 @@ const SupportChat = lazy(loaders.SupportChat)
 const Login = lazy(loaders.Login)
 const NotFound = lazy(loaders.NotFound)
 const Admin = lazy(loaders.Admin)
+const Welcome = lazy(loaders.Welcome)
 
 function RequireAuth({ children }: { children: ReactNode }) {
   const uid = useStore((s) => s.currentUserId)
@@ -100,6 +102,7 @@ export default function App() {
               <Route path="help" element={<Help />} />
               <Route path="help/chat" element={<SupportChat />} />
               <Route path="login" element={<Login />} />
+            <Route path="welcome" element={<RequireAuth><Welcome /></RequireAuth>} />
               <Route path="admin/*" element={<Admin />} />
               <Route path="*" element={<NotFound />} />
             </Route>

@@ -1,16 +1,18 @@
 import { useState, type ReactNode } from 'react'
 import { Link, Navigate, useNavigate, useParams } from 'react-router-dom'
-import { ArrowLeft, Info, Pencil, Plus, Star, Trash2, RotateCcw, Globe, Gauge, Brain, Bell } from 'lucide-react'
+import { ArrowLeft, Info, Pencil, Plus, Star, Trash2, RotateCcw, Globe, Gauge, Brain, Bell, House, Gift, ChevronRight, TicketPercent } from 'lucide-react'
 import type { SimSpeed } from '../data/types'
 import { useMe, useStore } from '../store/store'
 import { useUI } from '../store/ui'
 import { confirmDialog, toast } from '../store/toast'
 import { areaById } from '../data/areas'
-import { cx, normalizeBdPhone, prettyPhone } from '../lib/format'
+import { cx, fmtDateTime, normalizeBdPhone, prettyPhone } from '../lib/format'
+import { visibleTo, voucherDestination } from '../lib/pricing'
+import { VoucherCard } from '../components/cards'
 import { useTitle } from '../lib/hooks'
 import { LabelIcon, addressLine } from '../components/location'
 import { PAYMENT_META, PaymentLogo, DEMO_WALLETS, DEMO_CARDS } from '../components/PaymentGateway'
-import { Badge, EmptyState, Field, Modal, Toggle } from '../components/ui'
+import { Badge, EmptyState, Field, Modal, Tabs, Toggle } from '../components/ui'
 
 export default function AccountPages() {
   const { section } = useParams()
@@ -19,7 +21,7 @@ export default function AccountPages() {
     case 'addresses': return <Addresses />
     case 'payments': return <Payments />
     case 'settings': return <SettingsPage />
-    case 'vouchers': return <Navigate to="/offers" replace />
+    case 'vouchers': return <MyVouchers />
     default: return <Navigate to="/account" replace />
   }
 }
@@ -83,7 +85,7 @@ function Addresses() {
   const open = useUI((s) => s.openAddressForm)
   return (
     <Shell title="Saved addresses" action={<button className="btn btn-primary btn-sm" onClick={() => open()}><Plus className="size-4" /> Add</button>}>
-      {addresses.length === 0 ? <EmptyState emoji="🏠" title="No saved addresses" body="Save Home, Office and other places for faster (simulated) checkout." action={<button className="btn btn-primary" onClick={() => open()}>Add address</button>} /> : (
+      {addresses.length === 0 ? <EmptyState icon={House} title="No saved addresses" body="Save Home, Office and other places for faster (simulated) checkout." action={<button className="btn btn-primary" onClick={() => open()}>Add address</button>} /> : (
         <div className="space-y-3">
           {addresses.map((a) => (
             <div key={a.id} className="card p-4">
@@ -194,8 +196,8 @@ function SettingsPage() {
         <button className="btn btn-danger btn-sm mt-3" onClick={async () => { if (await confirmDialog({ title: 'Reset all demo data?', body: 'This cannot be undone.', confirmLabel: 'Reset', tone: 'danger' })) { reset(); toast('success', 'Demo data reset'); nav('/') } }}><RotateCcw className="size-4" /> Reset everything</button>
       </div>
       <div className="mt-4 rounded-2xl bg-ink-900 p-5 text-sm text-white/80">
-        <p className="font-bold text-white">About Dopamine Kitchen</p>
-        <p className="mt-1">Version 1.0 (prototype). A craving-reduction simulation: every restaurant, brand, rider, payment and delivery is fictional. Data is stored locally in your browser. <Link to="/help" className="font-semibold text-coral-300">Learn more</Link></p>
+        <p className="font-bold text-white">About pikk</p>
+        <p className="mt-1">Version 1.0 (prototype). A craving-reduction simulation: every restaurant, brand, rider, payment and delivery is fictional. Data is stored locally in your browser. <Link to="/help" className="font-semibold text-sun-300">Learn more</Link></p>
       </div>
     </Shell>
   )
@@ -208,3 +210,52 @@ const Row = ({ icon, title, sub, children }: { icon: ReactNode; title: string; s
     {children}
   </div>
 )
+
+function MyVouchers() {
+  const me = useMe()!
+  const nav = useNavigate()
+  const vouchers = useStore((s) => s.db.vouchers)
+  const events = useStore((s) => s.db.rewardEvents).filter((e) => e.userId === me.id)
+  const hasSpun = events.some((e) => e.kind === 'welcome_spin')
+  const [tab, setTab] = useState<'available' | 'used' | 'expired'>('available')
+  const now = Date.now()
+  const mine = vouchers.filter((v) => visibleTo(v, me.id)).sort((a, b) => Number(!!b.ownerId) - Number(!!a.ownerId))
+  const groups = {
+    available: mine.filter((v) => v.active && !v.usedAt && v.expiresAt > now),
+    used: mine.filter((v) => !!v.usedAt),
+    expired: mine.filter((v) => !v.usedAt && (!v.active || v.expiresAt <= now)),
+  }
+  const list = groups[tab]
+  return (
+    <Shell title="My vouchers">
+      {!hasSpun && (
+        <button onClick={() => nav('/welcome')} className="mb-5 flex w-full items-center gap-4 rounded-2xl bg-brand-surface p-4 text-left text-white">
+          <span className="grid size-12 shrink-0 place-items-center rounded-2xl bg-sun-400 text-ink-900"><Gift className="size-6" /></span>
+          <span className="flex-1"><span className="block font-extrabold">Your welcome spin is waiting</span><span className="block text-sm text-white/80">Spin once and win a voucher. Every slice is a real reward.</span></span>
+          <ChevronRight className="size-5" />
+        </button>
+      )}
+      <Tabs value={tab} onChange={setTab} items={[{ id: 'available', label: 'Available', count: groups.available.length }, { id: 'used', label: 'Used', count: groups.used.length }, { id: 'expired', label: 'Expired', count: groups.expired.length }]} />
+      <div className="mt-4 space-y-3">
+        {list.length === 0 ? (
+          <EmptyState icon={TicketPercent} title={tab === 'available' ? 'No vouchers right now' : tab === 'used' ? 'No used vouchers yet' : 'Nothing has expired'} body={tab === 'available' ? 'Check Deals for public vouchers.' : undefined} action={tab === 'available' ? <Link to="/offers" className="btn btn-primary">See deals</Link> : undefined} />
+        ) : (
+          list.map((v) => <VoucherCard key={v.code} v={v} actionLabel="Use" onApply={tab === 'available' ? () => nav(voucherDestination(v)) : undefined} />)
+        )}
+      </div>
+      {events.length > 0 && (
+        <section className="mt-8">
+          <h2 className="text-lg font-extrabold">Reward history</h2>
+          <ul className="mt-3 card divide-y divide-ink-100">
+            {events.map((e) => (
+              <li key={e.id} className="flex items-center gap-3 p-4">
+                <span className="grid size-10 place-items-center rounded-full bg-sun-100 text-sun-800"><Gift className="size-5" /></span>
+                <span className="flex-1 min-w-0"><span className="block font-bold">{e.kind === 'welcome_spin' ? 'Welcome spin' : 'Reward'}: {e.title}</span><span className="block text-xs text-ink-500">{fmtDateTime(e.at)}{e.voucherCode && ` · ${e.voucherCode}`}</span></span>
+              </li>
+            ))}
+          </ul>
+        </section>
+      )}
+    </Shell>
+  )
+}

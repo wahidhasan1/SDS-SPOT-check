@@ -10,7 +10,7 @@ await page.evaluate(() => localStorage.clear())
 await page.goto(BASE + '#/restaurant/r-kacchi-corner') // any change triggers the (batched) save
 await page.waitForTimeout(1500)
 const r = await page.evaluate(() => {
-  const s = JSON.parse(localStorage.getItem('dopamine-kitchen-v1') ?? 'null')?.state
+  const s = JSON.parse(localStorage.getItem('pikk-v1') ?? 'null')?.state
   return s && {
     db: s.db, recent: s.recentlyViewed.length,
   }

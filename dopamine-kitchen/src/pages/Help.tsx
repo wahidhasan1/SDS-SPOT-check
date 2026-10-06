@@ -18,7 +18,7 @@ const CATS: { id: Cat; label: string; icon: typeof Package }[] = [
 ]
 
 const FAQ: { cat: Exclude<Cat, 'all'>; q: string; a: string }[] = [
-  { cat: 'order', q: 'Is my order real?', a: 'No. Every order on Dopamine Kitchen is a simulated test order. It is never sent to a restaurant or store, and nothing will be prepared or delivered.' },
+  { cat: 'order', q: 'Is my order real?', a: 'No. Every order on pikk is a simulated test order. It is never sent to a restaurant or store, and nothing will be prepared or delivered.' },
   { cat: 'order', q: 'Can I cancel an order?', a: 'Yes — while an order is “Order Confirmed” or “Preparing”, open it and tap Cancel. Once a rider has picked it up the simulation continues to delivery.' },
   { cat: 'order', q: 'How do I reorder?', a: 'Open Orders, choose a delivered or cancelled order and tap Reorder. Items that are still available are added back to your cart.' },
   { cat: 'payment', q: 'Will I be charged?', a: 'Never. bKash, Nagad, card and cash-on-delivery are all demo flows that do not connect to any payment provider.' },

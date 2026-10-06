@@ -15,6 +15,7 @@ import { STAGES, isActive, stageLabel } from '../../lib/sim'
 import { cx, discounted, fmtDateTime, normalizeBdPhone, prettyPhone, taka, uid } from '../../lib/format'
 import { useTitle } from '../../lib/hooks'
 import { voucherHeadline } from '../../lib/pricing'
+import { WHEEL_SEGMENTS } from '../../lib/rewards'
 import { Logo } from '../../components/Logo'
 import { StatusBadge } from '../../components/cards'
 import { Avatar, Badge, Field, Img, Modal, Toggle } from '../../components/ui'
@@ -132,11 +133,11 @@ function Dashboard() {
         <div className="flex h-3 overflow-hidden rounded-full bg-ink-100">
           {[...STAGES, 'cancelled' as const].map((s, i) => {
             const n = db.orders.filter((o) => o.status === s).length
-            return n ? <div key={s} title={`${s}: ${n}`} style={{ width: `${(n / db.orders.length) * 100}%`, background: ['#93c5fd', '#a78bfa', '#7c3aed', '#ff7a57', '#10b981', '#ef4444'][i] }} /> : null
+            return n ? <div key={s} title={`${s}: ${n}`} style={{ width: `${(n / db.orders.length) * 100}%`, background: ['#B9C0BB', '#6FC9A3', '#0F9466', '#FFC233', '#086648', '#E5484D'][i] }} /> : null
           })}
         </div>
         <div className="mt-2 flex flex-wrap gap-3 text-xs text-ink-500">
-          {[...STAGES, 'cancelled' as const].map((s, i) => <span key={s} className="inline-flex items-center gap-1"><span className="size-2 rounded-full" style={{ background: ['#93c5fd', '#a78bfa', '#7c3aed', '#ff7a57', '#10b981', '#ef4444'][i] }} />{stageLabel('food', s).title} ({db.orders.filter((o) => o.status === s).length})</span>)}
+          {[...STAGES, 'cancelled' as const].map((s, i) => <span key={s} className="inline-flex items-center gap-1"><span className="size-2 rounded-full" style={{ background: ['#B9C0BB', '#6FC9A3', '#0F9466', '#FFC233', '#086648', '#E5484D'][i] }} />{stageLabel('food', s).title} ({db.orders.filter((o) => o.status === s).length})</span>)}
         </div>
       </div>
       <h2 className="mt-6 mb-3 font-display text-lg font-bold">Recent orders</h2>
@@ -283,7 +284,7 @@ function ImagePicker({ value, onChange, pools = POOL_OPTS }: { value: string; on
 function RestaurantForm({ initial, onClose }: { initial: Restaurant | null; onClose: () => void }) {
   const upsert = useStore((s) => s.upsertRestaurant)
   const [f, setF] = useState<Restaurant>(() => initial ?? {
-    id: uid('r'), name: '', tagline: '', cuisines: [], categories: ['burger'], areaId: 'banani', address: '', cover: IMG.restaurant[0], logoBg: '#6D28D9', logoEmoji: '🍽️',
+    id: uid('r'), name: '', tagline: '', cuisines: [], categories: ['burger'], areaId: 'banani', address: '', cover: IMG.restaurant[0], logoBg: '#0A7F57', logoEmoji: '🍽️',
     rating: 4.5, reviewCount: 0, priceLevel: 2, prepMinutes: 15, baseDeliveryFee: 39, minOrder: 250, isOpen: true, tags: ['New'], sections: ['Popular', 'Mains', 'Drinks'], createdAt: Date.now(),
   })
   const [cuisines, setCuisines] = useState(f.cuisines.join(', '))
@@ -473,7 +474,7 @@ function VouchersAdmin() {
         {vouchers.map((v) => (
           <tr key={v.code} className="hover:bg-ink-50">
             <td className="px-3 py-2 font-mono font-bold">{v.code}</td>
-            <td className="px-3 py-2"><p className="font-semibold">{voucherHeadline(v)}{v.maxDiscount ? ` (max ৳${v.maxDiscount})` : ''}</p><p className="text-xs text-ink-500">{v.title}{v.firstOrderOnly && ' · first order'}</p></td>
+            <td className="px-3 py-2"><p className="font-semibold">{voucherHeadline(v)}{v.maxDiscount ? ` (max ৳${v.maxDiscount})` : ''}</p><p className="text-xs text-ink-500">{v.title}{v.firstOrderOnly && ' · first order'}{v.ownerId && ` · ${v.source === 'welcome_spin' ? 'welcome spin' : 'personal'}${v.usedAt ? ` · used on ${v.usedOnOrder}` : ''}`}</p></td>
             <td className="px-3 py-2"><NumCell value={v.minOrder} onSave={(n) => upsert({ ...v, minOrder: n })} prefix="৳" width="w-20" /></td>
             <td className="px-3 py-2 capitalize">{v.scope}</td>
             <td className="px-3 py-2">{v.expiresAt < Date.now() ? <Badge tone="danger">Expired</Badge> : fmtDateTime(v.expiresAt)}</td>
@@ -542,7 +543,7 @@ function UsersAdmin() {
     if (f.name.trim().length < 2) return toast('error', 'Name is required')
     if (!phone) return toast('error', 'Enter a valid +880 mobile number')
     if (users.some((u) => u.phone === phone)) return toast('error', 'Phone already in use')
-    addUser({ name: f.name.trim(), phone, email: f.email.trim(), role: f.role, avatarColor: ['#7C3AED', '#EA580C', '#0E7490', '#DB2777', '#15803D'][users.length % 5] })
+    addUser({ name: f.name.trim(), phone, email: f.email.trim(), role: f.role, avatarColor: ['#0A7F57', '#EA580C', '#0E7490', '#B45309', '#334155'][users.length % 5] })
     toast('success', 'Demo user created')
     setOpen(false)
     setF({ name: '', phone: '', email: '', role: 'customer' })
@@ -588,7 +589,7 @@ function SettingsAdmin() {
     const blob = new Blob([JSON.stringify(db, null, 2)], { type: 'application/json' })
     const a = document.createElement('a')
     a.href = URL.createObjectURL(blob)
-    a.download = `dopamine-kitchen-demo-${new Date().toISOString().slice(0, 10)}.json`
+    a.download = `pikk-demo-${new Date().toISOString().slice(0, 10)}.json`
     a.click()
     URL.revokeObjectURL(a.href)
   }
@@ -599,6 +600,13 @@ function SettingsAdmin() {
         <div className="flex flex-wrap items-center gap-4 p-4">
           <div className="flex-1 min-w-[200px]"><p className="font-semibold">Global simulation speed</p><p className="text-xs text-ink-500">How fast active orders progress. Real-time = food ≈ 30 min, shopping ≈ 1 day.</p></div>
           <div className="flex rounded-xl bg-ink-100 p-0.5">{([1, 10, 60] as SimSpeed[]).map((s) => <button key={s} onClick={() => update({ simSpeed: s })} className={cx('h-8 rounded-lg px-3 text-xs font-bold', settings.simSpeed === s ? 'bg-white shadow-sm text-brand-700' : 'text-ink-500')}>{s}×</button>)}</div>
+        </div>
+        <div className="flex flex-wrap items-center gap-4 p-4">
+          <div className="flex-1 min-w-[200px]"><p className="font-semibold">Next welcome spin result</p><p className="text-xs text-ink-500">Force the outcome of the next Lucky Wheel spin (for demos and testing). Resets to random after one spin.</p></div>
+          <select aria-label="Next welcome spin result" className="input h-9 w-auto" value={settings.nextSpin ?? ''} onChange={(e) => update({ nextSpin: e.target.value || null })}>
+            <option value="">Random (real odds)</option>
+            {WHEEL_SEGMENTS.map((g) => <option key={g.id} value={g.id}>{g.headline}</option>)}
+          </select>
         </div>
         <div className="flex flex-wrap items-center gap-4 p-4">
           <div className="flex-1 min-w-[200px]"><p className="font-semibold">Export data</p><p className="text-xs text-ink-500">Download the full simulation database as JSON (~{size} KB). Useful as a template for real catalog data.</p></div>

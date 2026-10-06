@@ -1,6 +1,6 @@
-import { useEffect, useRef, useState, type ReactNode } from 'react'
+import { useEffect, useMemo, useRef, useState, type ReactNode } from 'react'
 import { createPortal } from 'react-dom'
-import { ChevronLeft, ChevronRight, Minus, Plus, Star, X, FlaskConical } from 'lucide-react'
+import { ChevronLeft, ChevronRight, Minus, Plus, Star, X, FlaskConical, PackageOpen, type LucideIcon } from 'lucide-react'
 import { FALLBACK_ART } from '../data/images'
 import { cx, hashStr, taka } from '../lib/format'
 
@@ -42,13 +42,13 @@ export function Img({ src, alt, art, className, imgClassName }: { src: string; a
 }
 
 // ---------- Badges ----------
-type Tone = 'brand' | 'coral' | 'success' | 'danger' | 'info' | 'neutral' | 'warning' | 'dark'
+type Tone = 'brand' | 'sun' | 'success' | 'danger' | 'info' | 'neutral' | 'warning' | 'dark'
 const toneCls: Record<Tone, string> = {
   brand: 'bg-brand-100 text-brand-700',
-  coral: 'bg-coral-100 text-coral-700',
+  sun: 'bg-sun-100 text-sun-800',
   success: 'bg-emerald-100 text-emerald-700',
   danger: 'bg-red-100 text-red-700',
-  info: 'bg-sky-100 text-sky-700',
+  info: 'bg-ink-100 text-ink-700',
   neutral: 'bg-ink-100 text-ink-700',
   warning: 'bg-amber-100 text-amber-800',
   dark: 'bg-ink-900/80 text-white backdrop-blur',
@@ -135,15 +135,14 @@ export function GridSkeleton({ count = 6, tall, className }: { count?: number; t
 }
 
 // ---------- Empty / error states ----------
-export function EmptyState({ emoji = '🫙', title, body, action, className }: { emoji?: string; title: string; body?: ReactNode; action?: ReactNode; className?: string }) {
+export function EmptyState({ icon: Icon = PackageOpen, title, body, action, className, tone = 'brand' }: { icon?: LucideIcon; title: string; body?: ReactNode; action?: ReactNode; className?: string; tone?: 'brand' | 'danger' }) {
   return (
-    <div className={cx('flex flex-col items-center text-center py-14 px-6 animate-fade-in', className)}>
-      <div className="relative mb-5">
-        <div className="absolute inset-0 rounded-full bg-brand-200/50 blur-2xl" />
-        <div className="relative grid place-items-center size-24 rounded-[2rem] bg-gradient-to-br from-brand-50 to-coral-50 border border-white shadow-card text-5xl animate-float">{emoji}</div>
+    <div className={cx('flex flex-col items-center text-center py-14 px-6 animate-fade-in', className)} role="status">
+      <div className={cx('grid size-20 place-items-center rounded-full mb-5', tone === 'danger' ? 'bg-red-50 text-red-600' : 'bg-brand-50 text-brand-600')}>
+        <Icon className="size-9" strokeWidth={1.75} />
       </div>
-      <h3 className="font-display text-xl font-bold">{title}</h3>
-      {body && <p className="mt-2 max-w-sm text-sm text-ink-500">{body}</p>}
+      <h3 className="text-xl font-extrabold tracking-tight">{title}</h3>
+      {body && <p className="mt-2 max-w-sm text-[15px] text-ink-500">{body}</p>}
       {action && <div className="mt-6 flex flex-wrap justify-center gap-2">{action}</div>}
     </div>
   )
@@ -293,6 +292,17 @@ export function FilterGroup({ title, children }: { title: string; children: Reac
     <div className="py-3 border-b border-ink-100 last:border-0">
       <p className="mb-2.5 text-sm font-bold">{title}</p>
       <div className="flex flex-wrap gap-2">{children}</div>
+    </div>
+  )
+}
+
+/** Short, non-blocking celebration burst (1.6s). */
+export function Confetti() {
+  const pieces = useMemo(() => Array.from({ length: 24 }, (_, i) => ({ left: (i * 37) % 100, delay: (i % 8) * 0.15, color: ['#FFC233', '#0F9466', '#121513', '#FFE08A', '#6FC9A3'][i % 5], rot: (i * 47) % 360 })), [])
+  return (
+    <div aria-hidden className="pointer-events-none absolute inset-0 overflow-hidden">
+      <style>{`@keyframes dk-fall{0%{transform:translateY(-20px) rotate(0)}100%{transform:translateY(260px) rotate(540deg);opacity:0}}`}</style>
+      {pieces.map((p, i) => <span key={i} className="absolute top-0 h-2.5 w-1.5 rounded-sm" style={{ left: `${p.left}%`, background: p.color, transform: `rotate(${p.rot}deg)`, animation: `dk-fall 1.6s ${p.delay * 0.6}s ease-in forwards` }} />)}
     </div>
   )
 }

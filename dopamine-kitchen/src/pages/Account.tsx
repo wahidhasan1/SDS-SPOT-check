@@ -4,6 +4,7 @@ import { Bell, ChevronRight, CreditCard, Heart, Headphones, LayoutDashboard, Log
 import { useMe, useStore } from '../store/store'
 import { confirmDialog, toast } from '../store/toast'
 import { fmtDate, prettyPhone, taka } from '../lib/format'
+import { visibleTo } from '../lib/pricing'
 import { useTitle } from '../lib/hooks'
 import { Avatar, Badge } from '../components/ui'
 
@@ -15,7 +16,8 @@ export default function Account() {
   const orders = useStore((s) => s.db.orders).filter((o) => o.userId === me.id)
   const addresses = useStore((s) => s.db.addresses).filter((a) => a.userId === me.id)
   const unread = useStore((s) => s.db.notifications).filter((n) => n.userId === me.id && !n.read).length
-  const vouchers = useStore((s) => s.db.vouchers).filter((v) => v.active && v.expiresAt > Date.now()).length
+  const vouchers = useStore((s) => s.db.vouchers).filter((v) => visibleTo(v, me.id) && v.active && !v.usedAt && v.expiresAt > Date.now()).length
+  const hasSpun = useStore((s) => s.db.rewardEvents.some((e) => e.userId === me.id && e.kind === 'welcome_spin'))
   const delivered = orders.filter((o) => o.status === 'delivered')
   const notSpent = delivered.reduce((a, o) => a + o.total, 0)
   const checkins = delivered.filter((o) => o.cravingBefore && o.cravingAfter)
@@ -26,7 +28,7 @@ export default function Account() {
     { to: '/account/addresses', icon: MapPin, label: 'Saved addresses', sub: `${addresses.length} saved` },
     { to: '/orders', icon: Package, label: 'Orders', sub: `${orders.length} simulated orders` },
     { to: '/favorites', icon: Heart, label: 'Favourites', sub: 'Restaurants, food, products, stores' },
-    { to: '/offers', icon: TicketPercent, label: 'Vouchers', sub: `${vouchers} available` },
+    { to: '/account/vouchers', icon: TicketPercent, label: 'My vouchers', sub: hasSpun ? `${vouchers} available` : `${vouchers} available · welcome spin waiting` },
     { to: '/account/payments', icon: CreditCard, label: 'Payment methods', sub: 'Demo wallets & test cards' },
     { to: '/notifications', icon: Bell, label: 'Notifications', sub: unread ? `${unread} unread` : 'All caught up' },
     { to: '/help', icon: Headphones, label: 'Help & Support', sub: 'FAQ, chat (simulated)' },
@@ -37,7 +39,7 @@ export default function Account() {
   return (
     <div className="mx-auto max-w-4xl px-4 py-6 animate-fade-in">
       <div className="card overflow-hidden">
-        <div className="bg-brand-gradient h-20" />
+        <div className="bg-brand-surface h-20" />
         <div className="px-5 pb-5">
           <div className="-mt-10 flex items-end gap-4">
             <span className="rounded-full ring-4 ring-white"><Avatar name={me.name} color={me.avatarColor} size={80} /></span>
@@ -51,7 +53,7 @@ export default function Account() {
 
       <div className="mt-4 grid grid-cols-3 gap-3">
         <Stat icon={<Package className="size-5 text-brand-600" />} label="Cravings simulated" value={String(delivered.length)} />
-        <Stat icon={<PiggyBank className="size-5 text-coral-500" />} label="Money not spent" value={taka(notSpent)} />
+        <Stat icon={<PiggyBank className="size-5 text-sun-600" />} label="Money not spent" value={taka(notSpent)} />
         <Stat icon={<Brain className="size-5 text-emerald-600" />} label="Cravings eased" value={eased === null ? '—' : `${eased}%`} />
       </div>
 

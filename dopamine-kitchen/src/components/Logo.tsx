@@ -1,36 +1,38 @@
-import { useId } from 'react'
 import { cx } from '../lib/format'
 
+/** App icon: a lowercase "p" (stem + ring) on a jade tile, with the sun dot. Legible down to 16px. */
 export function LogoMark({ size = 36, className }: { size?: number; className?: string }) {
-  const gid = `dk-g-${useId().replace(/[^a-zA-Z0-9_-]/g, '')}`
   return (
     <svg width={size} height={size} viewBox="0 0 64 64" className={className} aria-hidden>
-      <defs>
-        <linearGradient id={gid} x1="0" y1="0" x2="1" y2="1">
-          <stop offset="0" stopColor="#7C3AED" />
-          <stop offset=".55" stopColor="#B43EDB" />
-          <stop offset="1" stopColor="#FF5A36" />
-        </linearGradient>
-      </defs>
-      <rect width="64" height="64" rx="18" fill={`url(#${gid})`} />
-      <path d="M13 33h38a19 19 0 0 1-38 0z" fill="#fff" />
-      <path d="M22 50h20" stroke="#fff" strokeWidth="4" strokeLinecap="round" opacity=".55" />
-      <path d="M32 9l2.8 6.9L41.7 18.7l-6.9 2.8L32 28.4l-2.8-6.9-6.9-2.8 6.9-2.8z" fill="#FFE8A3" />
-      <circle cx="45" cy="14" r="2.8" fill="#fff" opacity=".9" />
-      <circle cx="20" cy="24" r="2.2" fill="#fff" opacity=".7" />
+      <rect width="64" height="64" rx="18" fill="#0A7F57" />
+      <rect x="17" y="17" width="9" height="36" rx="4.5" fill="#fff" />
+      <circle cx="33.5" cy="30" r="11" fill="none" stroke="#fff" strokeWidth="9" />
+      <circle cx="49" cy="15" r="5" fill="#FFC233" />
     </svg>
+  )
+}
+
+/** Wordmark: "pikk" with the sun dot over the i. */
+export function Wordmark({ className, light }: { className?: string; light?: boolean }) {
+  return (
+    <span className={cx('relative inline-flex items-baseline font-extrabold tracking-[-0.045em] leading-none', light ? 'text-white' : 'text-ink-900', className)} aria-label="pikk">
+      <span aria-hidden>p</span>
+      <span aria-hidden className="relative">
+        ı
+        <span className="absolute left-1/2 top-[0.02em] size-[0.2em] -translate-x-1/2 rounded-full bg-sun-400" />
+      </span>
+      <span aria-hidden>kk</span>
+    </span>
   )
 }
 
 export function Logo({ compact, light, className }: { compact?: boolean; light?: boolean; className?: string }) {
   return (
-    <span className={cx('inline-flex items-center gap-2.5', className)}>
-      <LogoMark size={compact ? 32 : 38} />
+    <span className={cx('inline-flex items-center gap-2', className)}>
+      <LogoMark size={compact ? 30 : 36} />
       <span className="leading-none">
-        <span className={cx('block font-display font-extrabold tracking-tight', compact ? 'text-[17px]' : 'text-xl', light ? 'text-white' : 'text-ink-900')}>
-          Dopamine<span className={light ? 'text-coral-200' : 'text-brand-600'}> Kitchen</span>
-        </span>
-        {!compact && <span className={cx('block text-[11px] font-medium mt-1', light ? 'text-white/75' : 'text-ink-500')}>Feed the craving. Skip the delivery.</span>}
+        <Wordmark light={light} className={compact ? 'text-[22px]' : 'text-[26px]'} />
+        {!compact && <span className={cx('block text-[11px] font-semibold mt-1', light ? 'text-white/75' : 'text-ink-500')}>Pick anything. Pay nothing.</span>}
       </span>
     </span>
   )
