@@ -13,6 +13,7 @@ cd dopamine-kitchen   # project folder (app is branded pikk)
 npm install
 npm run dev        # http://localhost:5173
 npm run build      # static build in dist/ (HashRouter + relative base: host it anywhere)
+npm run build:single  # one self-contained dist-single/index.html (all JS/CSS inlined; used for the published artifact)
 ```
 
 ## Demo credentials

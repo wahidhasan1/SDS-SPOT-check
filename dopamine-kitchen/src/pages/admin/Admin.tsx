@@ -1,7 +1,7 @@
 import { useMemo, useState, type ReactNode } from 'react'
 import { Link, NavLink, useLocation, useNavigate } from 'react-router-dom'
 import {
-  ArrowLeft, Download, FastForward, LayoutDashboard, Package, Pencil, Plus, RotateCcw, Settings, ShoppingBag, Store,
+  ArrowLeft, Copy, FastForward, LayoutDashboard, Package, Pencil, Plus, RotateCcw, Settings, ShoppingBag, Store,
   TicketPercent, Trash2, Users, UtensilsCrossed, Eye, LogIn, FlaskConical,
 } from 'lucide-react'
 import type { CartKind, FoodCategory, MenuItem, OrderStatus, Product, Restaurant, ShopCategory, SimSpeed, Voucher, VoucherScope, VoucherType } from '../../data/types'
@@ -585,13 +585,13 @@ function SettingsAdmin() {
   const reset = useStore((s) => s.resetDemo)
   const db = useStore((s) => s.db)
   const size = useMemo(() => Math.round(JSON.stringify(db).length / 1024), [db])
+  // Copy rather than download: sandboxed hosts (like the published artifact) block file downloads.
   const exportJson = () => {
-    const blob = new Blob([JSON.stringify(db, null, 2)], { type: 'application/json' })
-    const a = document.createElement('a')
-    a.href = URL.createObjectURL(blob)
-    a.download = `pikk-demo-${new Date().toISOString().slice(0, 10)}.json`
-    a.click()
-    URL.revokeObjectURL(a.href)
+    const json = JSON.stringify(db, null, 2)
+    navigator.clipboard.writeText(json).then(
+      () => toast('success', 'Database copied as JSON', `${size} KB on your clipboard`),
+      () => toast('error', 'Couldn’t copy', 'This browser blocked clipboard access.'),
+    )
   }
   return (
     <>
@@ -609,8 +609,8 @@ function SettingsAdmin() {
           </select>
         </div>
         <div className="flex flex-wrap items-center gap-4 p-4">
-          <div className="flex-1 min-w-[200px]"><p className="font-semibold">Export data</p><p className="text-xs text-ink-500">Download the full simulation database as JSON (~{size} KB). Useful as a template for real catalog data.</p></div>
-          <button className="btn btn-secondary btn-sm" onClick={exportJson}><Download className="size-4" /> Export JSON</button>
+          <div className="flex-1 min-w-[200px]"><p className="font-semibold">Export data</p><p className="text-xs text-ink-500">Copy the full simulation database as JSON (~{size} KB). Useful as a template for real catalog data.</p></div>
+          <button className="btn btn-secondary btn-sm" onClick={exportJson}><Copy className="size-4" /> Copy JSON</button>
         </div>
         <div className="flex flex-wrap items-center gap-4 p-4">
           <div className="flex-1 min-w-[200px]"><p className="font-semibold">Reset demo data</p><p className="text-xs text-ink-500">Restore the original seed (restaurants, products, users, orders, vouchers).</p></div>

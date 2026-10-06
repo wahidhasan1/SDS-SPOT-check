@@ -142,8 +142,10 @@ await shot('confirmed')
 
 // ---- Tracking → completion
 await page.getByRole('button', { name: '60×' }).click()
-for (let i = 0; i < 4; i++) {
-  await page.getByRole('button', { name: /Skip to next stage/ }).click()
+// At 60× a stage can also advance on its own, so skip until the order is delivered rather than a fixed count.
+const skip = page.getByRole('button', { name: /Skip to next stage/ })
+for (let i = 0; i < 6 && (await skip.count()); i++) {
+  await skip.click().catch(() => undefined)
   await page.waitForTimeout(300)
 }
 await see('Simulation Complete')
