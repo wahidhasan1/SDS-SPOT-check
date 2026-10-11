@@ -1,0 +1,15 @@
+{
+  "name": "vocabattle-db-tests",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "reset": "./db/reset.sh",
+    "test": "./db/reset.sh && node --test --test-concurrency=1 db/*.test.mjs"
+  },
+  "dependencies": {
+    "pg": "^8.13.1"
+  },
+  "devDependencies": {
+    "playwright": "^1.56.1"
+  }
+}
