@@ -8,6 +8,11 @@ import { callRoutes } from './calls.ts'
 import { assessmentRoutes } from './assessment.ts'
 import { vocabRoutes } from './vocab.ts'
 import { grammarRoutes } from './grammar.ts'
+import { objectiveRoutes } from '../ielts/objective-routes.ts'
+import { writingRoutes } from '../ielts/writing-routes.ts'
+import { speakingRoutes } from '../ielts/speaking-routes.ts'
+import { mockRoutes } from '../ielts/mock-routes.ts'
+import { overviewRoutes } from '../ielts/overview.ts'
 
 export const registerRoutes: FastifyPluginAsync = async (app) => {
   /** Public, non-secret configuration: app name and which optional services are available. */
@@ -33,4 +38,9 @@ export const registerRoutes: FastifyPluginAsync = async (app) => {
   await app.register(assessmentRoutes, { prefix: '/assessment' })
   await app.register(vocabRoutes, { prefix: '/vocab' })
   await app.register(grammarRoutes, { prefix: '/grammar' })
+  await app.register(objectiveRoutes, { prefix: '/ielts' })
+  await app.register(overviewRoutes, { prefix: '/ielts' })
+  await app.register(writingRoutes, { prefix: '/writing' })
+  await app.register(speakingRoutes, { prefix: '/speaking' })
+  await app.register(mockRoutes, { prefix: '/mock' })
 }

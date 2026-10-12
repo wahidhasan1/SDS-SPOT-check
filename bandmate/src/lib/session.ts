@@ -30,6 +30,7 @@ export type Me = {
     reminderHour: number | null
     aiConsent: boolean
     voiceConsent: boolean
+    speechConsent: boolean
   }
   adult: boolean
   plan: {

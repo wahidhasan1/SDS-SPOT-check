@@ -51,7 +51,7 @@ export type CallMode = 'casual' | 'ielts'
 export const LIMIT_KEYS = {
   callsPerDay: 'Voice calls per day',
   callMaxMinutes: 'Maximum call length (minutes)',
-  writingFeedbackPerDay: 'AI writing feedback per day',
+  writingFeedbackPerDay: 'AI feedback reviews per day (writing and speaking)',
   speakingAnalysesPerDay: 'Speaking analyses per day',
   ocrPagesPerDay: 'Photo pages read per day',
   translationsPerDay: 'Translations per day',

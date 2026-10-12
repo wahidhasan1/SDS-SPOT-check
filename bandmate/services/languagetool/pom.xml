@@ -1,0 +1,11 @@
+<project xmlns="http://maven.apache.org/POM/4.0.0">
+  <!-- Fetches the open-source LanguageTool server (LGPL-2.1) for offline grammar and spelling checks. -->
+  <modelVersion>4.0.0</modelVersion>
+  <groupId>app.bandmate</groupId>
+  <artifactId>languagetool-runtime</artifactId>
+  <version>1</version>
+  <dependencies>
+    <dependency><groupId>org.languagetool</groupId><artifactId>languagetool-server</artifactId><version>6.8</version></dependency>
+    <dependency><groupId>org.languagetool</groupId><artifactId>language-en</artifactId><version>6.8</version></dependency>
+  </dependencies>
+</project>

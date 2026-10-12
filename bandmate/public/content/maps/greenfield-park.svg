@@ -1,0 +1,37 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 420 320" font-family="Arial, Helvetica, sans-serif">
+  <title>Greenfield Country Park (original illustration)</title>
+  <rect width="420" height="320" rx="14" fill="#f3f7ef"/>
+  <!-- lake -->
+  <ellipse cx="210" cy="62" rx="95" ry="36" fill="#b9dcf2" stroke="#6aa9d1" stroke-width="2"/>
+  <text x="210" y="67" text-anchor="middle" font-size="13" fill="#2d5f80" font-style="italic">Lake</text>
+  <!-- paths -->
+  <g stroke="#c9a46a" stroke-width="9" stroke-linecap="round" fill="none">
+    <path d="M210 300 L210 175"/>
+    <path d="M210 175 L210 100"/>
+    <path d="M210 175 L80 175"/>
+    <path d="M210 175 L340 175"/>
+    <path d="M80 175 L105 92"/>
+  </g>
+  <!-- car park -->
+  <rect x="20" y="232" width="95" height="62" rx="6" fill="#e2e2e2" stroke="#9a9a9a"/>
+  <text x="67" y="268" text-anchor="middle" font-size="12" fill="#333">Car park</text>
+  <!-- visitor centre -->
+  <rect x="240" y="236" width="80" height="44" rx="6" fill="#fff" stroke="#555" stroke-width="1.5"/>
+  <text x="280" y="255" text-anchor="middle" font-size="11" fill="#333">Visitor</text>
+  <text x="280" y="269" text-anchor="middle" font-size="11" fill="#333">centre</text>
+  <!-- entrance -->
+  <text x="210" y="316" text-anchor="middle" font-size="12" font-weight="bold" fill="#333">▲ Main entrance</text>
+  <!-- trees (decoration) -->
+  <g fill="#9cc98a"><circle cx="370" cy="110" r="10"/><circle cx="388" cy="125" r="8"/><circle cx="35" cy="120" r="9"/><circle cx="160" cy="125" r="7"/><circle cx="270" cy="125" r="7"/></g>
+  <!-- letters -->
+  <g font-size="14" font-weight="bold" text-anchor="middle" fill="#fff">
+    <g><circle cx="150" cy="252" r="13" fill="#1e4fd8"/><text x="150" y="257">A</text></g>
+    <g><circle cx="52" cy="175" r="13" fill="#1e4fd8"/><text x="52" y="180">B</text></g>
+    <g><circle cx="90" cy="60" r="13" fill="#1e4fd8"/><text x="90" y="65">C</text></g>
+    <g><circle cx="210" cy="14" r="13" fill="#1e4fd8"/><text x="210" y="19">D</text></g>
+    <g><circle cx="335" cy="62" r="13" fill="#1e4fd8"/><text x="335" y="67">E</text></g>
+    <g><circle cx="368" cy="175" r="13" fill="#1e4fd8"/><text x="368" y="180">F</text></g>
+    <g><circle cx="365" cy="262" r="13" fill="#1e4fd8"/><text x="365" y="267">G</text></g>
+    <g><circle cx="232" cy="155" r="13" fill="#1e4fd8"/><text x="232" y="160">H</text></g>
+  </g>
+</svg>

@@ -46,5 +46,21 @@
  "assessment/l-c2-2": {
   "duration": 7.98,
   "chars": 161
+ },
+ "listening/listen-1-p1": {
+  "duration": 111.65,
+  "chars": 1898
+ },
+ "listening/listen-1-p2": {
+  "duration": 123.72,
+  "chars": 2438
+ },
+ "listening/listen-1-p3": {
+  "duration": 115.63,
+  "chars": 2096
+ },
+ "listening/listen-1-p4": {
+  "duration": 135.13,
+  "chars": 2483
  }
 }

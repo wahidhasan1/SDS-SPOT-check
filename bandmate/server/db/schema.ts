@@ -447,4 +447,10 @@ export const MIGRATIONS: string[] = [
   );
   CREATE INDEX quiz_user ON quiz_sessions(user_id, kind, created_at);
   `,
+
+  /* 8: speech-analysis consent and AI speaking feedback */ `
+  ALTER TABLE profiles ADD COLUMN speech_consent INTEGER NOT NULL DEFAULT 0;
+  ALTER TABLE speaking_sessions ADD COLUMN mode TEXT NOT NULL DEFAULT 'answer';
+  ALTER TABLE speaking_sessions ADD COLUMN ai_feedback TEXT;
+  `,
 ]

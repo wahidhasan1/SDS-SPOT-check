@@ -5,6 +5,9 @@ import { seedPlans } from './lib/plans.ts'
 import { seedSpeaking } from './content/seed.ts'
 import { seedVocab } from './routes/vocab.ts'
 import { seedGrammar } from './routes/grammar.ts'
+import { seedObjective } from './ielts/objective-routes.ts'
+import { seedWriting } from './ielts/writing-routes.ts'
+import { seedMocks } from './ielts/mock-routes.ts'
 
 /** Builds an app on a fresh in-memory database with all seed content. */
 export async function testApp(): Promise<FastifyInstance> {
@@ -13,6 +16,9 @@ export async function testApp(): Promise<FastifyInstance> {
   seedSpeaking()
   seedVocab()
   seedGrammar()
+  seedObjective()
+  seedWriting()
+  seedMocks()
   const extra = (globalThis as { __extraSeeds?: (() => void)[] }).__extraSeeds ?? []
   extra.forEach((f) => f())
   return buildApp()

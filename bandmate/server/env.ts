@@ -29,7 +29,7 @@ export const env = {
 
   // ---- Optional providers. Each feature reports "not configured" when its key is missing.
   anthropicKey: str('ANTHROPIC_API_KEY'),
-  anthropicModel: str('ANTHROPIC_MODEL', 'claude-sonnet-5-5'),
+  anthropicModel: str('ANTHROPIC_MODEL', 'claude-opus-5-5'),
   languageToolUrl: str('LANGUAGETOOL_URL', 'http://127.0.0.1:8081'),
   smtpUrl: str('SMTP_URL'),
   mailFrom: str('MAIL_FROM', `${DEFAULT_APP_NAME} <no-reply@example.com>`),

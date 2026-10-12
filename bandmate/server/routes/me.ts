@@ -31,6 +31,7 @@ type ProfileRow = {
   timezone_offset: number
   ai_consent: number
   voice_consent: number
+  speech_consent: number
 }
 
 export const isAdult = (birthYear: number | null) => !!birthYear && new Date().getFullYear() - birthYear >= 18
@@ -66,6 +67,7 @@ export function meView(userId: string) {
       reminderHour: p.reminder_hour,
       aiConsent: !!p.ai_consent,
       voiceConsent: !!p.voice_consent,
+      speechConsent: !!p.speech_consent,
     },
     adult: isAdult(p.birth_year),
     plan: entitlements(userId),
@@ -93,6 +95,7 @@ const profilePatch = z
     timezoneOffset: z.number().int().min(-840).max(840),
     aiConsent: z.boolean(),
     voiceConsent: z.boolean(),
+    speechConsent: z.boolean(),
     onboardingStep: z.enum(ONBOARDING_STEPS),
   })
   .partial()
@@ -114,6 +117,7 @@ const COLUMN: Record<string, string> = {
   timezoneOffset: 'timezone_offset',
   aiConsent: 'ai_consent',
   voiceConsent: 'voice_consent',
+  speechConsent: 'speech_consent',
   onboardingStep: 'onboarding_step',
 }
 
