@@ -430,4 +430,21 @@ export const MIGRATIONS: string[] = [
     created_at INTEGER NOT NULL
   );
   `,
+
+  /* 7: quizzes (vocabulary challenges, grammar exercises) */ `
+  CREATE TABLE quiz_sessions (
+    id TEXT PRIMARY KEY,
+    user_id TEXT NOT NULL REFERENCES users(id) ON DELETE CASCADE,
+    kind TEXT NOT NULL CHECK (kind IN ('daily','vocab','grammar','review')),
+    ref TEXT,
+    day TEXT,
+    items TEXT NOT NULL,
+    answers TEXT NOT NULL DEFAULT '{}',
+    score INTEGER NOT NULL DEFAULT 0,
+    total INTEGER NOT NULL,
+    created_at INTEGER NOT NULL,
+    finished_at INTEGER
+  );
+  CREATE INDEX quiz_user ON quiz_sessions(user_id, kind, created_at);
+  `,
 ]

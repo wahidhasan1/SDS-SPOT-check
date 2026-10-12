@@ -4,7 +4,7 @@ import { spawn, type ChildProcess } from 'node:child_process'
 import fs from 'node:fs'
 import os from 'node:os'
 import path from 'node:path'
-import { chromium, type Browser, type BrowserContext, type Page } from 'playwright'
+import { chromium, type APIResponse, type Browser, type BrowserContext, type Page } from 'playwright'
 
 export const ROOT = path.resolve(import.meta.dirname, '..', '..')
 export const CHROME = process.env.CHROME ?? '/opt/pw-browsers/chromium'
@@ -64,7 +64,7 @@ export async function createUser(browser: Browser, server: Server, opts: { name:
   const email = `${opts.name.toLowerCase()}.${Date.now()}${Math.floor(Math.random() * 1000)}@e2e.test`
   const password = 'practice123'
   const req = context.request
-  const ok = async (p: Promise<{ ok(): boolean; text(): Promise<string>; url(): string }>) => {
+  const ok = async (p: Promise<APIResponse>) => {
     const r = await p
     if (!r.ok()) throw new Error(`${r.url()} → ${await r.text()}`)
     return r

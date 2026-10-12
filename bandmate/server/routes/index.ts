@@ -6,6 +6,8 @@ import { requireUser } from '../lib/auth.ts'
 import { features } from '../services/features.ts'
 import { callRoutes } from './calls.ts'
 import { assessmentRoutes } from './assessment.ts'
+import { vocabRoutes } from './vocab.ts'
+import { grammarRoutes } from './grammar.ts'
 
 export const registerRoutes: FastifyPluginAsync = async (app) => {
   /** Public, non-secret configuration: app name and which optional services are available. */
@@ -29,4 +31,6 @@ export const registerRoutes: FastifyPluginAsync = async (app) => {
 
   await app.register(callRoutes, { prefix: '/calls' })
   await app.register(assessmentRoutes, { prefix: '/assessment' })
+  await app.register(vocabRoutes, { prefix: '/vocab' })
+  await app.register(grammarRoutes, { prefix: '/grammar' })
 }

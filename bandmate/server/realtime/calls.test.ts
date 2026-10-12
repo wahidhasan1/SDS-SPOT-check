@@ -148,7 +148,7 @@ describe('matching', () => {
 })
 
 describe('compatibility rules', () => {
-  const base = { clientId: 'c', mode: 'casual' as const, topic: 'random', role: 'either' as const, gender: null, genderPref: null, premium: false, maxMinutes: 15, excluded: new Set<string>(), recent: [] as string[] }
+  const base = { clientId: 'c', mode: 'casual' as const, topic: 'random', role: 'either' as const, gender: null as string | null, genderPref: null as string | null, premium: false, maxMinutes: 15, excluded: new Set<string>(), recent: [] as string[] }
   const t0 = 1_000_000
   const q = (id: string, level: number, extra: Partial<typeof base> & { joinedAt?: number } = {}) => ({ ...base, userId: id, level, joinedAt: t0, ...extra })
 
