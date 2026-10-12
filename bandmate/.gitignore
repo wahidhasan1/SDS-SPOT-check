@@ -1,0 +1,10 @@
+node_modules
+dist
+dist-server
+models/
+data/
+services/languagetool/lib
+.env
+*.log
+test-results
+.e2e
