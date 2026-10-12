@@ -31,6 +31,7 @@ export type Me = {
     aiConsent: boolean
     voiceConsent: boolean
     speechConsent: boolean
+    pushEnabled: boolean
   }
   adult: boolean
   plan: {

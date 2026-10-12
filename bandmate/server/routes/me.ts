@@ -32,6 +32,7 @@ type ProfileRow = {
   ai_consent: number
   voice_consent: number
   speech_consent: number
+  push_enabled: number
 }
 
 export const isAdult = (birthYear: number | null) => !!birthYear && new Date().getFullYear() - birthYear >= 18
@@ -68,6 +69,7 @@ export function meView(userId: string) {
       aiConsent: !!p.ai_consent,
       voiceConsent: !!p.voice_consent,
       speechConsent: !!p.speech_consent,
+      pushEnabled: !!p.push_enabled,
     },
     adult: isAdult(p.birth_year),
     plan: entitlements(userId),
@@ -96,6 +98,7 @@ const profilePatch = z
     aiConsent: z.boolean(),
     voiceConsent: z.boolean(),
     speechConsent: z.boolean(),
+    pushEnabled: z.boolean(),
     onboardingStep: z.enum(ONBOARDING_STEPS),
   })
   .partial()
@@ -118,6 +121,7 @@ const COLUMN: Record<string, string> = {
   aiConsent: 'ai_consent',
   voiceConsent: 'voice_consent',
   speechConsent: 'speech_consent',
+  pushEnabled: 'push_enabled',
   onboardingStep: 'onboarding_step',
 }
 
@@ -176,6 +180,10 @@ export const meRoutes: FastifyPluginAsync = async (app) => {
     const body = z.object({ password: z.string().min(1) }).parse(req.body)
     const row = db().one<{ password_hash: string }>('SELECT password_hash FROM users WHERE id = ?', user.id)!
     if (!(await verifyPassword(body.password, row.password_hash))) throw new HttpError(401, 'bad_credentials', 'Password is incorrect.')
+    // Leave any live call or battle first so partners are told and microphones are released.
+    const [{ endCallForUser }, { leaveBattle }] = await Promise.all([import('../realtime/calls.ts'), import('../realtime/battles.ts')])
+    endCallForUser(user.id, 'partner_left')
+    leaveBattle(user.id)
     db().tx(() => {
       // Cascades remove the profile, sessions, practice data, saved words, ratings and subscriptions.
       // Calls and reports keep a row with the user reference set to NULL so partners' history stays intact.

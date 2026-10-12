@@ -453,4 +453,19 @@ export const MIGRATIONS: string[] = [
   ALTER TABLE speaking_sessions ADD COLUMN mode TEXT NOT NULL DEFAULT 'answer';
   ALTER TABLE speaking_sessions ADD COLUMN ai_feedback TEXT;
   `,
+
+  /* 9: billing customers, reminders, reading sessions from photos */ `
+  CREATE TABLE billing_customers (
+    user_id TEXT NOT NULL REFERENCES users(id) ON DELETE CASCADE,
+    provider TEXT NOT NULL,
+    customer_id TEXT NOT NULL,
+    created_at INTEGER NOT NULL,
+    PRIMARY KEY (user_id, provider)
+  );
+  CREATE UNIQUE INDEX billing_customer_ref ON billing_customers(provider, customer_id);
+  ALTER TABLE profiles ADD COLUMN last_reminder_day TEXT;
+  ALTER TABLE profiles ADD COLUMN push_enabled INTEGER NOT NULL DEFAULT 1;
+  ALTER TABLE reading_sessions ADD COLUMN source TEXT NOT NULL DEFAULT 'photo';
+  ALTER TABLE reading_sessions ADD COLUMN translation TEXT;
+  `,
 ]
