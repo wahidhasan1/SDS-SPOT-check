@@ -195,6 +195,21 @@ describe('speaking', () => {
     assert.deepEqual(a.words.filter((w) => !w.heard).map((w) => w.word), ['flat'])
   })
 
+  it('premium topics and closed mock sections are refused before any processing', async () => {
+    await u.req('PATCH', '/api/me/profile', { speechConsent: true })
+    const premium = db().one<{ id: string }>("SELECT id FROM content_items WHERE kind = 'speaking' AND premium = 1")!.id
+    const send = async (extra: Record<string, string>) => {
+      const boundary = '----bm' + Date.now()
+      const parts: Buffer[] = []
+      for (const [k, v] of Object.entries({ part: '2', mode: 'answer', question: 'Describe something.', ...extra })) parts.push(Buffer.from(`--${boundary}\r\nContent-Disposition: form-data; name="${k}"\r\n\r\n${v}\r\n`))
+      parts.push(Buffer.from(`--${boundary}\r\nContent-Disposition: form-data; name="audio"; filename="a.webm"\r\nContent-Type: audio/webm\r\n\r\n`), Buffer.from('not really audio'), Buffer.from(`\r\n--${boundary}--\r\n`))
+      const res = await app.inject({ method: 'POST', url: '/api/speaking/analyse', headers: { cookie: u.cookie, 'content-type': `multipart/form-data; boundary=${boundary}` }, payload: Buffer.concat(parts) })
+      return { status: res.statusCode, code: JSON.parse(res.body).error?.code as string }
+    }
+    assert.deepEqual(await send({ promptId: premium }), { status: 402, code: 'premium_required' })
+    assert.deepEqual(await send({ mockAttemptId: 'mk_nope' }), { status: 409, code: 'mock_closed' })
+  })
+
   it('transcribes a real recording and measures fluency (offline speech recognition)', { skip: !asrReady() && 'speech models not downloaded' }, async () => {
     await u.req('PATCH', '/api/me/profile', { speechConsent: true })
     const speech = synth('My hometown is a busy city near the coast. I like it because the people are friendly and there are many parks. However, the traffic can be terrible during rush hour.', 'gb_female', 0.95)
@@ -221,6 +236,7 @@ describe('speaking', () => {
 
 describe('mock tests', () => {
   it('runs sections in order, cannot skip, and reports results only from real data', async () => {
+    let mockEssay = ''
     const m = await u.req<{ id: string; section: string; status: string }>('POST', '/api/mock/start', { mockId: 'mock-ac-1' })
     assert.equal(m.body.section, 'listening')
     const again = await u.req<{ id: string }>('POST', '/api/mock/start', { mockId: 'mock-ac-1' })
@@ -230,9 +246,18 @@ describe('mock tests', () => {
     for (const section of ['listening', 'reading', 'writing', 'speaking']) {
       const b = await u.req<{ section: string; underlying: Record<string, unknown> }>('POST', `/api/mock/attempts/${m.body.id}/begin`)
       assert.equal(b.body.section, section)
+      if (section === 'writing') {
+        const ws = (b.body.underlying as { writing: { id: string }[] }).writing
+        assert.equal(ws.length, 2)
+        const save = await u.req('PATCH', `/api/writing/submissions/${ws[0].id}`, { text: 'Mock essay text while the clock runs.' })
+        assert.equal(save.status, 200)
+        mockEssay = ws[0].id
+      }
       const c = await u.req<{ section: string | null }>('POST', `/api/mock/attempts/${m.body.id}/complete`, { section })
       assert.notEqual(c.body.section, section)
     }
+    const late = await u.req<{ error: { code: string } }>('PATCH', `/api/writing/submissions/${mockEssay}`, { text: 'edited later' })
+    assert.equal(late.status, 409, 'mock essays cannot be edited after the section closes')
     const done = await u.req<{ status: string; results: { bands: Record<string, number | null>; overall: number | null } }>('GET', `/api/mock/attempts/${m.body.id}`)
     assert.equal(done.body.status, 'completed')
     assert.equal(done.body.results.bands.listening, 2) // nothing answered

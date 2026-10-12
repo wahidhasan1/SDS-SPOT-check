@@ -81,6 +81,13 @@ export async function aiWritingFeedback(p: WritingPrompt, text: string) {
   return { ...fb, overall_band_estimate: roundBand(fb.overall_band_estimate), criteria: fb.criteria.map((c) => ({ ...c, band: roundBand(c.band) })), unofficial: true, generatedAt: now() }
 }
 
+/** Mock-test essays can only change while the Writing section's clock is running (plus a short grace for the last save). */
+function assertMockWritingOpen(mockAttemptId: string) {
+  const m = db().one<{ status: string; section_index: number; section_started_at: number | null }>('SELECT status, section_index, section_started_at FROM mock_attempts WHERE id = ?', mockAttemptId)
+  const open = m && m.status === 'in_progress' && m.section_index === 2 && m.section_started_at && now() <= m.section_started_at + (60 * 60 + 90) * 1000
+  if (!open) throw new HttpError(409, 'time_up', 'The time for this writing section is over.')
+}
+
 // ------------------------------------------------------------------------------------------- routes
 export const writingRoutes: FastifyPluginAsync = async (app) => {
   app.get('/prompts', async (req) => {
@@ -117,6 +124,7 @@ export const writingRoutes: FastifyPluginAsync = async (app) => {
     const user = requireUser(req)
     const s = getSub(user.id, (req.params as { id: string }).id)
     if (s.status !== 'draft') throw new HttpError(409, 'submitted', 'This essay has already been submitted.')
+    if (s.mock_attempt_id) assertMockWritingOpen(s.mock_attempt_id)
     const body = z.object({ text: z.string().max(20_000), timeSpentS: z.number().int().min(0).max(36_000).optional() }).parse(req.body)
     const wc = wordsOf(body.text).length
     db().tx(() => {

@@ -3,7 +3,7 @@ import { z } from 'zod'
 import { db, json } from '../db/index.ts'
 import { env } from '../env.ts'
 import { requireUser } from '../lib/auth.ts'
-import { consume, refund } from '../lib/plans.ts'
+import { consume, hasFlag, refund } from '../lib/plans.ts'
 import { HttpError, newId, notFound, now, wordsOf } from '../lib/util.ts'
 import { recordActivity } from '../lib/events.ts'
 import { decodeAudio, transcribe, type SpeechSegment } from '../services/asr.ts'
@@ -145,6 +145,14 @@ export const speakingRoutes: FastifyPluginAsync = async (app) => {
     const meta = z
       .object({ part: z.coerce.number().int().min(0).max(3), mode: z.enum(['answer', 'read-aloud']).default('answer'), question: z.string().max(500), promptId: z.string().max(60).optional(), mockAttemptId: z.string().max(60).optional() })
       .parse(fields)
+    if (meta.promptId) {
+      const pr = db().one<{ premium: number }>("SELECT premium FROM content_items WHERE id = ? AND kind = 'speaking'", meta.promptId)
+      if (pr?.premium && !hasFlag(user.id, 'premiumContent')) throw new HttpError(402, 'premium_required', 'This topic is part of Premium.')
+    }
+    if (meta.mockAttemptId) {
+      const m = db().one<{ status: string; section_index: number }>('SELECT status, section_index FROM mock_attempts WHERE id = ? AND user_id = ?', meta.mockAttemptId, user.id)
+      if (!m || m.status !== 'in_progress' || m.section_index !== 3) throw new HttpError(409, 'mock_closed', 'The speaking section of this mock test is not open.')
+    }
     if (!/^audio\//.test(file.mimetype) && file.mimetype !== 'application/octet-stream') throw new HttpError(400, 'bad_audio', 'Please upload an audio recording.')
     const buf = await file.toBuffer()
     consume(user.id, 'speakingAnalysesPerDay', 'speaking analyses')
