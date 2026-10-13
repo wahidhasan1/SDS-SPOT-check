@@ -51,6 +51,8 @@
   --warn-soft: #fff4dc;
   --bad: #c42b1c;
   --bad-soft: #fde9e7;
+  --hero: linear-gradient(135deg, #1e4fd8 0%, #3b2fc0 100%);
+  --hero-ink: #1e4fd8;
 }
 
 [data-theme='dark'] {
@@ -74,6 +76,8 @@
   --warn-soft: #3a2c10;
   --bad: #ff7b6e;
   --bad-soft: #3d1a17;
+  --hero: linear-gradient(135deg, #1f3aa3 0%, #2e2585 100%);
+  --hero-ink: #1f3aa3;
 }
 
 html,
