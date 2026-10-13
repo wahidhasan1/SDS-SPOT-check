@@ -41,8 +41,8 @@ export const config = {
 
   // AI (Anthropic Claude). Optional: features degrade to deterministic analysis without it.
   anthropicApiKey: process.env.ANTHROPIC_API_KEY ?? '',
-  anthropicModel: process.env.ANTHROPIC_MODEL ?? 'claude-sonnet-5-5',
-  anthropicBaseUrl: process.env.ANTHROPIC_API_URL ?? 'https://api.anthropic.com',
+  anthropicModel: process.env.ANTHROPIC_MODEL ?? 'claude-opus-5-5',
+  anthropicBaseUrl: process.env.ANTHROPIC_API_URL || undefined,
 
   // Speech-to-text (OpenAI-compatible /audio/transcriptions endpoint, e.g. OpenAI, Groq, self-hosted whisper server)
   sttApiUrl: process.env.STT_API_URL ?? '',
@@ -66,6 +66,7 @@ export const config = {
   stripePremiumPriceId: process.env.STRIPE_PREMIUM_PRICE_ID ?? '',
   revenueCatWebhookAuth: process.env.REVENUECAT_WEBHOOK_AUTH ?? '',
   revenueCatEntitlementId: process.env.REVENUECAT_ENTITLEMENT_ID ?? 'premium',
+  revenueCatApiKey: process.env.REVENUECAT_API_KEY ?? '',
 
   // Push notifications (Expo push service). Access token optional unless enhanced security is enabled.
   expoAccessToken: process.env.EXPO_ACCESS_TOKEN ?? '',

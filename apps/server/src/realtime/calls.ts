@@ -296,6 +296,15 @@ function shuffle<T>(arr: T[]): T[] {
   return a;
 }
 
+let promptCache: { at: number; value: Record<string, string[]> } | null = null;
+async function topicPrompts(topicId: string): Promise<string[]> {
+  if (!promptCache || Date.now() - promptCache.at > 60_000) {
+    const row = await one<{ value: Record<string, string[]> }>(`SELECT value FROM app_config WHERE key='topic_prompts'`);
+    promptCache = { at: Date.now(), value: row?.value ?? {} };
+  }
+  return promptCache.value[topicId] ?? findTopic(topicId)?.prompts ?? [];
+}
+
 async function callInfoFor(callId: string, userId: string): Promise<CallInfo | null> {
   const call = await one<any>('SELECT * FROM call_sessions WHERE id=$1', [callId]);
   if (!call) return null;
@@ -313,7 +322,7 @@ async function callInfoFor(callId: string, userId: string): Promise<CallInfo | n
     partner: { anonName: partner.anon_name, avatar: partner.avatar, level: partner.level },
     iceServers: iceServersFor(userId),
     maxDurationSec: call.max_duration_sec,
-    prompts: shuffle(topic?.prompts ?? []),
+    prompts: shuffle(await topicPrompts(call.topic_id)),
     ielts: call.ielts_script ?? undefined,
     matchedAt: new Date(call.created_at).toISOString(),
   };

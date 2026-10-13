@@ -45,6 +45,20 @@ export async function buildApp(opts: { logger?: boolean } = {}) {
     trustProxy: true,
   });
 
+  // Accept empty JSON bodies (treated as {}) so clients that send no body on POST still work.
+  app.removeContentTypeParser('application/json');
+  app.addContentTypeParser('application/json', { parseAs: 'string' }, (_req, body, done) => {
+    const text = String(body ?? '');
+    if (!text.trim()) return done(null, {});
+    try {
+      done(null, JSON.parse(text));
+    } catch {
+      const err: any = new Error('Invalid JSON body');
+      err.statusCode = 400;
+      done(err, undefined);
+    }
+  });
+
   await app.register(cors, {
     origin: (origin, cb) => {
       if (!origin || config.corsOrigins.includes(origin) || config.corsOrigins.includes('*')) cb(null, true);
