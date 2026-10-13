@@ -1,0 +1,11 @@
+.figure-svg { width: 100%; height: auto; display: block; }
+.fig-floor { stroke: var(--fig-floor, #9aa4b2); stroke-width: 1.5; }
+.fig-limb { fill: none; stroke-linecap: round; stroke-linejoin: round; }
+.fig-near { stroke: var(--fig-near, #1d2a44); }
+.fig-far { stroke: var(--fig-far, #8a98b3); }
+.fig-torso { stroke: var(--fig-torso, #1d2a44); stroke-linecap: round; fill: none; }
+.fig-head { fill: var(--fig-torso, #1d2a44); }
+.fig-face { fill: var(--fig-face, #c8f031); }
+.fig-prop rect { fill: var(--fig-prop, #c9d2df); }
+.fig-mat { fill: var(--fig-mat, #c8f03155); }
+.fig-label { font: 600 10px system-ui, sans-serif; fill: var(--text-muted, #5b6577); letter-spacing: .04em; text-transform: uppercase; }
