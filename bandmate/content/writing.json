@@ -1,0 +1,119 @@
+{
+  "_note": "Original practice prompts. Data in charts is invented for practice.",
+  "prompts": [
+    {
+      "id": "w-ac-t1-line", "task": 1, "testType": "academic", "kind": "line",
+      "title": "Internet access in three countries",
+      "prompt": "The graph below shows the percentage of households with internet access in three countries between 2000 and 2020.\n\nSummarise the information by selecting and reporting the main features, and make comparisons where relevant.",
+      "chart": { "type": "line", "unit": "%", "x": ["2000", "2005", "2010", "2015", "2020"], "series": [{ "name": "Country A", "values": [20, 45, 70, 85, 95] }, { "name": "Country B", "values": [10, 25, 55, 75, 90] }, { "name": "Country C", "values": [5, 10, 20, 40, 65] }], "yMax": 100 },
+      "keywords": ["internet", "access", "households", "percentage", "country", "2000", "2020"],
+      "structure": ["Introduction: paraphrase what the graph shows (don’t copy the question).", "Overview: the two or three most important trends — e.g. all three rose; A stayed highest; C grew most slowly at first.", "Body 1: Countries A and B — starting points, steady growth, final figures.", "Body 2: Country C — slow start, faster growth after 2010, still lowest in 2020."],
+      "minWords": 150, "minutes": 20
+    },
+    {
+      "id": "w-ac-t1-bar", "task": 1, "testType": "academic", "kind": "bar",
+      "title": "Weekly leisure time by age group",
+      "prompt": "The chart below shows the average number of hours per week that people in three age groups spent on four leisure activities in one country.\n\nSummarise the information by selecting and reporting the main features, and make comparisons where relevant.",
+      "chart": { "type": "bar", "unit": "hours", "x": ["Sport", "Television", "Social media", "Reading"], "series": [{ "name": "16–24", "values": [5, 6, 14, 2] }, { "name": "25–44", "values": [3, 9, 8, 3] }, { "name": "45–64", "values": [2, 15, 3, 6] }], "yMax": 16 },
+      "keywords": ["hours", "week", "age", "leisure", "television", "social media", "sport", "reading"],
+      "structure": ["Introduction: what the chart compares (activities × age groups).", "Overview: younger people favour social media; older people watch most TV; reading and sport take the least time overall.", "Body 1: social media and sport — highest for 16–24, falling with age.", "Body 2: television and reading — rising with age; 45–64 watch 15 hours of TV."],
+      "minWords": 150, "minutes": 20
+    },
+    {
+      "id": "w-ac-t1-table", "task": 1, "testType": "academic", "kind": "table",
+      "title": "Museum visitors in 2010 and 2020",
+      "prompt": "The table below shows the number of visitors (in thousands) to four museums in a city in 2010 and 2020.\n\nSummarise the information by selecting and reporting the main features, and make comparisons where relevant.",
+      "chart": { "type": "table", "columns": ["Museum", "2010", "2020"], "rows": [["Science Museum", "420", "610"], ["Art Gallery", "380", "350"], ["History Museum", "250", "460"], ["Transport Museum", "150", "120"]], "caption": "Visitors (thousands)" },
+      "keywords": ["visitors", "museum", "thousand", "2010", "2020", "science", "art", "history", "transport"],
+      "structure": ["Introduction: paraphrase the table.", "Overview: two museums grew strongly (Science, History); two declined slightly (Art, Transport); Science was the most visited in 2020.", "Body 1: the rises, with figures.", "Body 2: the falls, with figures and comparisons."],
+      "minWords": 150, "minutes": 20
+    },
+    {
+      "id": "w-ac-t1-process", "task": 1, "testType": "academic", "kind": "process",
+      "title": "How recycled paper is made",
+      "prompt": "The diagram below shows how recycled paper is produced.\n\nSummarise the information by selecting and reporting the main features.",
+      "chart": { "type": "process", "steps": ["Used paper collected from homes and offices", "Sorted by type and quality", "Mixed with water and chemicals to make pulp", "Pulp cleaned and ink removed", "Pulp pressed and rolled into sheets", "Sheets dried and cut", "Recycled paper delivered to shops"] },
+      "keywords": ["paper", "recycled", "pulp", "collected", "sorted", "water", "ink", "dried", "stages"],
+      "structure": ["Introduction: what the diagram shows.", "Overview: number of stages, beginning (collection) and end (delivery).", "Body 1: collection, sorting and pulping — use the passive (is collected, is sorted).", "Body 2: cleaning, pressing, drying and delivery — use sequencing words (next, after that, finally)."],
+      "minWords": 150, "minutes": 20
+    },
+    {
+      "id": "w-gt-t1-complaint", "task": 1, "testType": "general_training", "kind": "letter",
+      "title": "Complaint about a delivery",
+      "prompt": "You recently ordered a piece of furniture online, but there was a problem with the delivery.\n\nWrite a letter to the company. In your letter:\n• describe what you ordered\n• explain what was wrong with the delivery\n• say what you would like the company to do\n\nBegin your letter as follows: Dear Sir or Madam,",
+      "bullets": ["describe what you ordered", "explain what was wrong with the delivery", "say what you would like the company to do"],
+      "formality": "formal", "greeting": "Dear Sir or Madam",
+      "keywords": ["ordered", "delivery", "delivered", "furniture", "refund", "replace", "damaged", "late"],
+      "structure": ["Opening line: why you are writing.", "Paragraph for each bullet point.", "Polite closing request, then ‘Yours faithfully,’ + full name (because you began with ‘Dear Sir or Madam’)."],
+      "minWords": 150, "minutes": 20
+    },
+    {
+      "id": "w-gt-t1-friend", "task": 1, "testType": "general_training", "kind": "letter",
+      "title": "Inviting a friend to visit",
+      "prompt": "A friend from another country is planning to visit your town for a week.\n\nWrite a letter to your friend. In your letter:\n• suggest the best time of year to visit\n• describe some things you could do together\n• give advice about what to bring\n\nBegin your letter as follows: Dear ..........,",
+      "bullets": ["suggest the best time of year to visit", "describe some things you could do together", "give advice about what to bring"],
+      "formality": "informal", "greeting": "Dear",
+      "keywords": ["visit", "time", "together", "bring", "weather", "town"],
+      "structure": ["Friendly opening (e.g. It was great to hear you’re coming!).", "One paragraph per bullet point, with reasons and details.", "Friendly ending: ‘Best wishes,’ / ‘Love,’ + first name."],
+      "minWords": 150, "minutes": 20
+    },
+    {
+      "id": "w-gt-t1-landlord", "task": 1, "testType": "general_training", "kind": "letter",
+      "title": "Asking your landlord for repairs",
+      "prompt": "There is a problem with the heating in the flat you rent.\n\nWrite a letter to your landlord. In your letter:\n• explain the problem\n• describe how it is affecting you\n• suggest a time when the repair could be done\n\nBegin your letter as follows: Dear Mr Patel,",
+      "bullets": ["explain the problem", "describe how it is affecting you", "suggest a time when the repair could be done"],
+      "formality": "semi-formal", "greeting": "Dear Mr",
+      "keywords": ["heating", "flat", "repair", "cold", "problem", "time", "available"],
+      "structure": ["Say who you are and why you are writing.", "One paragraph per bullet point.", "Close with ‘Yours sincerely,’ (because you used his name) + full name."],
+      "minWords": 150, "minutes": 20
+    },
+    {
+      "id": "w-t2-technology", "task": 2, "testType": "both", "kind": "essay", "essayType": "opinion",
+      "title": "Technology and communication",
+      "prompt": "Some people believe that modern technology has made it easier for people to communicate, while others think it has made people more isolated.\n\nTo what extent do you agree or disagree?\n\nGive reasons for your answer and include any relevant examples from your own knowledge or experience.",
+      "keywords": ["technology", "communicate", "communication", "isolated", "isolation", "people", "social"],
+      "structure": ["Introduction: paraphrase the question and give a clear position (thesis).", "Body 1: main reason for your view, explained with an example.", "Body 2: second reason, or the opposite view and why it is less convincing.", "Conclusion: restate your position in new words."],
+      "minWords": 250, "minutes": 40
+    },
+    {
+      "id": "w-t2-university", "task": 2, "testType": "both", "kind": "essay", "essayType": "discussion",
+      "title": "Purpose of university education",
+      "prompt": "Some people think that the main purpose of university education is to prepare students for employment. Others believe universities should focus on knowledge for its own sake.\n\nDiscuss both these views and give your own opinion.",
+      "keywords": ["university", "education", "students", "employment", "jobs", "knowledge", "career"],
+      "structure": ["Introduction: present the two views and state which you prefer.", "Body 1: arguments for preparing students for work.", "Body 2: arguments for knowledge for its own sake.", "Conclusion: your balanced opinion, clearly stated."],
+      "minWords": 250, "minutes": 40
+    },
+    {
+      "id": "w-t2-cities", "task": 2, "testType": "both", "kind": "essay", "essayType": "problem-solution",
+      "title": "Traffic in big cities",
+      "prompt": "Traffic congestion is becoming a serious problem in many large cities.\n\nWhat are the main causes of this problem? What measures could be taken to reduce it?",
+      "keywords": ["traffic", "congestion", "cities", "cars", "public transport", "causes", "measures", "solutions"],
+      "structure": ["Introduction: introduce the problem and say you will discuss causes and solutions.", "Body 1: two main causes, each explained.", "Body 2: two practical solutions linked to those causes.", "Conclusion: summarise."],
+      "minWords": 250, "minutes": 40
+    },
+    {
+      "id": "w-t2-remote", "task": 2, "testType": "both", "kind": "essay", "essayType": "advantages-disadvantages",
+      "title": "Working from home",
+      "prompt": "More and more people are working from home instead of in an office.\n\nDo the advantages of this development outweigh the disadvantages?",
+      "keywords": ["working from home", "home", "office", "advantages", "disadvantages", "employees", "work"],
+      "structure": ["Introduction: paraphrase and give your answer (do advantages outweigh disadvantages?).", "Body 1: advantages with examples.", "Body 2: disadvantages with examples.", "Conclusion: weigh them and answer the question directly."],
+      "minWords": 250, "minutes": 40
+    },
+    {
+      "id": "w-t2-environment", "task": 2, "testType": "both", "kind": "essay", "essayType": "opinion",
+      "title": "Individuals and the environment",
+      "prompt": "Some people say that individuals can do little to protect the environment and that only governments and large companies can make a real difference.\n\nTo what extent do you agree or disagree?",
+      "keywords": ["environment", "individuals", "governments", "companies", "protect", "climate", "pollution"],
+      "structure": ["Introduction: paraphrase and state your position.", "Body 1: what governments and companies can do.", "Body 2: what individuals can do and why it matters (or doesn’t).", "Conclusion: restate your view."],
+      "minWords": 250, "minutes": 40
+    },
+    {
+      "id": "w-t2-elderly", "task": 2, "testType": "both", "kind": "essay", "essayType": "two-part",
+      "title": "An ageing population",
+      "prompt": "In many countries, the proportion of older people is steadily increasing.\n\nWhy is this happening? Is it a positive or negative development?",
+      "keywords": ["older", "elderly", "ageing", "population", "proportion", "life expectancy", "positive", "negative"],
+      "structure": ["Introduction: paraphrase; briefly answer both questions.", "Body 1: reasons (e.g. healthcare, lower birth rates).", "Body 2: your view on whether it is positive or negative, with reasons.", "Conclusion: summarise both answers."],
+      "minWords": 250, "minutes": 40
+    }
+  ]
+}

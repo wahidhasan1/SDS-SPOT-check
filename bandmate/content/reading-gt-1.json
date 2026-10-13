@@ -1,0 +1,174 @@
+{
+  "id": "read-gt-1",
+  "testType": "general_training",
+  "title": "General Training Reading · Practice Test 1",
+  "minutes": 60,
+  "passages": [
+    {
+      "title": "Section 1 · Riverside Community Centre",
+      "intro": "Read the texts below and answer Questions 1–14. The centre and its classes are fictional.",
+      "paragraphs": [
+        { "label": "", "text": "NEW CLASSES THIS TERM" },
+        { "label": "A", "text": "Aqua Fit — A gentle workout in the pool, ideal for anyone recovering from an injury. Mondays and Thursdays, 10–11 a.m. No swimming experience needed: the class takes place in the shallow end. £4.50 per session, free for over-65s." },
+        { "label": "B", "text": "Beginners’ Pottery — Learn to make bowls and cups on the potter’s wheel. All materials provided, but wear old clothes. Six-week course, Tuesday evenings 7–9 p.m., £90. Maximum eight people, so book early." },
+        { "label": "C", "text": "Family Cycling Skills — Children aged 8–12 and their parents learn to ride safely. Bring your own bike and helmet; a small number of bikes can be borrowed if you call us in advance. Saturday mornings in the centre’s car park, free of charge." },
+        { "label": "D", "text": "Conversational Spanish — For people who already know some basic Spanish and want to gain confidence speaking. Wednesday evenings, 6.30–8 p.m. £60 for ten weeks." },
+        { "label": "E", "text": "Yoga for Office Workers — Short sessions focusing on the neck, back and shoulders. Come in your work clothes; mats are provided. Fridays 12.15–12.45 p.m., £3 per session, pay on the day." },
+        { "label": "F", "text": "Digital Photography — Get the most out of the camera on your phone. Each session includes a walk along the river to practise taking pictures outdoors. Sunday afternoons, 2–4 p.m., £8 per session." },
+        { "label": "", "text": "LOST PROPERTY — Items found in the centre are kept at reception for two weeks. After that, clothing is given to a local charity shop and other items are disposed of, except for keys, which are kept for three months. Valuable items such as phones, wallets and jewellery are kept in a locked safe and can only be collected from the duty manager. To collect an item, you will need to describe it accurately and show photo identification. If you think you have lost something, you can also fill in a form on our website; we will contact you by email if a matching item is handed in. Please note that the centre cannot accept responsibility for items left in lockers overnight. Lockers are emptied by staff at 10 p.m. every evening." }
+      ],
+      "groups": [
+        {
+          "type": "match_info",
+          "letters": ["A", "B", "C", "D", "E", "F"],
+          "instructions": "Look at the six classes, A–F. For which class are the following statements true? You may use any letter more than once.",
+          "questions": [
+            { "n": 1, "text": "It is suitable for people who cannot swim.", "answer": "A", "why": "A: ‘No swimming experience needed’." },
+            { "n": 2, "text": "It takes place in the middle of the day.", "answer": "E", "why": "E: Fridays 12.15–12.45 p.m." },
+            { "n": 3, "text": "Participants practise outdoors near the river.", "answer": "F", "why": "F: ‘a walk along the river to practise taking pictures outdoors’." },
+            { "n": 4, "text": "There is no charge.", "answer": "C", "why": "C: ‘free of charge’." },
+            { "n": 5, "text": "Only a small number of people can join.", "answer": "B", "why": "B: ‘Maximum eight people’." },
+            { "n": 6, "text": "Participants need some previous knowledge.", "answer": "D", "why": "D: ‘For people who already know some basic Spanish’." },
+            { "n": 7, "text": "Equipment can be borrowed if arranged beforehand.", "answer": "C", "why": "C: ‘bikes can be borrowed if you call us in advance’." }
+          ]
+        },
+        {
+          "type": "tfng",
+          "instructions": "Do the following statements agree with the information about lost property? Write TRUE, FALSE or NOT GIVEN.",
+          "questions": [
+            { "n": 8, "text": "Lost clothing is kept at reception for one month.", "answer": "FALSE", "why": "Items are kept ‘for two weeks’." },
+            { "n": 9, "text": "Keys are kept longer than most other items.", "answer": "TRUE", "why": "Keys ‘are kept for three months’." },
+            { "n": 10, "text": "Most lost items are returned to their owners.", "answer": "NOT GIVEN", "why": "The notice doesn't say how many items are returned." },
+            { "n": 11, "text": "Staff empty the lockers every night.", "answer": "TRUE", "why": "‘Lockers are emptied by staff at 10 p.m. every evening.’" }
+          ]
+        },
+        {
+          "type": "gaps",
+          "format": "short",
+          "wordLimit": 2,
+          "instructions": "Answer the questions below. Choose NO MORE THAN TWO WORDS from the text for each answer.",
+          "lines": [
+            "Who should you see to collect a lost wallet? {12}",
+            "What must you show as well as describing your item? {13}",
+            "How will the centre contact you if your item is handed in? {14}"
+          ],
+          "answers": { "12": ["duty manager", "the duty manager"], "13": ["photo identification", "identification", "photo id", "id"], "14": ["by email", "email"] },
+          "why": { "12": "Valuable items ‘can only be collected from the duty manager’.", "13": "‘show photo identification’.", "14": "‘we will contact you by email’." }
+        }
+      ]
+    },
+    {
+      "title": "Section 2 · Information for new staff",
+      "intro": "Read the text below and answer Questions 15–27. The hotel is fictional.",
+      "paragraphs": [
+        { "label": "", "text": "Welcome to the team at Harbourview Hotel. This guide explains some practical arrangements for your first few weeks." },
+        { "label": "", "text": "Working hours and pay. Full-time staff work 37.5 hours per week on a rota that is published every Thursday for the following week. Overtime must be agreed in advance with your line manager and is paid at one and a half times the normal hourly rate. Wages are paid monthly, on the last working day of the month." },
+        { "label": "", "text": "Staff benefits. All staff receive free meals in the staff canteen during their shift. After completing a three-month probation period, you will be entitled to a 50% discount on hotel food and drink, and you can book rooms for friends and family at 30% off. Staff who complete a full year of service receive one additional day of paid holiday for each year worked, up to a maximum of five extra days." },
+        { "label": "", "text": "Uniform. Uniforms are provided and cleaned by the hotel laundry. Name badges must be worn at all times in public areas. Please leave your uniform in the laundry bag in the changing room at the end of each shift." },
+        { "label": "", "text": "Health and safety. If you have an accident at work, however minor, it must be reported. First, make sure the area is safe and get first aid if needed; every department has at least one trained first-aider, whose name is displayed on the noticeboard. Next, tell your supervisor as soon as possible. Your supervisor will then complete an accident report form with you, which must be sent to the HR office within 24 hours. HR reviews all reports each week to find ways of preventing similar accidents." },
+        { "label": "", "text": "Training. During your first month you will attend a one-day induction course, which covers fire safety, customer service and data protection. Further courses, such as food hygiene or languages, can be requested through your manager; the hotel pays the fees for any training related to your role." }
+      ],
+      "groups": [
+        {
+          "type": "gaps",
+          "format": "table",
+          "wordLimit": 1,
+          "allowNumber": true,
+          "instructions": "Complete the table below. Choose ONE WORD AND/OR A NUMBER from the text for each answer.",
+          "table": {
+            "columns": ["Benefit", "When available", "Details"],
+            "rows": [
+              ["Free meals", "from the first day", "in the staff {15}"],
+              ["Discount on food and drink", "after the {16} period", "{17}% off"],
+              ["Reduced room rates", "after three months", "for friends and {18}"],
+              ["Extra paid holiday", "after one {19} of service", "maximum of {20} extra days"]
+            ]
+          },
+          "answers": { "15": ["canteen"], "16": ["probation"], "17": ["50", "fifty"], "18": ["family"], "19": ["year"], "20": ["five", "5"] },
+          "why": { "15": "‘free meals in the staff canteen’.", "16": "‘After completing a three-month probation period’.", "17": "‘a 50% discount on hotel food and drink’.", "18": "‘rooms for friends and family’.", "19": "‘Staff who complete a full year of service’.", "20": "‘up to a maximum of five extra days’." }
+        },
+        {
+          "type": "gaps",
+          "format": "flowchart",
+          "title": "Reporting an accident",
+          "wordLimit": 1,
+          "instructions": "Complete the flow-chart below. Choose ONE WORD ONLY from the text for each answer.",
+          "steps": [
+            "Make the area safe and get first aid (the first-aider’s name is on the {21})",
+            "Tell your {22} as soon as possible",
+            "Complete an accident report {23} together",
+            "Send it to the HR office within 24 hours",
+            "HR reviews all reports every {24}"
+          ],
+          "answers": { "21": ["noticeboard", "notice-board"], "22": ["supervisor"], "23": ["form"], "24": ["week"] },
+          "why": { "21": "‘whose name is displayed on the noticeboard’.", "22": "‘tell your supervisor as soon as possible’.", "23": "‘complete an accident report form with you’.", "24": "‘HR reviews all reports each week’." }
+        },
+        {
+          "type": "mcq_multi",
+          "numbers": [25, 26],
+          "text": "Which TWO topics are covered in the induction course?",
+          "options": ["food hygiene", "fire safety", "languages", "data protection", "first aid"],
+          "answer": ["B", "D"],
+          "instructions": "Choose TWO letters, A–E.",
+          "why": "‘a one-day induction course, which covers fire safety, customer service and data protection’. Food hygiene and languages are optional extra courses."
+        },
+        {
+          "type": "mcq",
+          "instructions": "Choose the correct letter, A, B, C or D.",
+          "questions": [
+            { "n": 27, "text": "Overtime is paid", "options": ["at the normal hourly rate.", "only if it has been agreed beforehand.", "every Thursday.", "as extra holiday."], "answer": "B", "why": "‘Overtime must be agreed in advance with your line manager’." }
+          ]
+        }
+      ]
+    },
+    {
+      "title": "Section 3 · The Bicycle: A Short History",
+      "intro": "Read the text below and answer Questions 28–40.",
+      "paragraphs": [
+        { "label": "A", "text": "The first machine generally recognised as an ancestor of the bicycle appeared in Germany in 1817. It had two wheels and a steering handle, but no pedals: riders sat on a wooden frame and pushed themselves along with their feet. Its inventor hoped this ‘running machine’ might replace the horse, but it was heavy and difficult to steer, and it was soon banned from pavements in several cities after collisions with pedestrians." },
+        { "label": "B", "text": "Pedals finally arrived in the 1860s, attached directly to the front wheel. These machines were nicknamed ‘boneshakers’ because their iron-rimmed wheels passed every bump in the road on to the rider. Because each turn of the pedals produced only one turn of the wheel, the only way to go faster was to make the front wheel larger. The result was the high-wheeler of the 1870s, whose front wheel could be as tall as 1.5 metres. Fast but dangerous, it was ridden mainly by athletic young men; a sudden stop could throw the rider over the handlebars." },
+        { "label": "C", "text": "The design we recognise today emerged in the 1880s. The so-called ‘safety bicycle’ had two wheels of equal size and a chain that carried power from the pedals to the rear wheel. Gears allowed the wheels to turn faster than the pedals, so speed no longer depended on wheel size. Shortly afterwards, the air-filled rubber tyre made riding far more comfortable, and within a decade bicycle manufacturing had become a major industry." },
+        { "label": "D", "text": "The social effects were remarkable. For the first time, ordinary working people could travel several miles cheaply and independently, which widened their choice of jobs. The bicycle also played a part in changing attitudes towards women. Cycling required practical clothing, and the sight of women riding alone challenged ideas about how they should behave in public; some campaigners for women’s rights described the bicycle as a symbol of freedom." },
+        { "label": "E", "text": "In the twentieth century, however, the motor car pushed the bicycle to the margins in many countries. Roads were redesigned for cars, and cycling came to be seen as a hobby, or as transport for those who could not afford anything better. A few countries followed a different path, partly as a result of public campaigns against the growing number of road accidents. They invested in separate cycle lanes and safe junctions, and cycling remained a normal part of daily life for people of all ages." },
+        { "label": "F", "text": "Today the bicycle is enjoying a revival. Concerns about pollution, traffic congestion and physical inactivity have led many cities to build cycle networks, and electric bicycles have made longer journeys and hilly routes possible for riders who might otherwise have chosen to drive. Bike-sharing schemes, in which bicycles can be rented by the hour, have spread to hundreds of cities worldwide." },
+        { "label": "G", "text": "Experience suggests that infrastructure matters more than enthusiasm. Surveys repeatedly find that the main reason people give for not cycling is fear of traffic. Where cities have built continuous, protected routes, the number of cyclists has typically risen quickly; where cycle lanes are simply painted on busy roads, growth has been slow. Two hundred years after its invention, the bicycle’s future appears to depend less on technology than on how we choose to design our streets." }
+      ],
+      "groups": [
+        {
+          "type": "endings",
+          "instructions": "Complete each sentence with the correct ending, A–H, below.",
+          "endings": ["gears changed how fast the wheels turned.", "it was cheaper than keeping a horse.", "it caused accidents involving people on foot.", "people campaigned against road accidents.", "it was designed especially for women.", "a bigger wheel was the only way to go faster.", "electric motors were added.", "it let them look for work further from home."],
+          "questions": [
+            { "n": 28, "text": "The running machine was banned in some places because", "answer": "C", "why": "A: banned ‘after collisions with pedestrians’." },
+            { "n": 29, "text": "The high-wheeler had a very large front wheel because", "answer": "F", "why": "B: ‘the only way to go faster was to make the front wheel larger’." },
+            { "n": 30, "text": "The safety bicycle made wheel size less important because", "answer": "A", "why": "C: ‘Gears allowed the wheels to turn faster than the pedals, so speed no longer depended on wheel size.’" },
+            { "n": 31, "text": "The bicycle helped many workers because", "answer": "H", "why": "D: travelling cheaply ‘widened their choice of jobs’." },
+            { "n": 32, "text": "Some countries kept cycling popular partly because", "answer": "D", "why": "E: ‘partly as a result of public campaigns against the growing number of road accidents’." }
+          ]
+        },
+        {
+          "type": "mcq",
+          "instructions": "Choose the correct letter, A, B, C or D.",
+          "questions": [
+            { "n": 33, "text": "Early pedal bicycles were called ‘boneshakers’ because", "options": ["they were made from animal bone.", "riders felt every bump in the road.", "they often broke down.", "they were used mainly on farms."], "answer": "B", "why": "B: the wheels ‘passed every bump in the road on to the rider’." },
+            { "n": 34, "text": "Some campaigners for women’s rights saw the bicycle as", "options": ["too dangerous for women.", "a symbol of freedom.", "too expensive for most families.", "suitable only for sport."], "answer": "B", "why": "D: they ‘described the bicycle as a symbol of freedom’." },
+            { "n": 35, "text": "What has made longer journeys possible for more riders?", "options": ["bike-sharing schemes", "new cycle networks", "electric bicycles", "lighter frames"], "answer": "C", "why": "F: ‘electric bicycles have made longer journeys and hilly routes possible’." },
+            { "n": 36, "text": "What does the writer conclude in paragraph G?", "options": ["New technology will decide the bicycle’s future.", "Street design is the key to more people cycling.", "Painted cycle lanes are very effective.", "Most people are not interested in cycling."], "answer": "B", "why": "G: the future depends ‘less on technology than on how we choose to design our streets’." }
+          ]
+        },
+        {
+          "type": "gaps",
+          "format": "summary",
+          "title": "The bicycle in modern times",
+          "wordLimit": 2,
+          "instructions": "Complete the summary below. Choose NO MORE THAN TWO WORDS from the text for each answer.",
+          "lines": [
+            "In the twentieth century, roads in many countries were redesigned for the {37}, and cycling came to be seen as a {38} or as transport for poorer people. Today, worries about pollution, congestion and physical {39} have encouraged cities to build cycle networks. However, surveys show that the main reason people avoid cycling is fear of {40}."
+          ],
+          "answers": { "37": ["motor car", "car", "cars"], "38": ["hobby"], "39": ["inactivity"], "40": ["traffic"] },
+          "why": { "37": "E: ‘the motor car pushed the bicycle to the margins … Roads were redesigned for cars’.", "38": "E: ‘cycling came to be seen as a hobby’.", "39": "F: ‘Concerns about pollution, traffic congestion and physical inactivity’.", "40": "G: ‘the main reason people give for not cycling is fear of traffic’." }
+        }
+      ]
+    }
+  ]
+}

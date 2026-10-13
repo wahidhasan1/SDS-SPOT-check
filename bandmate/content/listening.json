@@ -1,0 +1,229 @@
+[
+  {
+    "id": "listen-1",
+    "title": "Listening · Practice Test 1",
+    "parts": [
+      {
+        "id": "listen-1-p1",
+        "title": "Part 1 · Joining a running club",
+        "context": "You will hear a woman phoning a running club to become a member.",
+        "speakers": { "M": "gb_male", "W": "us_female" },
+        "script": [
+          { "s": "M", "text": "Good morning, Hillside Running Club, Daniel speaking. How can I help?" },
+          { "s": "W", "text": "Hi. I'd like to join the club, if that's possible. I've just moved to the area." },
+          { "s": "M", "text": "Of course. I can take your details over the phone now. Could I have your name, please?" },
+          { "s": "W", "text": "Yes, it's Sarah Jennings." },
+          { "s": "M", "text": "Could you spell your surname for me?" },
+          { "s": "W", "text": "Sure. J, E, N, N, I, N, G, S." },
+          { "s": "M", "text": "Thank you. And your address?" },
+          { "s": "W", "text": "It's forty-seven Green Lane. The postcode is C B 2, 4 R T." },
+          { "s": "M", "text": "C B 2, 4 R T. Lovely. And a contact phone number?" },
+          { "s": "W", "text": "My mobile is oh seven seven double oh, nine double oh, four six one." },
+          { "s": "M", "text": "Let me read that back: oh seven seven oh oh, nine oh oh, four six one." },
+          { "s": "W", "text": "That's right." },
+          { "s": "M", "text": "Now, we have three groups: beginners, intermediate and advanced. How far do you usually run?" },
+          { "s": "W", "text": "About eight kilometres, three times a week. I used to be in the advanced group at my old club, but I haven't run much this year, so I think the intermediate group would be better for now." },
+          { "s": "M", "text": "Sensible. The intermediate group meets on Mondays and Wednesdays. Your first session would be next Wednesday, because Monday is a bank holiday." },
+          { "s": "W", "text": "Great. Where do you meet?" },
+          { "s": "M", "text": "We used to meet in front of the town hall, but there's building work there at the moment, so now we meet outside the library, at half past six." },
+          { "s": "W", "text": "Outside the library. Got it. And how much is membership?" },
+          { "s": "M", "text": "The full fee is forty-five pounds a year, but new members who join before the end of the month pay thirty-five pounds." },
+          { "s": "W", "text": "Oh, good, so thirty-five for me, then." },
+          { "s": "M", "text": "That's right. One more question: do you have any injuries we should know about?" },
+          { "s": "W", "text": "Well, I hurt my ankle last year, but that's fine now. Actually, it's my knee that sometimes gives me trouble on long runs." },
+          { "s": "M", "text": "Okay, I'll note that you have a knee injury, and I'll tell the coach. And finally, how did you hear about us?" },
+          { "s": "W", "text": "I saw a poster in the gym at first, but I didn't take a note of the number. So in the end I found you on your website." },
+          { "s": "M", "text": "Perfect. Welcome to the club, Sarah. See you on Wednesday." }
+        ],
+        "groups": [
+          {
+            "type": "gaps",
+            "format": "form",
+            "title": "Hillside Running Club — Membership form",
+            "wordLimit": 1,
+            "allowNumber": true,
+            "instructions": "Complete the form below. Write ONE WORD AND/OR A NUMBER for each answer.",
+            "lines": [
+              "Name: Sarah {1}",
+              "Address: {2} Green Lane",
+              "Postcode: {3}",
+              "Mobile: 07700 {4}",
+              "Group: {5}",
+              "First session: next {6}",
+              "Meeting point: outside the {7}",
+              "Fee: £{8} per year",
+              "Health: has a {9} injury",
+              "Heard about the club from: the club's {10}"
+            ],
+            "answers": { "1": ["jennings"], "2": ["47", "forty-seven"], "3": ["cb2 4rt", "cb24rt"], "4": ["900461", "900 461"], "5": ["intermediate"], "6": ["wednesday"], "7": ["library"], "8": ["35", "thirty-five"], "9": ["knee"], "10": ["website", "web site"] },
+            "why": {
+              "1": "She spells it: J-E-N-N-I-N-G-S.",
+              "2": "“It's forty-seven Green Lane.”",
+              "3": "“The postcode is C B 2, 4 R T.”",
+              "4": "“nine double oh, four six one”.",
+              "5": "She used to be advanced, but chooses “the intermediate group … for now”.",
+              "6": "“Your first session would be next Wednesday, because Monday is a bank holiday.”",
+              "7": "They used to meet at the town hall, but “now we meet outside the library”.",
+              "8": "The full fee is £45, but new members joining before the end of the month pay £35.",
+              "9": "Her ankle is fine now; “it's my knee that sometimes gives me trouble”.",
+              "10": "She saw a poster first but “found you on your website”."
+            }
+          }
+        ]
+      },
+      {
+        "id": "listen-1-p2",
+        "title": "Part 2 · Greenfield Country Park",
+        "context": "You will hear a park ranger giving information to a group of visitors.",
+        "speakers": { "R": "gb_female" },
+        "script": [
+          { "s": "R", "text": "Good morning, everyone, and welcome to Greenfield Country Park. My name's Emma, and I'm one of the rangers here. Before you set off, I'd like to tell you a little about the park and how to find your way around." },
+          { "s": "R", "text": "The park opened to the public in nineteen seventy-two. Before that, the land was used for sand and gravel quarrying, and the lake you'll see later was actually created when one of the old quarries filled with water. Today the park covers about a hundred and twenty hectares, and it's managed by the local council with the help of more than two hundred volunteers." },
+          { "s": "R", "text": "Entry to the park is free, but we do charge for parking. That money goes directly towards looking after the paths and the wildlife areas, so thank you for your support. Many people ask whether dogs are allowed. They are, but please keep them on a lead near the lake, because ground-nesting birds breed there from March to July." },
+          { "s": "R", "text": "We run several events throughout the year. The most popular is our autumn fungus walk, which always sells out quickly, so I'd recommend booking online at least a month in advance. Children's activities run every weekend during the school holidays." },
+          { "s": "R", "text": "Now, if you look at the map I've given you, you'll see we're standing at the main entrance, at the bottom of the map. The visitor centre is just here, on your right as you come in." },
+          { "s": "R", "text": "If you'd like to hire a bike, the bike hire shop is on the left of the main path, between the path and the car park, so it's the first building you pass." },
+          { "s": "R", "text": "If you walk straight up the main path, you'll come to a crossroads in the middle of the park. That's where you'll find the café, right at the crossroads. It does excellent cakes." },
+          { "s": "R", "text": "From the crossroads, if you turn left and follow that path to the end, you'll reach the adventure playground, which the children love. If you turn right instead and go to the end of the path, you'll find the picnic area, with tables and some lovely views across the fields." },
+          { "s": "R", "text": "Keep going straight on from the crossroads and you'll arrive at the lake. There's a bird hide on the far side of the lake, on the northern shore, where you can watch the water birds without disturbing them. And finally, as well as the toilets in the visitor centre, there's a second toilet block on the western shore of the lake. You can reach it by taking the path that goes up from the playground." },
+          { "s": "R", "text": "Right, I hope you all have a wonderful day. If you have any questions, you'll find me in the visitor centre." }
+        ],
+        "groups": [
+          {
+            "type": "mcq",
+            "instructions": "Choose the correct letter, A, B or C.",
+            "questions": [
+              { "n": 11, "text": "The lake in the park was formed", "options": ["by a river changing its course.", "when an old quarry filled with water.", "as part of a council project in 1972."], "answer": "B", "why": "“the lake … was actually created when one of the old quarries filled with water.”" },
+              { "n": 12, "text": "The money from car parking is used to", "options": ["pay the volunteers.", "look after paths and wildlife areas.", "build a new visitor centre."], "answer": "B", "why": "“That money goes directly towards looking after the paths and the wildlife areas.”" },
+              { "n": 13, "text": "Dogs must be kept on a lead near the lake because", "options": ["birds nest on the ground there.", "the water is deep.", "it is busy with visitors in summer."], "answer": "A", "why": "“ground-nesting birds breed there from March to July.”" },
+              { "n": 14, "text": "Visitors who want to join the fungus walk should", "options": ["arrive early on the day.", "phone the visitor centre.", "book online well in advance."], "answer": "C", "why": "“I'd recommend booking online at least a month in advance.”" }
+            ]
+          },
+          {
+            "type": "map",
+            "instructions": "Label the map below. Write the correct letter, A–H, next to Questions 15–20.",
+            "image": "/content/maps/greenfield-park.svg",
+            "imageAlt": "Plan of Greenfield Country Park: main entrance at the bottom, visitor centre to the right of the entrance, car park bottom left, a main path running north to a crossroads and then to a lake at the top. Paths lead left and right from the crossroads. Letters A to H mark buildings and places.",
+            "letters": ["A", "B", "C", "D", "E", "F", "G", "H"],
+            "questions": [
+              { "n": 15, "text": "Café", "answer": "H", "why": "“the café, right at the crossroads.”" },
+              { "n": 16, "text": "Picnic area", "answer": "F", "why": "Turn right at the crossroads “and go to the end of the path”." },
+              { "n": 17, "text": "Adventure playground", "answer": "B", "why": "Turn left at the crossroads “and follow that path to the end”." },
+              { "n": 18, "text": "Bird hide", "answer": "D", "why": "“on the far side of the lake, on the northern shore”." },
+              { "n": 19, "text": "Toilets (outdoor block)", "answer": "C", "why": "“on the western shore of the lake … the path that goes up from the playground”." },
+              { "n": 20, "text": "Bike hire", "answer": "A", "why": "“on the left of the main path, between the path and the car park”." }
+            ]
+          }
+        ]
+      },
+      {
+        "id": "listen-1-p3",
+        "title": "Part 3 · A research project on food waste",
+        "context": "You will hear two students, Maya and Tom, discussing their project with their tutor.",
+        "speakers": { "T": "gb_female2", "MA": "us_female2", "TO": "gb_male" },
+        "script": [
+          { "s": "T", "text": "So, Maya, Tom, how is the food waste project going?" },
+          { "s": "MA", "text": "Quite well, I think. We've decided to focus on the main university canteen, rather than all the cafés on campus. There are just too many places to cover properly." },
+          { "s": "T", "text": "That sounds sensible. What made you choose food waste in the first place?" },
+          { "s": "TO", "text": "Well, I'd assumed it was the cost that would interest people, but when we read the background material, what really surprised us was the environmental impact, especially the greenhouse gases that come from food rotting in landfill. That's what made us want to do it." },
+          { "s": "MA", "text": "Yes, neither of us had realised how big that was." },
+          { "s": "T", "text": "And how are you collecting your data?" },
+          { "s": "MA", "text": "We were going to hand out questionnaires to students, but we realised people don't always remember what they've thrown away. So instead we're going to weigh the food left on plates at the end of lunch, for two weeks." },
+          { "s": "T", "text": "Good. Have the canteen staff agreed to that?" },
+          { "s": "TO", "text": "They have. The manager was very helpful, actually. Her only condition was that we don't get in the way during the busiest period, between twelve and one, so we'll do our weighing after one o'clock." },
+          { "s": "T", "text": "Fine. And what do you think your biggest problem will be?" },
+          { "s": "MA", "text": "Probably time. We both have exams in the third week of term, so we need to finish the data collection before then." },
+          { "s": "TO", "text": "I'm also slightly worried about whether two weeks is long enough to give reliable results, but I think we'll just have to explain that limitation in the report." },
+          { "s": "T", "text": "That's exactly the right approach. Now, have you divided up the tasks?" },
+          { "s": "MA", "text": "Mostly. I'm going to do the literature review, because I've already read quite a lot." },
+          { "s": "TO", "text": "And I'll design the spreadsheet for the data. I'm more comfortable with that kind of thing." },
+          { "s": "MA", "text": "We'll both do the weighing, obviously. It's too much for one person." },
+          { "s": "T", "text": "What about interviewing the canteen manager?" },
+          { "s": "TO", "text": "Maya's going to do that. She's already met her." },
+          { "s": "T", "text": "And the presentation at the end of term?" },
+          { "s": "MA", "text": "We'll share that. Half each." },
+          { "s": "T", "text": "And who's writing up the final recommendations?" },
+          { "s": "TO", "text": "That'll be me. Maya's doing more of the earlier work, so it seems fair." },
+          { "s": "T", "text": "Excellent. It sounds like you're well organised. Let's meet again in two weeks." }
+        ],
+        "groups": [
+          {
+            "type": "mcq",
+            "instructions": "Choose the correct letter, A, B or C.",
+            "questions": [
+              { "n": 21, "text": "Why did the students choose to study only the main canteen?", "options": ["It produces the most waste.", "Studying all the cafés would be too much.", "The tutor suggested it."], "answer": "B", "why": "“There are just too many places to cover properly.”" },
+              { "n": 22, "text": "What surprised the students most in the background reading?", "options": ["the cost of food waste", "the environmental impact", "how much students eat"], "answer": "B", "why": "“what really surprised us was the environmental impact”." },
+              { "n": 23, "text": "How will the students collect their data?", "options": ["by giving out questionnaires", "by weighing food left on plates", "by interviewing students"], "answer": "B", "why": "They rejected questionnaires: “we're going to weigh the food left on plates”." },
+              { "n": 24, "text": "What condition did the canteen manager set?", "options": ["They must not work during the busiest hour.", "They must wear protective clothing.", "They must share their results with her."], "answer": "A", "why": "“we don't get in the way during the busiest period, between twelve and one”." },
+              { "n": 25, "text": "What do the students think will be their main problem?", "options": ["getting permission", "a lack of time", "analysing the data"], "answer": "B", "why": "“Probably time. We both have exams…”" }
+            ]
+          },
+          {
+            "type": "match_features",
+            "instructions": "Who will do each task? Choose your answers from the box. A = Maya, B = Tom, C = both Maya and Tom.",
+            "features": ["Maya", "Tom", "Both Maya and Tom"],
+            "questions": [
+              { "n": 26, "text": "literature review", "answer": "A", "why": "Maya: “I'm going to do the literature review.”" },
+              { "n": 27, "text": "spreadsheet design", "answer": "B", "why": "Tom: “I'll design the spreadsheet.”" },
+              { "n": 28, "text": "weighing the food", "answer": "C", "why": "“We'll both do the weighing.”" },
+              { "n": 29, "text": "interviewing the manager", "answer": "A", "why": "“Maya's going to do that.”" },
+              { "n": 30, "text": "final recommendations", "answer": "B", "why": "Tom: “That'll be me.”" }
+            ]
+          }
+        ]
+      },
+      {
+        "id": "listen-1-p4",
+        "title": "Part 4 · The urban heat island",
+        "context": "You will hear part of a lecture about why cities are warmer than the countryside.",
+        "speakers": { "L": "us_male" },
+        "script": [
+          { "s": "L", "text": "Today I want to talk about a phenomenon that affects almost every large city in the world: the urban heat island. Put simply, this means that cities are warmer than the countryside around them. On a calm summer night, the difference can be as much as ten degrees Celsius." },
+          { "s": "L", "text": "So what causes it? The first factor is the materials we build with. Concrete, brick and especially asphalt absorb heat from the sun during the day and then release it slowly at night. That's why the effect is usually strongest after dark, rather than in the middle of the afternoon." },
+          { "s": "L", "text": "The second factor is the lack of vegetation. In the countryside, plants cool the air through a process called evapotranspiration, which is similar to the way sweating cools the human body. Water evaporates from the leaves and takes heat with it. In cities, where much of the ground is covered with hard surfaces, there's far less of this natural cooling." },
+          { "s": "L", "text": "Third, the shape of the city itself matters. Tall buildings on narrow streets create what are called urban canyons. These trap heat and reduce the wind that would otherwise carry it away. And finally, there's the heat produced directly by human activity: vehicles, factories and, increasingly, air conditioning units, which push hot air out into the street." },
+          { "s": "L", "text": "Why does this matter? The most serious consequence is for health. During heatwaves, death rates rise sharply in cities, and the people most at risk are the elderly, especially those who live alone. There's also an economic cost: higher temperatures increase demand for electricity for cooling, which in turn produces more heat and more emissions. It's a kind of vicious circle." },
+          { "s": "L", "text": "Fortunately, there are solutions. One of the simplest is to change the colour of surfaces. White or light-coloured roofs reflect much more sunlight than dark ones; in some studies, cool roofs have reduced indoor temperatures by several degrees. Another approach is to plant more trees, which provide shade as well as evapotranspiration. Some cities are also creating green roofs, which are covered with plants, and these have the extra benefit of absorbing rainwater, which reduces the risk of flooding." },
+          { "s": "L", "text": "Finally, planners can design streets that allow air to flow through the city, for example by keeping wide corridors along the direction of the most common winds. In the long term, this kind of planning may be the most effective measure of all, although it's obviously much easier to apply in new developments than in existing city centres." }
+        ],
+        "groups": [
+          {
+            "type": "gaps",
+            "format": "notes",
+            "title": "The urban heat island",
+            "wordLimit": 1,
+            "instructions": "Complete the notes below. Write ONE WORD ONLY for each answer.",
+            "lines": [
+              "**Definition:** cities are warmer than the surrounding countryside — up to 10°C on a calm summer {31}",
+              "**Causes**",
+              "• building materials such as asphalt release heat slowly, so the effect is strongest after {32}",
+              "• less vegetation, so less cooling by evapotranspiration (similar to {33})",
+              "• tall buildings on narrow streets form urban {34}, which trap heat and reduce wind",
+              "• heat from vehicles, factories and air {35}",
+              "**Effects**",
+              "• heatwaves are most dangerous for the {36}, especially those living alone",
+              "• more electricity used for cooling, creating a vicious {37}",
+              "**Solutions**",
+              "• light-coloured {38} reflect sunlight",
+              "• green roofs also absorb rainwater and reduce the risk of {39}",
+              "• streets designed to let {40} flow through the city"
+            ],
+            "answers": { "31": ["night"], "32": ["dark"], "33": ["sweating"], "34": ["canyons"], "35": ["conditioning"], "36": ["elderly"], "37": ["circle"], "38": ["roofs"], "39": ["flooding"], "40": ["air", "wind"] },
+            "why": {
+              "31": "“On a calm summer night, the difference can be as much as ten degrees.”",
+              "32": "“the effect is usually strongest after dark”.",
+              "33": "“similar to the way sweating cools the human body”.",
+              "34": "“what are called urban canyons”.",
+              "35": "“air conditioning units, which push hot air out into the street”.",
+              "36": "“the people most at risk are the elderly, especially those who live alone”.",
+              "37": "“It's a kind of vicious circle.”",
+              "38": "“White or light-coloured roofs reflect much more sunlight”.",
+              "39": "Green roofs absorb rainwater, “which reduces the risk of flooding”.",
+              "40": "“design streets that allow air to flow through the city”."
+            }
+          }
+        ]
+      }
+    ]
+  }
+]

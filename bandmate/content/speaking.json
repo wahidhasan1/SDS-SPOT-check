@@ -1,0 +1,116 @@
+{
+  "_note": "Original practice material written for this app. Not official IELTS questions.",
+  "part1": [
+    { "id": "p1-hometown", "topic": "Your hometown", "questions": ["Where is your hometown?", "What do you like most about it?", "Is it a good place for young people to live? Why?", "How has your hometown changed in recent years?", "Would you like to live there in the future?"] },
+    { "id": "p1-work-study", "topic": "Work or study", "questions": ["Do you work or are you a student?", "Why did you choose that job or subject?", "What do you find most difficult about it?", "What would you like to do in the future?"] },
+    { "id": "p1-home", "topic": "Your home", "questions": ["Do you live in a house or a flat?", "Which room do you spend the most time in?", "What would you change about your home?", "Do you prefer living alone or with other people?"] },
+    { "id": "p1-routine", "topic": "Daily routine", "questions": ["What is your usual morning like?", "Do you prefer mornings or evenings? Why?", "Is your routine different at the weekend?", "Would you like to change anything about your daily routine?"] },
+    { "id": "p1-free-time", "topic": "Free time", "questions": ["What do you usually do in your free time?", "Do you have more free time now than when you were a child?", "Do you prefer spending free time alone or with others?", "Is there a hobby you would like to start?"] },
+    { "id": "p1-weather", "topic": "Weather", "questions": ["What is the weather like where you live?", "What is your favourite kind of weather?", "Does the weather affect your mood?", "Do you check the weather forecast often?"] },
+    { "id": "p1-music", "topic": "Music", "questions": ["What kind of music do you enjoy?", "When do you usually listen to music?", "Did you learn to play an instrument as a child?", "Has your taste in music changed as you have got older?"] },
+    { "id": "p1-food", "topic": "Food and cooking", "questions": ["What is your favourite food?", "Do you enjoy cooking?", "Is there any food you disliked as a child but like now?", "Do people in your country often eat out?"] },
+    { "id": "p1-transport", "topic": "Transport", "questions": ["How do you usually travel to work or school?", "Is public transport good in your city?", "Do you prefer travelling by bus or by train?", "Would you like to own a car in the future?"] },
+    { "id": "p1-phones", "topic": "Mobile phones", "questions": ["How often do you use your phone?", "What do you mostly use it for?", "Do you think people use their phones too much?", "How would your life be different without a phone?"] },
+    { "id": "p1-reading", "topic": "Reading", "questions": ["Do you like reading?", "What kinds of things do you read?", "Do you prefer printed books or reading on a screen?", "Did your parents read to you when you were young?"] },
+    { "id": "p1-shopping", "topic": "Shopping", "questions": ["Do you enjoy shopping?", "Do you prefer shopping online or in shops?", "What was the last thing you bought?", "Are there any shops you visit often?"] },
+    { "id": "p1-friends", "topic": "Friends", "questions": ["Do you have many close friends?", "How often do you meet your friends?", "What do you usually do together?", "Is it easy to make new friends as an adult?"] },
+    { "id": "p1-sport", "topic": "Sport and exercise", "questions": ["Do you play any sports?", "How do you keep fit?", "Which sports are popular in your country?", "Did you do much exercise at school?"] },
+    { "id": "p1-holidays", "topic": "Holidays", "questions": ["Where did you go on your last holiday?", "Do you prefer relaxing or active holidays?", "Who do you usually go on holiday with?", "Is there a place you would love to visit?"] }
+  ],
+  "part2": [
+    {
+      "id": "p2-teacher", "title": "A teacher who influenced you",
+      "cue": "Describe a teacher who influenced you.",
+      "points": ["who this teacher was", "what subject they taught", "what was special about their teaching"],
+      "explain": "and explain how this teacher influenced you.",
+      "part3": ["What makes a good teacher?", "Is the role of the teacher changing because of technology?", "Should teachers be paid more? Why or why not?", "Do you think students learn better in groups or alone?", "How important is it for teachers to be strict?"]
+    },
+    {
+      "id": "p2-trip", "title": "A memorable journey",
+      "cue": "Describe a journey that you remember well.",
+      "points": ["where you went", "how you travelled", "who you went with"],
+      "explain": "and explain why you remember this journey well.",
+      "part3": ["Why do people enjoy travelling to new places?", "How has tourism changed in the last twenty years?", "What problems can tourism cause for local communities?", "Will people travel more or less in the future?"]
+    },
+    {
+      "id": "p2-skill", "title": "A skill you learned",
+      "cue": "Describe a useful skill you learned.",
+      "points": ["what the skill is", "when and how you learned it", "how difficult it was to learn"],
+      "explain": "and explain why this skill is useful to you.",
+      "part3": ["Which skills are most important for young people today?", "Should schools teach practical skills such as cooking?", "Is it better to learn from a teacher or online?", "Do older people find it harder to learn new skills?"]
+    },
+    {
+      "id": "p2-place", "title": "A quiet place you like",
+      "cue": "Describe a quiet place you like to go to.",
+      "points": ["where it is", "how often you go there", "what you do there"],
+      "explain": "and explain why you like this place.",
+      "part3": ["Why do some people prefer quiet places?", "Are cities becoming noisier?", "How can city planners create more peaceful spaces?", "Is it important for children to spend time in nature?"]
+    },
+    {
+      "id": "p2-gift", "title": "A gift you gave",
+      "cue": "Describe a gift you gave to someone.",
+      "points": ["what the gift was", "who you gave it to", "why you chose it"],
+      "explain": "and explain how the person felt about the gift.",
+      "part3": ["Why do people give gifts?", "Is it better to give money or an object as a gift?", "Has advertising changed the way people give gifts?", "Are expensive gifts always better?"]
+    },
+    {
+      "id": "p2-tech", "title": "A piece of technology you use",
+      "cue": "Describe a piece of technology you find useful.",
+      "points": ["what it is", "when you started using it", "what you use it for"],
+      "explain": "and explain why you find it useful.",
+      "part3": ["How has technology changed the way people communicate?", "Do you think people depend too much on technology?", "Should children be allowed to use smartphones?", "What technology will be important in the future?"]
+    },
+    {
+      "id": "p2-person", "title": "A person you admire",
+      "cue": "Describe a person you admire.",
+      "points": ["who this person is", "how you know about them", "what they have done"],
+      "explain": "and explain why you admire this person.",
+      "part3": ["What qualities make someone a good role model?", "Do famous people have a responsibility to behave well?", "Who do children admire most in your country?", "Has the media changed who young people look up to?"]
+    },
+    {
+      "id": "p2-decision", "title": "An important decision",
+      "cue": "Describe an important decision you made.",
+      "points": ["what the decision was", "when you made it", "how you made it"],
+      "explain": "and explain why it was important.",
+      "part3": ["Do young people today have more choices than their parents did?", "Should parents help their children make important decisions?", "Why do some people find it hard to make decisions?", "Is it better to decide quickly or slowly?"]
+    },
+    {
+      "id": "p2-event", "title": "A celebration you enjoyed",
+      "cue": "Describe a celebration or festival you enjoyed.",
+      "points": ["what it was", "where and when it took place", "what people did"],
+      "explain": "and explain why you enjoyed it.",
+      "part3": ["Why are traditional festivals important?", "Are festivals becoming too commercial?", "How do celebrations differ between generations?", "Should governments spend money on public celebrations?"]
+    },
+    {
+      "id": "p2-book", "title": "A book or film you enjoyed",
+      "cue": "Describe a book or film that you enjoyed.",
+      "points": ["what it was", "what it was about", "when you read or watched it"],
+      "explain": "and explain why you enjoyed it.",
+      "part3": ["Do people read less than they used to?", "Are films better than books for telling stories?", "Should the government support local film-making?", "What can children learn from stories?"]
+    },
+    {
+      "id": "p2-goal", "title": "A goal you want to achieve",
+      "cue": "Describe a goal you would like to achieve.",
+      "points": ["what the goal is", "when you set this goal", "what you are doing to achieve it"],
+      "explain": "and explain why this goal is important to you.",
+      "part3": ["Why is it important to set goals?", "Do people set different goals at different ages?", "Is success mostly about hard work or luck?", "Should schools teach students how to plan their future?"]
+    },
+    {
+      "id": "p2-help", "title": "A time you helped someone",
+      "cue": "Describe a time when you helped someone.",
+      "points": ["who you helped", "what the situation was", "how you helped"],
+      "explain": "and explain how you felt about helping this person.",
+      "part3": ["Are people less helpful to strangers than in the past?", "Should volunteering be part of school education?", "Why do some people choose jobs that help others?", "Who should help elderly people: families or the government?"]
+    }
+  ],
+  "casual": {
+    "daily-life": ["What does a normal weekday look like for you?", "What is one small thing that makes your day better?", "Are you a morning person or a night person?", "What did you do last weekend?", "What is a habit you would like to build?", "How do you relax after a long day?", "What chore do you hate the most?", "What is the best thing that happened to you this week?"],
+    "education": ["What was your favourite subject at school, and why?", "Do you think exams show what students really know?", "Would you rather study online or in a classroom?", "What is something you taught yourself?", "Should university be free for everyone?", "What is the hardest part of learning English for you?", "Who was your best teacher and what made them good?", "What would you change about schools in your country?"],
+    "technology": ["Which app do you use most every day?", "Could you live without the internet for a week?", "Do you think AI will change your job or studies?", "What technology do you wish existed?", "Are video games good or bad for young people?", "How do you protect your privacy online?", "What was your first phone like?", "Should children learn to code at school?"],
+    "travel": ["Where is the most beautiful place you have visited?", "Do you prefer beaches, cities or mountains?", "What is a place in your country that visitors should see?", "Would you rather travel alone or with friends?", "What do you always pack when you travel?", "Tell me about a funny travel problem you had.", "Which country would you love to live in for a year?", "Is it better to plan a trip or to be spontaneous?"],
+    "food": ["What is a typical dish from your region?", "What is the best meal you have ever had?", "Can you cook? What is your best dish?", "Would you try insects as food?", "Do you prefer sweet or spicy food?", "What food do you eat when you are sad or tired?", "Is fast food a problem in your country?", "If you opened a restaurant, what would it serve?"],
+    "hobbies": ["What do you enjoy doing in your free time?", "Is there a hobby you gave up? Why?", "What hobby would you like to try?", "Do you prefer indoor or outdoor activities?", "Can a hobby become a good job?", "What did you love doing as a child?", "Do you collect anything?", "How much time do you spend on your hobbies each week?"],
+    "career": ["What is your dream job?", "What skills are you most proud of?", "Tell me about a challenge you solved at work or school.", "Would you prefer a high salary or a job you love?", "Where do you see yourself in five years?", "What is your greatest strength and one weakness?", "Would you like to work from home or in an office?", "What advice would you give someone looking for their first job?"],
+    "current-affairs": ["What is a problem in your city that you would like to fix?", "Should public transport be free?", "Is social media good for society?", "How can people protect the environment in daily life?", "Should people work four days a week?", "What makes a good leader?", "Is it important to follow the news every day?", "How has your town changed in the last ten years?"]
+  }
+}

@@ -1,0 +1,272 @@
+{
+  "_note": "Original lessons. Exercise types: mcq (answer = option index), fill (answer = accepted strings), fix (find the error: answer = index of the wrong word in tokens, plus correction).",
+  "lessons": [
+    {
+      "id": "g-present-simple", "title": "Present simple", "level": "A1", "topic": "Tenses",
+      "summary": "Use the present simple for facts, habits and routines.",
+      "sections": [
+        { "heading": "When to use it", "text": "Facts that are always true, and things that happen regularly.", "examples": ["Water boils at 100°C.", "I drink tea every morning.", "She works in a hospital."] },
+        { "heading": "He / she / it + -s", "text": "Add -s (or -es) to the verb after he, she, it or a single person or thing.", "examples": ["He plays football.", "My mother watches the news.", "The shop opens at nine."] },
+        { "heading": "Questions and negatives", "text": "Use do / does + the base verb. After does, the verb has no -s.", "examples": ["Do you like coffee?", "Does she live here?", "He doesn't speak French."] }
+      ],
+      "mistakes": [["She work in a bank.", "She works in a bank.", "Add -s after she."], ["Does he lives here?", "Does he live here?", "After does, use the base verb."]],
+      "exercises": [
+        { "type": "mcq", "prompt": "My brother ___ in London.", "options": ["live", "lives", "living", "is live"], "answer": 1, "explanation": "After ‘my brother’ (he) add -s: lives." },
+        { "type": "mcq", "prompt": "___ you speak Spanish?", "options": ["Does", "Are", "Do", "Is"], "answer": 2, "explanation": "With ‘you’, questions use do." },
+        { "type": "fill", "prompt": "She ___ (not / like) spicy food.", "answer": ["doesn't like", "does not like"], "explanation": "Negative with she: doesn't + base verb." },
+        { "type": "mcq", "prompt": "The train ___ at 7:30 every day.", "options": ["leave", "leaves", "is leave", "leaving"], "answer": 1, "explanation": "Timetables and routines use the present simple; the train = it → leaves." },
+        { "type": "fill", "prompt": "Where ___ your parents live?", "answer": ["do"], "explanation": "‘Your parents’ = they → do." },
+        { "type": "fix", "prompt": "Find the mistake: He go to school by bus.", "tokens": ["He", "go", "to", "school", "by", "bus."], "answer": 1, "correction": "goes", "explanation": "He → goes." }
+      ]
+    },
+    {
+      "id": "g-past-simple", "title": "Past simple", "level": "A2", "topic": "Tenses",
+      "summary": "Talk about finished actions at a specific time in the past.",
+      "sections": [
+        { "heading": "Regular verbs", "text": "Add -ed: work → worked, study → studied, stop → stopped.", "examples": ["I worked late yesterday.", "We studied for three hours."] },
+        { "heading": "Irregular verbs", "text": "Many common verbs are irregular and must be learned.", "examples": ["go → went", "see → saw", "buy → bought", "take → took"] },
+        { "heading": "Questions and negatives", "text": "Use did / didn't + the base verb.", "examples": ["Did you see the match?", "She didn't come to class."] }
+      ],
+      "mistakes": [["I didn't went to work.", "I didn't go to work.", "After didn't, use the base verb."], ["Yesterday I buyed a jacket.", "Yesterday I bought a jacket.", "Buy is irregular."]],
+      "exercises": [
+        { "type": "mcq", "prompt": "Last summer we ___ to Italy.", "options": ["go", "goed", "went", "gone"], "answer": 2, "explanation": "Go is irregular: went." },
+        { "type": "fill", "prompt": "She ___ (study) medicine at university.", "answer": ["studied"], "explanation": "Consonant + y → -ied." },
+        { "type": "mcq", "prompt": "___ you finish your homework?", "options": ["Do", "Did", "Have", "Were"], "answer": 1, "explanation": "Past question: did + base verb." },
+        { "type": "fill", "prompt": "I ___ (not / see) him at the party.", "answer": ["didn't see", "did not see"], "explanation": "didn't + base verb." },
+        { "type": "mcq", "prompt": "They ___ the bus because they were late.", "options": ["missed", "misses", "miss", "missing"], "answer": 0, "explanation": "Finished past action: missed." },
+        { "type": "fix", "prompt": "Find the mistake: Did she called you yesterday?", "tokens": ["Did", "she", "called", "you", "yesterday?"], "answer": 2, "correction": "call", "explanation": "After did, use the base verb: call." }
+      ]
+    },
+    {
+      "id": "g-comparatives", "title": "Comparatives and superlatives", "level": "A2", "topic": "Adjectives",
+      "summary": "Compare two things (bigger, more expensive) or one with all others (the biggest).",
+      "sections": [
+        { "heading": "Short adjectives", "text": "Add -er / -est. Double the last letter after a short vowel.", "examples": ["cheap → cheaper → the cheapest", "big → bigger → the biggest", "easy → easier → the easiest"] },
+        { "heading": "Long adjectives", "text": "Use more / the most with adjectives of two or more syllables (except -y).", "examples": ["expensive → more expensive → the most expensive"] },
+        { "heading": "Irregular", "text": "good → better → the best; bad → worse → the worst; far → further → the furthest", "examples": ["This is the best book I have read."] }
+      ],
+      "mistakes": [["She is more tall than me.", "She is taller than me.", "Short adjective: -er."], ["It's the most cheap option.", "It's the cheapest option.", "Short adjective: -est."]],
+      "exercises": [
+        { "type": "mcq", "prompt": "My flat is ___ than yours.", "options": ["smallest", "more small", "smaller", "small"], "answer": 2, "explanation": "Comparing two things: smaller than." },
+        { "type": "mcq", "prompt": "This is the ___ film I’ve ever seen.", "options": ["worse", "baddest", "worst", "most bad"], "answer": 2, "explanation": "Bad → worst (superlative)." },
+        { "type": "fill", "prompt": "Gold is ___ (expensive) than silver.", "answer": ["more expensive"], "explanation": "Long adjective: more + adjective." },
+        { "type": "fill", "prompt": "Today is the ___ (hot) day of the year.", "answer": ["hottest"], "explanation": "Double t: hottest." },
+        { "type": "mcq", "prompt": "Your English is getting ___.", "options": ["gooder", "better", "best", "more good"], "answer": 1, "explanation": "Good → better." },
+        { "type": "fix", "prompt": "Find the mistake: The exam was more easier than I expected.", "tokens": ["The", "exam", "was", "more", "easier", "than", "I", "expected."], "answer": 3, "correction": "(remove ‘more’)", "explanation": "Don’t use more with -er: easier." }
+      ]
+    },
+    {
+      "id": "g-countable", "title": "Countable and uncountable nouns", "level": "A2", "topic": "Nouns",
+      "summary": "Some nouns can be counted (books), others can’t (information). This changes the words you use with them.",
+      "sections": [
+        { "heading": "Countable", "text": "Singular and plural forms; use a/an, many, a few.", "examples": ["a book, two books", "How many students?", "a few ideas"] },
+        { "heading": "Uncountable", "text": "No plural, no a/an; use much, a little, some.", "examples": ["information, advice, research, furniture, homework", "How much money?", "a piece of advice"] }
+      ],
+      "mistakes": [["She gave me some advices.", "She gave me some advice.", "Advice is uncountable."], ["How many money do you have?", "How much money do you have?", "Money is uncountable."]],
+      "exercises": [
+        { "type": "mcq", "prompt": "Can you give me some ___ about the course?", "options": ["informations", "information", "an information", "many information"], "answer": 1, "explanation": "Information is uncountable." },
+        { "type": "mcq", "prompt": "There aren’t ___ people here today.", "options": ["much", "many", "a little", "any much"], "answer": 1, "explanation": "People is countable plural: many." },
+        { "type": "fill", "prompt": "How ___ homework do you have tonight?", "answer": ["much"], "explanation": "Homework is uncountable." },
+        { "type": "mcq", "prompt": "We bought new ___ for the living room.", "options": ["furnitures", "a furniture", "furniture", "furniture pieces of"], "answer": 2, "explanation": "Furniture is uncountable." },
+        { "type": "fill", "prompt": "I only need a ___ sugar in my tea.", "answer": ["little"], "explanation": "A little + uncountable." },
+        { "type": "fix", "prompt": "Find the mistake: The researchers published many researches last year.", "tokens": ["The", "researchers", "published", "many", "researches", "last", "year."], "answer": 4, "correction": "studies", "explanation": "Research is uncountable. Use ‘a lot of research’ or ‘many studies’." }
+      ]
+    },
+    {
+      "id": "g-present-perfect", "title": "Present perfect vs past simple", "level": "B1", "topic": "Tenses",
+      "summary": "Use the present perfect for experiences and past actions connected to now; use the past simple for finished times.",
+      "sections": [
+        { "heading": "Present perfect: have/has + past participle", "text": "Experiences (ever, never), changes, and situations continuing to now (for, since).", "examples": ["I have visited Japan twice.", "She has lived here since 2019.", "Prices have gone up."] },
+        { "heading": "Past simple", "text": "A finished time is mentioned or clear (yesterday, in 2018, last week, when I was a child).", "examples": ["I visited Japan in 2018.", "She moved here last year."] },
+        { "heading": "For and since", "text": "for + a period (for three years); since + a starting point (since Monday).", "examples": ["I've known her for ten years.", "We've been here since nine o'clock."] }
+      ],
+      "mistakes": [["I have seen him yesterday.", "I saw him yesterday.", "Yesterday is a finished time."], ["I live here since 2020.", "I have lived here since 2020.", "Situation continuing to now."]],
+      "exercises": [
+        { "type": "mcq", "prompt": "I ___ that film three times.", "options": ["saw", "have seen", "see", "had see"], "answer": 1, "explanation": "Experience, no finished time: have seen." },
+        { "type": "mcq", "prompt": "We ___ to Paris in 2015.", "options": ["have gone", "have been", "went", "go"], "answer": 2, "explanation": "Finished time (in 2015): past simple." },
+        { "type": "fill", "prompt": "She has worked here ___ five years.", "answer": ["for"], "explanation": "Period of time: for." },
+        { "type": "fill", "prompt": "They have been married ___ 2010.", "answer": ["since"], "explanation": "Starting point: since." },
+        { "type": "mcq", "prompt": "___ you ever ___ sushi?", "options": ["Did / eat", "Have / eaten", "Have / ate", "Do / eaten"], "answer": 1, "explanation": "Experience question: Have you ever eaten…?" },
+        { "type": "fix", "prompt": "Find the mistake: I have finished my essay last night.", "tokens": ["I", "have", "finished", "my", "essay", "last", "night."], "answer": 1, "correction": "(remove ‘have’): I finished", "explanation": "Last night is a finished time → past simple." }
+      ]
+    },
+    {
+      "id": "g-conditionals", "title": "First and second conditionals", "level": "B1", "topic": "Conditionals",
+      "summary": "Talk about real possibilities (first) and imaginary or unlikely situations (second).",
+      "sections": [
+        { "heading": "First conditional", "text": "If + present simple, will + verb. For real, likely future situations.", "examples": ["If it rains, we will stay inside.", "I'll call you if I finish early."] },
+        { "heading": "Second conditional", "text": "If + past simple, would + verb. For imaginary or unlikely situations now or in the future.", "examples": ["If I had more time, I would learn the guitar.", "If I were you, I would apologise."] }
+      ],
+      "mistakes": [["If it will rain, we'll stay home.", "If it rains, we'll stay home.", "No will after if."], ["If I would have money, I would travel.", "If I had money, I would travel.", "Past simple after if."]],
+      "exercises": [
+        { "type": "mcq", "prompt": "If you heat ice, it ___.", "options": ["melts", "would melt", "melted", "will melting"], "answer": 0, "explanation": "General truth (zero conditional): present + present." },
+        { "type": "mcq", "prompt": "If I ___ rich, I would buy a house by the sea.", "options": ["am", "will be", "were", "would be"], "answer": 2, "explanation": "Second conditional: if + past (were)." },
+        { "type": "fill", "prompt": "If she studies hard, she ___ (pass) the exam.", "answer": ["will pass", "'ll pass"], "explanation": "First conditional: will + verb." },
+        { "type": "fill", "prompt": "What ___ you do if you lost your phone?", "answer": ["would"], "explanation": "Second conditional question." },
+        { "type": "mcq", "prompt": "I ___ you if I hear any news.", "options": ["tell", "will tell", "would tell", "told"], "answer": 1, "explanation": "Real future possibility: will tell." },
+        { "type": "fix", "prompt": "Find the mistake: If it will be sunny tomorrow, we will have a picnic.", "tokens": ["If", "it", "will", "be", "sunny", "tomorrow,", "we", "will", "have", "a", "picnic."], "answer": 2, "correction": "If it is sunny", "explanation": "Use present simple after if, not will." }
+      ]
+    },
+    {
+      "id": "g-passive", "title": "The passive voice", "level": "B1", "topic": "Verbs",
+      "summary": "Use the passive when the action is more important than who did it. Very common in IELTS Writing Task 1 processes.",
+      "sections": [
+        { "heading": "Form: be + past participle", "text": "The tense is shown by ‘be’.", "examples": ["Paper is made from wood.", "The bridge was built in 1890.", "The results will be announced tomorrow.", "The houses have been sold."] },
+        { "heading": "Saying who did it", "text": "Add by + person only when it’s useful.", "examples": ["The novel was written by a teenager."] },
+        { "heading": "Describing processes", "text": "Use the present passive with sequencing words.", "examples": ["First, the beans are picked. Then they are dried in the sun."] }
+      ],
+      "mistakes": [["The letter was wrote yesterday.", "The letter was written yesterday.", "Use the past participle."], ["The museum built in 1900.", "The museum was built in 1900.", "Don't forget ‘be’."]],
+      "exercises": [
+        { "type": "mcq", "prompt": "English ___ in many countries.", "options": ["speaks", "is spoken", "is speaking", "spoke"], "answer": 1, "explanation": "Passive present: is spoken." },
+        { "type": "fill", "prompt": "The windows ___ (clean) every week.", "answer": ["are cleaned"], "explanation": "Present passive, plural." },
+        { "type": "mcq", "prompt": "The criminals ___ last night.", "options": ["arrested", "were arrested", "are arrested", "have arrested"], "answer": 1, "explanation": "Past passive: were arrested." },
+        { "type": "fill", "prompt": "After cutting, the wood ___ (transport) to the factory.", "answer": ["is transported"], "explanation": "Process: present passive." },
+        { "type": "mcq", "prompt": "A new hospital ___ next year.", "options": ["will build", "will be built", "is built", "built"], "answer": 1, "explanation": "Future passive: will be built." },
+        { "type": "fix", "prompt": "Find the mistake: The data were collect from 500 students.", "tokens": ["The", "data", "were", "collect", "from", "500", "students."], "answer": 3, "correction": "collected", "explanation": "Be + past participle: were collected." }
+      ]
+    },
+    {
+      "id": "g-modals", "title": "Modals for advice and obligation", "level": "B1", "topic": "Modals",
+      "summary": "should, must, have to, don’t have to, mustn’t — and the difference between them.",
+      "sections": [
+        { "heading": "Advice", "text": "should / ought to + verb.", "examples": ["You should get more sleep.", "Governments ought to invest in schools."] },
+        { "heading": "Obligation", "text": "must (the speaker's opinion or rules), have to (external rules).", "examples": ["I must call my mother.", "We have to wear a uniform at work."] },
+        { "heading": "No obligation vs prohibition", "text": "don’t have to = it’s not necessary; mustn’t = it’s not allowed.", "examples": ["You don't have to come — it's optional.", "You mustn't smoke here."] }
+      ],
+      "mistakes": [["You should to see a doctor.", "You should see a doctor.", "No ‘to’ after should."], ["You mustn't pay; it's free.", "You don't have to pay; it's free.", "Not necessary ≠ not allowed."]],
+      "exercises": [
+        { "type": "mcq", "prompt": "You ___ wear a seatbelt. It’s the law.", "options": ["should", "have to", "don't have to", "could"], "answer": 1, "explanation": "External rule: have to." },
+        { "type": "mcq", "prompt": "It’s Sunday, so I ___ get up early.", "options": ["mustn't", "don't have to", "must", "should"], "answer": 1, "explanation": "Not necessary: don't have to." },
+        { "type": "mcq", "prompt": "You ___ touch that wire — it’s dangerous!", "options": ["mustn't", "don't have to", "needn't", "shouldn't to"], "answer": 0, "explanation": "Not allowed / dangerous: mustn't." },
+        { "type": "fill", "prompt": "I think you ___ apologise to her. (advice)", "answer": ["should", "ought to"], "explanation": "Advice: should / ought to." },
+        { "type": "mcq", "prompt": "Students ___ submit essays before Friday.", "options": ["must", "musts", "must to", "are must"], "answer": 0, "explanation": "Must + base verb." },
+        { "type": "fix", "prompt": "Find the mistake: You should to practise every day.", "tokens": ["You", "should", "to", "practise", "every", "day."], "answer": 2, "correction": "(remove ‘to’)", "explanation": "Should + base verb, no ‘to’." }
+      ]
+    },
+    {
+      "id": "g-relative", "title": "Relative clauses", "level": "B2", "topic": "Sentences",
+      "summary": "Join ideas with who, which, that, whose, where, when — and use commas correctly.",
+      "sections": [
+        { "heading": "Defining clauses (no commas)", "text": "Identify which person or thing we mean. ‘That’ is possible.", "examples": ["The woman who/that lives next door is a doctor.", "The book that I lent you is overdue."] },
+        { "heading": "Non-defining clauses (commas)", "text": "Add extra information. Don’t use ‘that’.", "examples": ["My sister, who lives in Dhaka, is a teacher.", "The Nile, which is the longest river in Africa, flows north."] },
+        { "heading": "Whose, where, when", "text": "whose = possession; where = place; when = time.", "examples": ["The student whose bag was stolen called the police.", "This is the café where we met.", "I remember the day when we arrived."] }
+      ],
+      "mistakes": [["My father, that is a pilot, travels a lot.", "My father, who is a pilot, travels a lot.", "No ‘that’ in non-defining clauses."], ["The man which called you is here.", "The man who called you is here.", "Who for people."]],
+      "exercises": [
+        { "type": "mcq", "prompt": "The scientist ___ discovered penicillin was Alexander Fleming.", "options": ["which", "who", "whose", "where"], "answer": 1, "explanation": "People: who." },
+        { "type": "mcq", "prompt": "That’s the town ___ I grew up.", "options": ["which", "where", "when", "whose"], "answer": 1, "explanation": "Place: where." },
+        { "type": "fill", "prompt": "The company, ___ was founded in 1990, employs 500 people.", "answer": ["which"], "explanation": "Non-defining, thing: which (not that)." },
+        { "type": "mcq", "prompt": "I know a man ___ car runs on electricity.", "options": ["who", "who's", "whose", "which"], "answer": 2, "explanation": "Possession: whose." },
+        { "type": "fill", "prompt": "Do you remember the year ___ we first met?", "answer": ["when", "that"], "explanation": "Time: when (that is also possible)." },
+        { "type": "fix", "prompt": "Find the mistake: London, that is the capital of the UK, is very expensive.", "tokens": ["London,", "that", "is", "the", "capital", "of", "the", "UK,", "is", "very", "expensive."], "answer": 1, "correction": "which", "explanation": "Non-defining clause: which, not that." }
+      ]
+    },
+    {
+      "id": "g-third-conditional", "title": "Third and mixed conditionals", "level": "B2", "topic": "Conditionals",
+      "summary": "Talk about imaginary past situations and their results.",
+      "sections": [
+        { "heading": "Third conditional", "text": "If + past perfect, would have + past participle. The past cannot change.", "examples": ["If I had studied harder, I would have passed.", "She wouldn't have missed the flight if she had left earlier."] },
+        { "heading": "Mixed conditional", "text": "Imaginary past cause → present result: If + past perfect, would + verb.", "examples": ["If I had taken that job, I would be rich now."] }
+      ],
+      "mistakes": [["If I would have known, I would have helped.", "If I had known, I would have helped.", "Past perfect after if."]],
+      "exercises": [
+        { "type": "mcq", "prompt": "If we ___ the map, we wouldn’t have got lost.", "options": ["took", "had taken", "would take", "have taken"], "answer": 1, "explanation": "Third conditional: if + past perfect." },
+        { "type": "fill", "prompt": "If she had asked me, I ___ (help) her.", "answer": ["would have helped", "'d have helped"], "explanation": "would have + past participle." },
+        { "type": "mcq", "prompt": "If I hadn’t moved abroad, I ___ English so well now.", "options": ["wouldn't speak", "won't speak", "wouldn't have spoken", "didn't speak"], "answer": 0, "explanation": "Mixed: past cause, present result → would + verb." },
+        { "type": "mcq", "prompt": "He would have won if he ___ so tired.", "options": ["wasn't", "hadn't been", "wouldn't be", "isn't"], "answer": 1, "explanation": "Past perfect: hadn't been." },
+        { "type": "fill", "prompt": "If they ___ (not / cancel) the concert, we would have gone.", "answer": ["hadn't cancelled", "had not cancelled", "hadn't canceled", "had not canceled"], "explanation": "Past perfect negative." },
+        { "type": "fix", "prompt": "Find the mistake: If I would have seen you, I would have said hello.", "tokens": ["If", "I", "would", "have", "seen", "you,", "I", "would", "have", "said", "hello."], "answer": 2, "correction": "had seen", "explanation": "Use the past perfect after if." }
+      ]
+    },
+    {
+      "id": "g-articles", "title": "Articles: a, an, the or nothing", "level": "B2", "topic": "Nouns",
+      "summary": "One of the most common errors in IELTS writing. Learn the core rules.",
+      "sections": [
+        { "heading": "a / an", "text": "First mention of a singular countable noun, or ‘one of many’.", "examples": ["I saw an interesting documentary.", "She is a nurse."] },
+        { "heading": "the", "text": "Something specific or already known, unique things, superlatives, and some place names.", "examples": ["The documentary was about oceans.", "the sun, the internet", "the best solution", "the United Kingdom"] },
+        { "heading": "No article", "text": "General statements with plural or uncountable nouns.", "examples": ["Children need sleep.", "Pollution is harmful.", "Technology has changed education."] }
+      ],
+      "mistakes": [["The pollution is a big problem in cities.", "Pollution is a big problem in cities.", "General statement, uncountable."], ["She is best student in class.", "She is the best student in the class.", "Superlatives need ‘the’."]],
+      "exercises": [
+        { "type": "mcq", "prompt": "___ education is important for everyone.", "options": ["The", "An", "(no article)", "A"], "answer": 2, "explanation": "General, uncountable: no article." },
+        { "type": "mcq", "prompt": "I bought ___ umbrella yesterday.", "options": ["a", "an", "the", "(no article)"], "answer": 1, "explanation": "Vowel sound: an umbrella." },
+        { "type": "fill", "prompt": "___ moon goes round the Earth.", "answer": ["The"], "explanation": "Unique thing: the moon." },
+        { "type": "mcq", "prompt": "He wants to become ___ engineer.", "options": ["a", "an", "the", "(no article)"], "answer": 1, "explanation": "Jobs: a/an. Vowel sound: an engineer." },
+        { "type": "mcq", "prompt": "Mount Everest is ___ highest mountain in the world.", "options": ["a", "the", "(no article)", "an"], "answer": 1, "explanation": "Superlative: the highest." },
+        { "type": "fix", "prompt": "Find the mistake: The technology has changed the way we work.", "tokens": ["The", "technology", "has", "changed", "the", "way", "we", "work."], "answer": 0, "correction": "(remove ‘The’)", "explanation": "Technology in general: no article." }
+      ]
+    },
+    {
+      "id": "g-gerund-infinitive", "title": "Gerunds and infinitives", "level": "B2", "topic": "Verbs",
+      "summary": "Some verbs are followed by -ing, others by to + verb.",
+      "sections": [
+        { "heading": "Verb + -ing", "text": "enjoy, avoid, finish, mind, suggest, consider, keep, practise.", "examples": ["I enjoy reading.", "She suggested taking a taxi."] },
+        { "heading": "Verb + to + verb", "text": "want, decide, hope, plan, agree, refuse, manage, afford.", "examples": ["We decided to leave early.", "He refused to answer."] },
+        { "heading": "After prepositions: -ing", "text": "Always use -ing after a preposition.", "examples": ["I'm interested in learning Japanese.", "Thank you for helping me."] }
+      ],
+      "mistakes": [["I enjoy to swim.", "I enjoy swimming.", "Enjoy + -ing."], ["She decided going home.", "She decided to go home.", "Decide + to."]],
+      "exercises": [
+        { "type": "mcq", "prompt": "Would you mind ___ the window?", "options": ["to open", "opening", "open", "opened"], "answer": 1, "explanation": "Mind + -ing." },
+        { "type": "mcq", "prompt": "They can’t afford ___ a new car.", "options": ["buying", "to buy", "buy", "bought"], "answer": 1, "explanation": "Afford + to." },
+        { "type": "fill", "prompt": "I’m looking forward to ___ (see) you.", "answer": ["seeing"], "explanation": "‘to’ here is a preposition → -ing." },
+        { "type": "mcq", "prompt": "He managed ___ the exam despite being ill.", "options": ["passing", "to pass", "pass", "to passing"], "answer": 1, "explanation": "Manage + to." },
+        { "type": "fill", "prompt": "She is good at ___ (solve) problems.", "answer": ["solving"], "explanation": "Preposition + -ing." },
+        { "type": "fix", "prompt": "Find the mistake: I suggest to start the meeting earlier.", "tokens": ["I", "suggest", "to", "start", "the", "meeting", "earlier."], "answer": 2, "correction": "starting", "explanation": "Suggest + -ing: I suggest starting…" }
+      ]
+    },
+    {
+      "id": "g-reported", "title": "Reported speech", "level": "B2", "topic": "Sentences",
+      "summary": "Report what someone said, usually moving the tense one step back.",
+      "sections": [
+        { "heading": "Tense backshift", "text": "present → past, past → past perfect, will → would, can → could.", "examples": ["“I'm tired.” → She said she was tired.", "“I will help.” → He said he would help."] },
+        { "heading": "Questions", "text": "Use statement word order; use if/whether for yes/no questions.", "examples": ["“Where do you live?” → He asked where I lived.", "“Are you ready?” → She asked if I was ready."] },
+        { "heading": "Say vs tell", "text": "tell + person; say (to someone).", "examples": ["She told me (that) she was busy.", "She said (that) she was busy."] }
+      ],
+      "mistakes": [["He asked me where did I live.", "He asked me where I lived.", "Statement word order."], ["She said me she was late.", "She told me she was late.", "Tell + person."]],
+      "exercises": [
+        { "type": "mcq", "prompt": "“I like jazz,” he said. → He said he ___ jazz.", "options": ["likes", "liked", "has liked", "would like"], "answer": 1, "explanation": "Present → past." },
+        { "type": "mcq", "prompt": "She asked me ___ hungry.", "options": ["was I", "if I was", "if was I", "am I"], "answer": 1, "explanation": "Yes/no question: if + statement order." },
+        { "type": "fill", "prompt": "“We will call you.” → They said they ___ call me.", "answer": ["would"], "explanation": "will → would." },
+        { "type": "mcq", "prompt": "My teacher ___ me to practise more.", "options": ["said", "told", "says to", "speaks"], "answer": 1, "explanation": "Tell + person + to." },
+        { "type": "fill", "prompt": "“Where is the station?” → He asked where the station ___.", "answer": ["was"], "explanation": "Statement order and backshift." },
+        { "type": "fix", "prompt": "Find the mistake: She asked me what time did the film start.", "tokens": ["She", "asked", "me", "what", "time", "did", "the", "film", "start."], "answer": 5, "correction": "what time the film started", "explanation": "No question word order in reported questions." }
+      ]
+    },
+    {
+      "id": "g-hedging", "title": "Hedging and cautious language", "level": "C1", "topic": "Academic style",
+      "summary": "Academic writers avoid overgeneralising. Hedging makes your claims more precise and convincing.",
+      "sections": [
+        { "heading": "Modal verbs", "text": "may, might, could, tend to.", "examples": ["This may lead to higher costs.", "Young people tend to use social media more."] },
+        { "heading": "Adverbs and phrases", "text": "arguably, possibly, largely, to some extent, in many cases.", "examples": ["This is arguably the most serious problem.", "The policy has been largely successful."] },
+        { "heading": "Avoid absolute words", "text": "Replace always/never/everyone/all with often/rarely/most/many where the evidence is not absolute.", "examples": ["All teenagers are addicted to phones. → Many teenagers spend several hours a day on their phones."] }
+      ],
+      "mistakes": [["Technology always makes people lonely.", "Technology can make some people feel lonely.", "Overgeneralisation."]],
+      "exercises": [
+        { "type": "mcq", "prompt": "Which sentence is best for an IELTS essay?", "options": ["Everyone hates public transport.", "Many people find public transport inconvenient.", "Public transport is the worst thing ever.", "Nobody uses buses."], "answer": 1, "explanation": "Cautious, precise claim." },
+        { "type": "mcq", "prompt": "Higher taxes ___ reduce smoking rates.", "options": ["will definitely", "could", "always", "must surely"], "answer": 1, "explanation": "Hedged prediction: could." },
+        { "type": "fill", "prompt": "Older people ___ to prefer traditional media. (tend)", "answer": ["tend"], "explanation": "‘Tend to’ shows a general pattern, not a rule." },
+        { "type": "mcq", "prompt": "The scheme has been ___ successful, although some problems remain.", "options": ["totally", "largely", "never", "completely"], "answer": 1, "explanation": "Largely = mostly, leaving room for exceptions." },
+        { "type": "mcq", "prompt": "Choose the most academic option: ‘___, the main cause is poverty.’", "options": ["Obviously", "Arguably", "Everyone knows", "Of course"], "answer": 1, "explanation": "Arguably signals a reasoned claim." },
+        { "type": "fix", "prompt": "Find the overgeneralisation: Children never read books these days.", "tokens": ["Children", "never", "read", "books", "these", "days."], "answer": 1, "correction": "rarely / read fewer", "explanation": "‘Never’ is too absolute." }
+      ]
+    },
+    {
+      "id": "g-inversion", "title": "Inversion for emphasis", "level": "C1", "topic": "Advanced structures",
+      "summary": "After negative or limiting adverbials at the start of a sentence, use question word order.",
+      "sections": [
+        { "heading": "Negative adverbials", "text": "Never, Rarely, Seldom, Not only, Under no circumstances, Little.", "examples": ["Never have I seen such a beautiful view.", "Not only did she win, but she also broke the record."] },
+        { "heading": "Time expressions", "text": "Hardly / Scarcely … when; No sooner … than.", "examples": ["No sooner had we arrived than it started to rain.", "Hardly had I sat down when the phone rang."] },
+        { "heading": "Conditionals without if", "text": "Had / Were / Should at the start.", "examples": ["Had I known, I would have come.", "Should you need help, please call."] }
+      ],
+      "mistakes": [["Never I have seen this.", "Never have I seen this.", "Inversion after ‘Never’."]],
+      "exercises": [
+        { "type": "mcq", "prompt": "Rarely ___ such dedication in a student.", "options": ["I have seen", "have I seen", "I saw", "seen I have"], "answer": 1, "explanation": "Inversion: have I seen." },
+        { "type": "mcq", "prompt": "Not only ___ late, but he also forgot his notes.", "options": ["he was", "was he", "he is", "did he was"], "answer": 1, "explanation": "Not only + inversion." },
+        { "type": "fill", "prompt": "No sooner ___ I closed the door than the bell rang.", "answer": ["had"], "explanation": "No sooner had … than." },
+        { "type": "mcq", "prompt": "___ you require further information, please contact us.", "options": ["If should", "Should", "Would", "Had"], "answer": 1, "explanation": "Should you… = If you…" },
+        { "type": "fill", "prompt": "___ I known about the problem, I would have helped.", "answer": ["Had"], "explanation": "Had I known = If I had known." },
+        { "type": "fix", "prompt": "Find the mistake: Under no circumstances you should share your password.", "tokens": ["Under", "no", "circumstances", "you", "should", "share", "your", "password."], "answer": 3, "correction": "should you", "explanation": "Inversion: Under no circumstances should you…" }
+      ]
+    }
+  ]
+}

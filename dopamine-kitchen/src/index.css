@@ -1,0 +1,145 @@
+@import 'tailwindcss';
+
+/* ===== pikk design tokens ===== */
+@theme {
+  /* One family, weight-driven hierarchy. */
+  --font-sans: 'Figtree', ui-sans-serif, system-ui, -apple-system, 'Segoe UI', Roboto, 'Noto Sans Bengali', sans-serif;
+  --font-display: 'Figtree', ui-sans-serif, system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif;
+
+  /* Jade — primary actions, navigation, success */
+  --color-brand-50: #ecf8f2;
+  --color-brand-100: #d3f0e2;
+  --color-brand-200: #a8e0c6;
+  --color-brand-300: #6fc9a3;
+  --color-brand-400: #34ad7e;
+  --color-brand-500: #0f9466;
+  --color-brand-600: #0a7f57;
+  --color-brand-700: #086648;
+  --color-brand-800: #08513a;
+  --color-brand-900: #063b2b;
+
+  /* Sun — rewards, discounts, highlights (always with dark text) */
+  --color-sun-50: #fff9e6;
+  --color-sun-100: #fff0c2;
+  --color-sun-200: #ffe08a;
+  --color-sun-300: #ffd15c;
+  --color-sun-400: #ffc233;
+  --color-sun-500: #f5ad0a;
+  --color-sun-600: #d18e00;
+  --color-sun-700: #a36e00;
+  --color-sun-800: #7a5200;
+
+  /* Neutrals with a faint jade bias */
+  --color-ink-900: #121513;
+  --color-ink-700: #333a36;
+  --color-ink-500: #5c655f;
+  --color-ink-400: #838b86;
+  --color-ink-300: #b9c0bb;
+  --color-ink-200: #dfe3e0;
+  --color-ink-100: #eef1ef;
+  --color-ink-50: #f6f8f6;
+
+  --shadow-card: 0 1px 2px rgb(23 18 31 / 0.04), 0 4px 16px rgb(23 18 31 / 0.06);
+  --shadow-lift: 0 2px 4px rgb(23 18 31 / 0.05), 0 12px 32px rgb(23 18 31 / 0.12);
+  --shadow-glow: 0 8px 24px rgb(10 127 87 / 0.28);
+
+  --animate-fade-in: fade-in 0.25s ease-out both;
+  --animate-slide-up: slide-up 0.32s cubic-bezier(0.2, 0.9, 0.3, 1.1) both;
+  --animate-pop: pop 0.35s cubic-bezier(0.2, 0.9, 0.3, 1.4) both;
+  --animate-shimmer: shimmer 1.4s linear infinite;
+  --animate-float: float 3s ease-in-out infinite;
+  --animate-ping-slow: ping 2s cubic-bezier(0, 0, 0.2, 1) infinite;
+
+  @keyframes fade-in {
+    from { opacity: 0; transform: translateY(6px); }
+    to { opacity: 1; transform: none; }
+  }
+  @keyframes slide-up {
+    from { opacity: 0; transform: translateY(24px); }
+    to { opacity: 1; transform: none; }
+  }
+  @keyframes pop {
+    0% { opacity: 0; transform: scale(0.85); }
+    100% { opacity: 1; transform: scale(1); }
+  }
+  @keyframes shimmer {
+    from { background-position: -400px 0; }
+    to { background-position: 400px 0; }
+  }
+  @keyframes float {
+    0%, 100% { transform: translateY(0); }
+    50% { transform: translateY(-6px); }
+  }
+}
+
+@layer base {
+  html { -webkit-tap-highlight-color: transparent; scroll-behavior: smooth; }
+  body {
+    @apply bg-ink-50 text-ink-900 font-sans antialiased;
+  }
+  h1, h2, h3, .font-display { font-family: var(--font-display); letter-spacing: -0.025em; text-wrap: balance; }
+  button { cursor: pointer; }
+  button:disabled { cursor: not-allowed; }
+  :focus-visible { outline: 2px solid var(--color-brand-500); outline-offset: 2px; border-radius: 6px; }
+  input, select, textarea { font: inherit; }
+}
+
+@layer components {
+  .btn {
+    @apply inline-flex items-center justify-center gap-2 rounded-xl px-4 h-11 text-sm font-bold transition-all duration-150 select-none whitespace-nowrap active:scale-[0.97] disabled:opacity-45 disabled:active:scale-100 disabled:shadow-none;
+  }
+  .btn-sm { @apply h-9 px-3 text-[13px] rounded-lg; }
+  .btn-lg { @apply h-13 px-6 text-base rounded-2xl; }
+  .btn-primary { @apply bg-brand-600 text-white hover:bg-brand-700 shadow-[0_6px_16px_-8px_rgb(10_127_87/0.7)]; }
+  .btn-accent { @apply bg-sun-400 text-ink-900 hover:bg-sun-300 shadow-[0_6px_16px_-8px_rgb(209_142_0/0.7)]; }
+  .btn-dark { @apply bg-ink-900 text-white hover:bg-ink-700; }
+  .btn-secondary { @apply bg-white text-ink-900 border border-ink-200 hover:border-ink-300 hover:bg-ink-50; }
+  .btn-soft { @apply bg-brand-50 text-brand-700 hover:bg-brand-100; }
+  .btn-ghost { @apply text-ink-700 hover:bg-ink-100; }
+  .btn-danger { @apply bg-red-600 text-white hover:bg-red-700; }
+  .icon-btn { @apply inline-flex items-center justify-center size-10 rounded-full text-ink-700 hover:bg-ink-100 transition-colors relative; }
+
+  .card { @apply bg-white rounded-2xl shadow-card border border-ink-100; }
+  .card-hover { @apply transition-all duration-200 hover:shadow-lift hover:-translate-y-0.5; }
+
+  .chip {
+    @apply inline-flex items-center gap-1.5 h-9 px-3.5 rounded-full border border-ink-200 bg-white text-[13px] font-semibold text-ink-700 whitespace-nowrap transition-colors hover:border-ink-300;
+  }
+  .chip-active { @apply bg-ink-900 text-white border-ink-900 hover:border-ink-900; }
+
+  .input {
+    @apply w-full h-11 rounded-xl border border-ink-200 bg-white px-3.5 text-[15px] text-ink-900 placeholder:text-ink-400 outline-none transition focus:border-brand-500 focus:ring-4 focus:ring-brand-100;
+  }
+  .input-error { @apply border-red-400 focus:border-red-500 focus:ring-red-100; }
+  .label { @apply block text-[13px] font-semibold text-ink-700 mb-1.5; }
+
+  .badge { @apply inline-flex items-center gap-1 rounded-full px-2 py-0.5 text-[11px] font-bold uppercase tracking-wide; }
+
+  .skeleton {
+    @apply rounded-xl;
+    background: linear-gradient(90deg, #eef1ef 0px, #f6f8f6 120px, #eef1ef 240px);
+    background-size: 800px 100%;
+    animation: var(--animate-shimmer);
+  }
+
+  .section-title { @apply font-display text-xl sm:text-2xl font-bold text-ink-900; }
+  .scrollbar-none { scrollbar-width: none; }
+  .scrollbar-none::-webkit-scrollbar { display: none; }
+  /* Signature surface: solid jade with a soft light bloom (no multi-hue gradients). */
+  .bg-brand-surface { background: radial-gradient(120% 140% at 100% 0%, #0f9466 0%, #0a7f57 45%, #086648 100%); }
+  .map-grid {
+    background-color: #eef0e8;
+    background-image:
+      linear-gradient(rgba(255,255,255,0.9) 2px, transparent 2px),
+      linear-gradient(90deg, rgba(255,255,255,0.9) 2px, transparent 2px);
+    background-size: 46px 46px;
+  }
+}
+
+.pb-safe { padding-bottom: env(safe-area-inset-bottom); }
+
+@keyframes bump { 0% { transform: scale(1); } 35% { transform: scale(1.35); } 100% { transform: scale(1); } }
+.animate-bump { animation: bump 0.35s ease-out; }
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after { animation-duration: 0.01ms !important; animation-iteration-count: 1 !important; transition-duration: 0.01ms !important; scroll-behavior: auto !important; }
+}

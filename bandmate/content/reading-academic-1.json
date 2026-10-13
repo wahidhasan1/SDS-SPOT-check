@@ -1,0 +1,178 @@
+{
+  "id": "read-ac-1",
+  "testType": "academic",
+  "title": "Academic Reading · Practice Test 1",
+  "minutes": 60,
+  "passages": [
+    {
+      "title": "The Rise of the Urban Beehive",
+      "intro": "You should spend about 20 minutes on Questions 1–13, which are based on Reading Passage 1.",
+      "paragraphs": [
+        { "label": "A", "text": "Over the past two decades, beehives have appeared in some unlikely places: on the roofs of hotels in Paris, on the balconies of apartment blocks in Tokyo and among the vegetable beds of community gardens in Melbourne. In London alone, the number of registered hives more than doubled between 2008 and 2018, and some estimates now put the city's honeybee population at well over five thousand colonies. What began as the hobby of a few enthusiasts has become a visible symbol of the movement to bring nature back into cities." },
+        { "label": "B", "text": "The appeal is easy to understand. Honeybees are widely associated with environmental health, and news reports about declining bee populations, which became common in the mid-2000s, encouraged many people to see beekeeping as a practical way to help. Businesses were quick to notice the public's enthusiasm. A rooftop hive is cheap to install compared with other green initiatives, and companies have used them to demonstrate their environmental credentials, often selling or giving away the honey with their brand on the jar." },
+        { "label": "C", "text": "Urban bees appear to do surprisingly well. Cities offer a long flowering season: parks, gardens, street trees and window boxes provide a variety of plants from early spring until late autumn, and temperatures in built-up areas are usually a few degrees higher than in the surrounding countryside. Moreover, urban honeybees are often exposed to fewer agricultural pesticides than rural colonies. Several studies have found that hives in cities produce as much honey as, or more than, those on farmland, where large fields of a single crop may provide plenty of food for a few weeks but very little for the rest of the year." },
+        { "label": "D", "text": "However, ecologists have begun to question whether the boom in urban beekeeping is actually good for nature. The honeybee is just one of around 20,000 bee species worldwide, and in most countries it is effectively a managed farm animal rather than a wild insect. Britain, for example, has around 270 species of bee, most of which live alone rather than in colonies and nest in the ground or in hollow plant stems. These wild bees are frequently more efficient pollinators of certain plants than honeybees, and many of them are in genuine decline because of habitat loss." },
+        { "label": "E", "text": "The concern is competition. A single strong honeybee colony may contain 50,000 workers at the height of summer, and together they can collect the pollen and nectar from a very large number of flowers each day. A study of one large city compared the number of hives in different districts with the amount of flower resources available, and concluded that in central areas the demand from honeybees was already greater than the supply that local plants could provide. When food runs short, the researchers argued, it is the wild species, with their smaller foraging ranges, that are most likely to suffer." },
+        { "label": "F", "text": "There are also concerns about disease. Managed honeybees can carry viruses and parasites that may be transmitted to wild bees when they visit the same flowers. Although the evidence for this is still limited, some scientists recommend that new hives should not be placed close to nature reserves or other sites known to be important for rare species." },
+        { "label": "G", "text": "None of this means that city beekeeping should be banned, and many beekeepers are responding to the criticism. Some associations now encourage members to plant pollinator-friendly flowers before adding new hives, and a number of cities have produced guidance on how many colonies an area can support. Conservation groups argue that individuals and companies who want to help bees would often achieve more by creating habitat — leaving areas of grass uncut, planting native wildflowers or building nesting sites for solitary bees — than by installing a hive. As one researcher put it, ‘Keeping honeybees to save bees is a little like keeping chickens to save birds.’" }
+      ],
+      "groups": [
+        {
+          "type": "tfng",
+          "instructions": "Do the following statements agree with the information given in Reading Passage 1? Write TRUE if the statement agrees with the information, FALSE if the statement contradicts the information, NOT GIVEN if there is no information on this.",
+          "questions": [
+            { "n": 1, "text": "The number of registered beehives in London more than doubled in ten years.", "answer": "TRUE", "why": "Paragraph A: ‘the number of registered hives more than doubled between 2008 and 2018’." },
+            { "n": 2, "text": "Some companies have used rooftop hives to improve their environmental image.", "answer": "TRUE", "why": "Paragraph B: ‘companies have used them to demonstrate their environmental credentials’." },
+            { "n": 3, "text": "Installing a rooftop hive costs more than most other green projects.", "answer": "FALSE", "why": "Paragraph B says a rooftop hive is ‘cheap to install compared with other green initiatives’." },
+            { "n": 4, "text": "Cities are usually warmer than the countryside around them.", "answer": "TRUE", "why": "Paragraph C: temperatures in built-up areas are ‘usually a few degrees higher than in the surrounding countryside’." },
+            { "n": 5, "text": "Honey from city hives tastes better than honey from farmland hives.", "answer": "NOT GIVEN", "why": "Paragraph C compares the amount of honey, not its taste." },
+            { "n": 6, "text": "Most of Britain's bee species live in large colonies.", "answer": "FALSE", "why": "Paragraph D: most of Britain's bee species ‘live alone rather than in colonies’." }
+          ]
+        },
+        {
+          "type": "gaps",
+          "format": "notes",
+          "title": "Urban beekeeping: benefits and concerns",
+          "wordLimit": 1,
+          "instructions": "Complete the notes below. Choose ONE WORD ONLY from the passage for each answer.",
+          "lines": [
+            "**Why urban bees do well**",
+            "• cities have a longer {7} season than farmland",
+            "• less exposure to {8} used in agriculture",
+            "• farmland is often planted with a single {9}",
+            "**Concerns**",
+            "• the honeybee is usually a managed farm {10}",
+            "• wild bees may lose out because of {11} for food",
+            "• honeybees can spread viruses and {12}",
+            "**Advice from conservation groups**",
+            "• create {13} rather than installing hives"
+          ],
+          "answers": { "7": ["flowering"], "8": ["pesticides"], "9": ["crop"], "10": ["animal"], "11": ["competition"], "12": ["parasites"], "13": ["habitat"] },
+          "why": {
+            "7": "Paragraph C: ‘Cities offer a long flowering season’.",
+            "8": "Paragraph C: urban bees ‘are often exposed to fewer agricultural pesticides’.",
+            "9": "Paragraph C: ‘large fields of a single crop’.",
+            "10": "Paragraph D: ‘effectively a managed farm animal’.",
+            "11": "Paragraph E opens: ‘The concern is competition.’",
+            "12": "Paragraph F: ‘can carry viruses and parasites’.",
+            "13": "Paragraph G: people ‘would often achieve more by creating habitat’."
+          }
+        }
+      ]
+    },
+    {
+      "title": "Why Teenagers Sleep Late",
+      "intro": "You should spend about 20 minutes on Questions 14–26, which are based on Reading Passage 2.",
+      "paragraphs": [
+        { "label": "A", "text": "Parents have long complained that teenagers stay up too late and are impossible to wake in the morning. For much of the twentieth century this behaviour was regarded as a matter of discipline: young people, it was assumed, simply lacked the self-control to go to bed at a sensible hour. Research over the last thirty years has challenged this view, suggesting that the shift towards later sleep is, at least in part, biological." },
+        { "label": "B", "text": "The key lies in the body's internal clock, the circadian rhythm, which regulates when we feel alert and when we feel sleepy. One important signal is the hormone melatonin, which the brain releases in the evening as light fades. Laboratory studies have found that during puberty melatonin is released later in the evening than in younger children or adults, in some cases by up to two hours. As a result, a typical sixteen-year-old may not feel tired until around eleven o'clock at night, however early they go to bed." },
+        { "label": "C", "text": "A second factor is what scientists call ‘sleep pressure’: the gradual build-up of the need for sleep during the hours we are awake. Studies led by Professor Tomás Ruiz suggested that in adolescents this pressure builds more slowly than in children. Teenagers can therefore stay awake longer in the evening without feeling exhausted, which reinforces the effect of the delayed body clock." },
+        { "label": "D", "text": "Modern life makes matters worse. Phones, tablets and computers emit blue light, which is particularly effective at suppressing melatonin. Dr Anika Sharma, who studies technology and health, points out that the problem is not only light but also engagement: messages, games and social media keep the brain active at precisely the time it should be winding down. In a survey of 3,000 secondary school students, she found that those who used screens in bed slept on average forty minutes less on school nights than those who did not." },
+        { "label": "E", "text": "The consequences are significant. Teenagers need between eight and ten hours of sleep a night, but many get less than seven during the school week, then try to make up the difference at weekends. Chronic sleep loss has been linked to poorer concentration and memory, low mood and a higher risk of accidents. Dr Helen Marsh, an educational psychologist, argues that because early school start times force adolescents to wake before their bodies are ready, many students are effectively being taught at the wrong time of day." },
+        { "label": "F", "text": "This argument has led some schools to experiment with later start times. In one district, moving the beginning of the school day from 7.50 to 8.45 a.m. resulted in students sleeping, on average, an extra 34 minutes per night. Attendance improved and the number of students falling asleep in class fell sharply. Not everyone is convinced, however. Professor Leo Brandt warns that later starts can cause practical problems for families and for after-school activities, and that the benefits may disappear if students simply go to bed later. Most researchers nevertheless agree that schools, parents and teenagers themselves all have a role to play: limiting screens before bed, keeping regular sleep times and, where possible, aligning the timetable with the biology of the adolescent brain." }
+      ],
+      "groups": [
+        {
+          "type": "headings",
+          "instructions": "Reading Passage 2 has six paragraphs, A–F. Choose the correct heading for each paragraph from the list of headings below.",
+          "headings": [
+            "The effects of not getting enough sleep",
+            "A change in how teenage behaviour is explained",
+            "Why screens keep young people awake",
+            "An experiment that divides opinion",
+            "A hormone that arrives late",
+            "Why teenagers prefer weekends",
+            "A slower build-up of tiredness",
+            "The cost of reducing screen time"
+          ],
+          "questions": [
+            { "n": 14, "paragraph": "A", "answer": "ii", "why": "Paragraph A describes the shift from ‘a matter of discipline’ to a biological explanation." },
+            { "n": 15, "paragraph": "B", "answer": "v", "why": "Paragraph B: melatonin ‘is released later in the evening’ during puberty." },
+            { "n": 16, "paragraph": "C", "answer": "vii", "why": "Paragraph C: sleep pressure ‘builds more slowly’ in adolescents." },
+            { "n": 17, "paragraph": "D", "answer": "iii", "why": "Paragraph D explains blue light and engagement with phones and computers." },
+            { "n": 18, "paragraph": "E", "answer": "i", "why": "Paragraph E lists the consequences of chronic sleep loss." },
+            { "n": 19, "paragraph": "F", "answer": "iv", "why": "Paragraph F describes later start times, their benefits and Professor Brandt's doubts." }
+          ]
+        },
+        {
+          "type": "match_features",
+          "instructions": "Look at the following statements and the list of people below. Match each statement with the correct person, A–D.",
+          "features": ["Dr Helen Marsh", "Professor Tomás Ruiz", "Dr Anika Sharma", "Professor Leo Brandt"],
+          "questions": [
+            { "n": 20, "text": "found that using devices in bed was linked to shorter sleep", "answer": "C", "why": "Paragraph D: Dr Sharma's survey found students who used screens in bed slept forty minutes less." },
+            { "n": 21, "text": "suggested that teenagers' need for sleep increases more slowly", "answer": "B", "why": "Paragraph C: studies led by Professor Ruiz." },
+            { "n": 22, "text": "expressed doubts about changing school timetables", "answer": "D", "why": "Paragraph F: Professor Brandt warns about practical problems." },
+            { "n": 23, "text": "claimed that many students are taught when they are not fully awake", "answer": "A", "why": "Paragraph E: Dr Marsh says students are ‘taught at the wrong time of day’." }
+          ]
+        },
+        {
+          "type": "gaps",
+          "format": "sentence",
+          "wordLimit": 2,
+          "instructions": "Complete the sentences below. Choose NO MORE THAN TWO WORDS from the passage for each answer.",
+          "lines": [
+            "The brain releases melatonin in the evening as {24} fades.",
+            "Many teenagers try to make up for lost sleep at {25}.",
+            "After the school day began later, fewer students fell asleep in {26}."
+          ],
+          "answers": { "24": ["light"], "25": ["weekends", "the weekend", "the weekends", "weekend"], "26": ["class", "lessons"] },
+          "why": { "24": "Paragraph B: ‘as light fades’.", "25": "Paragraph E: ‘make up the difference at weekends’.", "26": "Paragraph F: ‘the number of students falling asleep in class fell sharply’." }
+        }
+      ]
+    },
+    {
+      "title": "Can Happiness Be Measured?",
+      "intro": "You should spend about 20 minutes on Questions 27–40, which are based on Reading Passage 3.",
+      "paragraphs": [
+        { "label": "A", "text": "For most of the twentieth century, governments judged the success of their countries largely by economic output. Gross domestic product (GDP), which measures the total value of goods and services produced, became the headline figure by which progress was assessed. Yet even the economists who developed it warned that it was never intended to measure well-being. A country's GDP rises when it spends money cleaning up after a disaster, and it says nothing about how income is shared or how people feel about their lives." },
+        { "label": "B", "text": "Since the early 2000s, a growing number of governments and international organisations have tried to measure well-being directly. The most common approach is surprisingly simple: people are asked how satisfied they are with their lives, usually on a scale from 0 to 10. Some surveys go further, asking how happy or anxious people felt the previous day, or whether they feel that the things they do are worthwhile." },
+        { "label": "C", "text": "Critics argue that such answers are too subjective to be useful. A person's response may depend on the weather, on their mood that morning or on the order in which questions are asked. Cultural differences present a further difficulty: in some societies it is considered modest to avoid extreme answers, while in others people may feel pressure to appear content. Comparing average scores between countries, the critics say, may tell us more about cultural norms than about real differences in well-being." },
+        { "label": "D", "text": "Supporters of well-being measurement accept these problems but believe they are often exaggerated. Large surveys, they point out, average out the effect of individual moods, and the results relate in predictable ways to other evidence: people who report low life satisfaction are more likely to visit the doctor, to change jobs or to experience periods of unemployment. In my view, the most convincing evidence is that the scores respond to real events. When a region's unemployment rate rises, average life satisfaction falls; when people move from a noisy, polluted area to a quieter one, their reported well-being tends to improve." },
+        { "label": "E", "text": "The more difficult question is what governments should do with the data. Some researchers argue that well-being should replace GDP as the main measure of national success. This seems to me too ambitious. Economic growth still matters, particularly for poorer countries, and a single happiness score could easily be manipulated or misunderstood. A better approach is to use well-being data alongside traditional economic indicators, especially when deciding between policies. If two programmes cost the same, the one that produces a larger improvement in people's lives — measured directly — has a strong claim to be preferred." },
+        { "label": "F", "text": "Some governments have begun to work in this way, publishing ‘well-being budgets’ that rank spending proposals according to their expected effect on mental health, child poverty and other quality-of-life measures. Early evaluations suggest that the approach encourages government departments to cooperate on problems that cut across their responsibilities, although it is still too soon to tell whether it has made people any happier." },
+        { "label": "G", "text": "Perhaps the greatest value of measuring well-being is that it changes the questions policy-makers ask. Instead of focusing only on how much a country produces, they are encouraged to consider what kind of lives its citizens are able to lead. That alone, I would argue, is a significant step forward." }
+      ],
+      "groups": [
+        {
+          "type": "mcq",
+          "instructions": "Choose the correct letter, A, B, C or D.",
+          "questions": [
+            { "n": 27, "text": "According to paragraph A, the economists who developed GDP", "options": ["believed it was the best measure of national success.", "said it was not designed to measure well-being.", "wanted it to show how income is shared.", "regretted that it rose after natural disasters."], "answer": "B", "why": "Paragraph A: they ‘warned that it was never intended to measure well-being’." },
+            { "n": 28, "text": "What is the most common way of measuring well-being?", "options": ["recording how often people visit the doctor", "asking how anxious people felt the day before", "asking people to rate how satisfied they are with their lives", "comparing unemployment rates in different regions"], "answer": "C", "why": "Paragraph B: ‘The most common approach … people are asked how satisfied they are with their lives’." },
+            { "n": 29, "text": "What problem with comparing countries is mentioned in paragraph C?", "options": ["Surveys are carried out at different times of year.", "Cultural attitudes may influence how people answer.", "Some countries use a different scale.", "Questions are often translated badly."], "answer": "B", "why": "Paragraph C: scores ‘may tell us more about cultural norms than about real differences’." },
+            { "n": 30, "text": "The ‘well-being budgets’ described in paragraph F", "options": ["have clearly made people happier.", "rank spending plans by their expected effect on quality of life.", "have replaced traditional economic indicators.", "were opposed by most government departments."], "answer": "B", "why": "Paragraph F: they ‘rank spending proposals according to their expected effect on … quality-of-life measures’." }
+          ]
+        },
+        {
+          "type": "ynng",
+          "instructions": "Do the following statements agree with the claims of the writer in Reading Passage 3? Write YES if the statement agrees with the claims of the writer, NO if the statement contradicts the claims of the writer, NOT GIVEN if it is impossible to say what the writer thinks about this.",
+          "questions": [
+            { "n": 31, "text": "The strongest evidence for well-being scores is that they change when real events happen.", "answer": "YES", "why": "Paragraph D: ‘In my view, the most convincing evidence is that the scores respond to real events.’" },
+            { "n": 32, "text": "Well-being should become the main measure of a country's success.", "answer": "NO", "why": "Paragraph E: replacing GDP ‘seems to me too ambitious’." },
+            { "n": 33, "text": "Economic growth is no longer important for poorer countries.", "answer": "NO", "why": "Paragraph E: ‘Economic growth still matters, particularly for poorer countries’." },
+            { "n": 34, "text": "Well-being data is useful when choosing between policies that cost the same.", "answer": "YES", "why": "Paragraph E: ‘If two programmes cost the same, the one that produces a larger improvement … has a strong claim to be preferred.’" },
+            { "n": 35, "text": "Most governments will publish well-being budgets within the next decade.", "answer": "NOT GIVEN", "why": "The writer makes no prediction about how many governments will do this." }
+          ]
+        },
+        {
+          "type": "gaps",
+          "format": "summary",
+          "title": "The value of measuring well-being",
+          "instructions": "Complete the summary using the list of words, A–I, below.",
+          "bank": ["produces", "lives", "subjective", "evidence", "cooperate", "compete", "spends", "objective", "money"],
+          "lines": [
+            "Measuring well-being encourages policy-makers to look beyond what a country {36} and to think about the kind of {37} its people are able to lead. Critics argue that people's answers are too {38}, but supporters reply that the results are linked to other kinds of {39}. Early experience of well-being budgets suggests that they help government departments to {40}."
+          ],
+          "answers": { "36": ["A"], "37": ["B"], "38": ["C"], "39": ["D"], "40": ["E"] },
+          "why": {
+            "36": "Paragraph G: ‘focusing only on how much a country produces’.",
+            "37": "Paragraph G: ‘what kind of lives its citizens are able to lead’.",
+            "38": "Paragraph C: ‘too subjective to be useful’.",
+            "39": "Paragraph D: results ‘relate in predictable ways to other evidence’.",
+            "40": "Paragraph F: departments ‘cooperate on problems that cut across their responsibilities’."
+          }
+        }
+      ]
+    }
+  ]
+}
