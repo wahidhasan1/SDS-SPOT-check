@@ -24,7 +24,7 @@ const registerSchema = z.object({
 
 const loginSchema = z.object({ email, password: z.string().min(1, 'Password is required'), client: clientKind });
 
-const RATE = { config: { rateLimit: { max: 10, timeWindow: '1 minute' } } };
+const RATE = { config: { rateLimit: { max: config.rateLimitEnabled ? 10 : 100_000, timeWindow: '1 minute' } } };
 
 export async function authRoutes(app: FastifyInstance) {
   app.get('/api/auth/providers', async () => ({
