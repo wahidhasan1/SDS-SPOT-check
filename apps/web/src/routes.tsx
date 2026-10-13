@@ -1,20 +1,45 @@
 import { Navigate, Route } from 'react-router-dom';
 import type { ReactNode } from 'react';
 import { useAuth } from './lib/auth';
-import { AdminPage } from './pages/Admin';
-import { AssessmentPage } from './pages/Assessment';
-import { BattlesPage } from './pages/Battles';
-import { GrammarLessonPage, GrammarListPage } from './pages/Grammar';
-import { HomePage, ProgressPage } from './pages/Home';
-import { IeltsHome, PracticePage, SetList } from './pages/Ielts';
-import { MockListPage, MockRunnerPage } from './pages/Mock';
-import { OnboardingPage } from './pages/Onboarding';
-import { NotificationsPage, ProfilePage, SubscriptionPage } from './pages/Profile';
-import { GuidelinesPage, LandingPage } from './pages/Public';
-import { ReaderPage, ReadHomePage } from './pages/Read';
-import { SpeakingPracticePage } from './pages/SpeakingPractice';
-import { ReviewPage, VocabularyPage } from './pages/Vocabulary';
-import { WritingList, WritingResultPage, WritingTaskPage } from './pages/Writing';
+import { lazy, Suspense, type ComponentType } from 'react';
+import { Loading } from './components/ui';
+
+/** Route-level code splitting: each page loads on first visit. */
+function lz(loader: () => Promise<Record<string, unknown>>, name: string) {
+  const C = lazy(async () => ({ default: (await loader())[name] as ComponentType<any> }));
+  return (props: any) => (
+    <Suspense fallback={<Loading />}>
+      <C {...props} />
+    </Suspense>
+  );
+}
+
+const AdminPage = lz(() => import('./pages/Admin'), 'AdminPage');
+const AssessmentPage = lz(() => import('./pages/Assessment'), 'AssessmentPage');
+const BattlesPage = lz(() => import('./pages/Battles'), 'BattlesPage');
+const GrammarLessonPage = lz(() => import('./pages/Grammar'), 'GrammarLessonPage');
+const GrammarListPage = lz(() => import('./pages/Grammar'), 'GrammarListPage');
+const HomePage = lz(() => import('./pages/Home'), 'HomePage');
+const ProgressPage = lz(() => import('./pages/Home'), 'ProgressPage');
+const IeltsHome = lz(() => import('./pages/Ielts'), 'IeltsHome');
+const PracticePage = lz(() => import('./pages/Ielts'), 'PracticePage');
+const SetList = lz(() => import('./pages/Ielts'), 'SetList');
+const MockListPage = lz(() => import('./pages/Mock'), 'MockListPage');
+const MockRunnerPage = lz(() => import('./pages/Mock'), 'MockRunnerPage');
+const OnboardingPage = lz(() => import('./pages/Onboarding'), 'OnboardingPage');
+const NotificationsPage = lz(() => import('./pages/Profile'), 'NotificationsPage');
+const ProfilePage = lz(() => import('./pages/Profile'), 'ProfilePage');
+const SubscriptionPage = lz(() => import('./pages/Profile'), 'SubscriptionPage');
+const GuidelinesPage = lz(() => import('./pages/Public'), 'GuidelinesPage');
+const LandingPage = lz(() => import('./pages/Public'), 'LandingPage');
+const ReaderPage = lz(() => import('./pages/Read'), 'ReaderPage');
+const ReadHomePage = lz(() => import('./pages/Read'), 'ReadHomePage');
+const SpeakingPracticePage = lz(() => import('./pages/SpeakingPractice'), 'SpeakingPracticePage');
+const ReviewPage = lz(() => import('./pages/Vocabulary'), 'ReviewPage');
+const VocabularyPage = lz(() => import('./pages/Vocabulary'), 'VocabularyPage');
+const WritingList = lz(() => import('./pages/Writing'), 'WritingList');
+const WritingResultPage = lz(() => import('./pages/Writing'), 'WritingResultPage');
+const WritingTaskPage = lz(() => import('./pages/Writing'), 'WritingTaskPage');
 
 function AdminOnly({ children }: { children: ReactNode }) {
   const { user } = useAuth();

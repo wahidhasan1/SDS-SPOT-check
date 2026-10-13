@@ -379,10 +379,14 @@ export async function adminRoutes(app: FastifyInstance) {
   app.post('/admin/media', async (req) => {
     const file = await (req as any).file();
     if (!file) throw badRequest('Choose an audio file.');
-    if (!['audio/mpeg', 'audio/mp3', 'audio/mp4', 'audio/x-m4a', 'audio/aac', 'audio/ogg', 'audio/wav', 'audio/webm'].includes(file.mimetype)) {
-      throw badRequest('Upload an MP3, M4A, AAC, OGG, WAV or WEBM audio file.');
-    }
-    const ext = (file.filename.split('.').pop() || 'mp3').toLowerCase().replace(/[^a-z0-9]/g, '').slice(0, 5);
+    const EXT: Record<string, string> = {
+      'audio/mpeg': 'mp3', 'audio/mp3': 'mp3', 'audio/mp4': 'm4a', 'audio/x-m4a': 'm4a', 'audio/aac': 'aac',
+      'audio/ogg': 'ogg', 'audio/wav': 'wav', 'audio/webm': 'webm',
+    };
+    // The extension comes from the validated type, never from the client filename,
+    // so nothing but audio can be served from /media.
+    const ext = EXT[file.mimetype];
+    if (!ext) throw badRequest('Upload an MP3, M4A, AAC, OGG, WAV or WEBM audio file.');
     const name = `${randomUUID()}.${ext}`;
     await mkdir(join(config.mediaDir, 'uploads'), { recursive: true });
     await writeFile(join(config.mediaDir, 'uploads', name), await file.toBuffer());
