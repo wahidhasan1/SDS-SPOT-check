@@ -36,3 +36,20 @@ export async function audioStats(page: Page) {
     return s ? await s.getAudioStats() : null;
   });
 }
+
+export async function apiCall(token: string, method: string, path: string, body?: unknown, platform = 'web') {
+  const res = await fetch(API + path, {
+    method,
+    headers: { 'content-type': 'application/json', authorization: 'Bearer ' + token, 'x-client-platform': platform },
+    body: body === undefined ? undefined : JSON.stringify(body),
+  });
+  const json = await res.json().catch(() => null);
+  return { status: res.status, json };
+}
+
+/** Test-only: promote a user to admin directly in the database (the API has no self-promotion path by design). */
+export async function makeAdmin(email: string) {
+  const { execFileSync } = await import('node:child_process');
+  const db = process.env.DATABASE_URL ?? 'postgresql://app:app@localhost:5432/fluentpath';
+  execFileSync('psql', [db, '-c', `UPDATE users SET role='admin' WHERE email='${email.replace(/'/g, "''")}'`]);
+}

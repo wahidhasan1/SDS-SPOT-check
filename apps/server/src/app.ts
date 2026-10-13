@@ -65,6 +65,9 @@ export async function buildApp(opts: { logger?: boolean } = {}) {
       else cb(null, false);
     },
     credentials: false,
+    methods: ['GET', 'HEAD', 'POST', 'PUT', 'PATCH', 'DELETE', 'OPTIONS'],
+    allowedHeaders: ['Content-Type', 'Authorization', 'X-Client-Platform'],
+    maxAge: 600,
   });
   await app.register(rateLimit, {
     max: config.isTest ? 100000 : 400,

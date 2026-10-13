@@ -30,6 +30,7 @@ export const config = {
     .filter(Boolean),
   publicWebUrl: process.env.PUBLIC_WEB_URL ?? 'http://localhost:5173',
   adminEmails: (process.env.ADMIN_EMAILS ?? '').split(',').map((s) => s.trim().toLowerCase()).filter(Boolean),
+  authRateLimitPerMin: num(process.env.AUTH_RATE_LIMIT_PER_MIN, 10),
   minimumAge: num(process.env.MINIMUM_AGE, 13),
   callingMinimumAge: num(process.env.CALLING_MINIMUM_AGE, 18),
 

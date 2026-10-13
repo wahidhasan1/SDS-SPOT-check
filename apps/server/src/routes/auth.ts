@@ -35,7 +35,7 @@ async function issueSession(userId: string, role: string, req: FastifyRequest) {
   return { accessToken, refreshToken, user: await loadProfile(userId) };
 }
 
-const AUTH_RATE = { config: { rateLimit: { max: 10, timeWindow: '1 minute' } } };
+const AUTH_RATE = { config: { rateLimit: { max: config.authRateLimitPerMin, timeWindow: '1 minute' } } };
 
 export async function authRoutes(app: FastifyInstance) {
   app.post('/auth/register', AUTH_RATE, async (req) => {

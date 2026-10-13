@@ -1,9 +1,11 @@
 import { chromium } from '@playwright/test';
-import { registerUser } from './helpers.ts';
-const OUT = '/tmp/claude-0/-home-user-SDS-SPOT-check/22f6ec46-e571-5e60-bd9b-981d9b0aabaa/scratchpad/shots';
+import { registerUser } from '../helpers.ts';
+const OUT = process.env.OUT_DIR ?? 'test-results/screenshots';
+import { mkdirSync } from 'node:fs';
+mkdirSync(OUT, { recursive: true });
 const u = await registerUser('Shot');
 await fetch('http://localhost:4000/me', { method: 'PATCH', headers: { 'content-type': 'application/json', authorization: 'Bearer ' + u.accessToken }, body: JSON.stringify({ testType: 'academic', targetBand: 7 }) });
-const browser = await chromium.launch({ executablePath: '/opt/pw-browsers/chromium-1194/chrome-linux/chrome' });
+const browser = await chromium.launch({ executablePath: process.env.CHROMIUM_PATH || undefined });
 const pages = ['/', '/speaking', '/ielts', '/ielts/reading', '/ielts/listening', '/ielts/writing', '/ielts/writing/acad-t1-bar-internet', '/ielts/writing/acad-t1-line-museums', '/ielts/speaking', '/ielts/mock', '/vocabulary', '/grammar', '/grammar/passive-voice', '/battles', '/read', '/profile', '/progress', '/subscription', '/notifications', '/assessment'];
 for (const [label, viewport] of [['desktop', { width: 1440, height: 900 }], ['mobile', { width: 390, height: 844 }]] as const) {
   const ctx = await browser.newContext({ viewport });
