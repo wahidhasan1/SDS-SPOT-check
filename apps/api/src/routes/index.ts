@@ -8,6 +8,9 @@ import { mockRoutes } from './mock';
 import { profileRoutes } from './profile';
 import { readerRoutes } from './reader';
 import { socialRoutes } from './social';
+import { accountRoutes } from './account';
+import { billingRoutes } from './billing';
+import { adminRoutes } from './admin';
 import { realtimeRoutes } from '../realtime/hub';
 import { registerCallHandlers } from '../realtime/calls';
 import { registerBattleHandlers } from '../realtime/battles';
@@ -30,6 +33,9 @@ export async function registerRoutes(app: FastifyInstance) {
   await app.register(progressRoutes);
   await app.register(readerRoutes);
   await app.register(socialRoutes);
+  await app.register(accountRoutes);
+  await app.register(billingRoutes);
+  await app.register(adminRoutes);
   await app.register(realtimeRoutes);
   registerHandlersOnce();
 }
