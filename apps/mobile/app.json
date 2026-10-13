@@ -1,0 +1,50 @@
+{
+  "expo": {
+    "name": "FluentPath",
+    "slug": "fluentpath",
+    "scheme": "fluentpath",
+    "version": "0.1.0",
+    "orientation": "portrait",
+    "icon": "./assets/icon.png",
+    "userInterfaceStyle": "automatic",
+    "splash": { "image": "./assets/splash-icon.png", "resizeMode": "contain", "backgroundColor": "#4f46e5" },
+    "ios": {
+      "supportsTablet": true,
+      "bundleIdentifier": "com.example.fluentpath",
+      "infoPlist": {
+        "NSMicrophoneUsageDescription": "The microphone is used for live speaking-practice calls and speaking exercises. Calls are not recorded.",
+        "NSCameraUsageDescription": "The camera is used to photograph English text so you can look up words.",
+        "NSPhotoLibraryUsageDescription": "Choose a photo of English text to read with AI.",
+        "NSSpeechRecognitionUsageDescription": "Speech recognition turns your spoken practice answers into text for feedback.",
+        "UIBackgroundModes": ["audio", "voip"]
+      }
+    },
+    "android": {
+      "package": "com.example.fluentpath",
+      "adaptiveIcon": { "foregroundImage": "./assets/android-icon-foreground.png", "backgroundColor": "#4f46e5" },
+      "permissions": [
+        "android.permission.RECORD_AUDIO",
+        "android.permission.MODIFY_AUDIO_SETTINGS",
+        "android.permission.CAMERA",
+        "android.permission.INTERNET",
+        "android.permission.ACCESS_NETWORK_STATE",
+        "android.permission.BLUETOOTH",
+        "android.permission.BLUETOOTH_CONNECT",
+        "android.permission.WAKE_LOCK",
+        "android.permission.POST_NOTIFICATIONS"
+      ]
+    },
+    "web": { "bundler": "metro", "output": "single", "favicon": "./assets/favicon.png" },
+    "plugins": [
+      "expo-router",
+      "expo-secure-store",
+      ["expo-audio", { "microphonePermission": "The microphone is used for speaking practice." }],
+      ["@config-plugins/react-native-webrtc", { "cameraPermission": false, "microphonePermission": "The microphone is used for live speaking-practice calls. Calls are not recorded." }],
+      ["expo-speech-recognition", { "microphonePermission": "The microphone is used for speaking practice.", "speechRecognitionPermission": "Speech recognition turns your spoken answers into text for feedback." }],
+      ["expo-image-picker", { "cameraPermission": "The camera is used to photograph English text so you can look up words.", "photosPermission": "Choose a photo of English text to read with AI." }],
+      ["expo-notifications", { "color": "#4f46e5" }]
+    ],
+    "experiments": { "typedRoutes": false },
+    "extra": { "router": {} }
+  }
+}

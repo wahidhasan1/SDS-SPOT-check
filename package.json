@@ -1,0 +1,28 @@
+{
+  "name": "fluentpath-platform",
+  "private": true,
+  "version": "0.1.0",
+  "description": "Cross-platform IELTS and English-learning platform (web, Android, iOS) with real anonymous voice practice.",
+  "workspaces": [
+    "packages/*",
+    "apps/server",
+    "apps/web"
+  ],
+  "scripts": {
+    "dev:server": "npm run dev -w apps/server",
+    "dev:web": "npm run dev -w apps/web",
+    "db:migrate": "npm run migrate -w apps/server",
+    "db:seed": "npm run seed -w apps/server",
+    "typecheck": "npm run typecheck --workspaces --if-present",
+    "test": "npm run test --workspaces --if-present",
+    "test:e2e": "playwright test -c e2e/playwright.config.ts",
+    "build": "npm run build --workspaces --if-present"
+  },
+  "devDependencies": {
+    "@playwright/test": "1.56.1",
+    "typescript": "5.9.3"
+  },
+  "engines": {
+    "node": ">=20"
+  }
+}
