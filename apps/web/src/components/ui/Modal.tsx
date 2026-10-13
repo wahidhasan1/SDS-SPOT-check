@@ -1,4 +1,5 @@
 import { useEffect, useRef, useState, type ReactNode } from 'react';
+import { createPortal } from 'react-dom';
 import { X } from 'lucide-react';
 import { Button } from './Button';
 
@@ -16,7 +17,7 @@ export function Modal({ open, onClose, title, children, footer, size = 'md' }: {
     };
   }, [open, onClose]);
   if (!open) return null;
-  return (
+  return createPortal(
     <div className="fixed inset-0 z-50 flex items-end justify-center bg-slate-950/50 p-0 sm:items-center sm:p-4" onMouseDown={(e) => e.target === e.currentTarget && onClose()}>
       <div
         ref={ref}
@@ -34,7 +35,8 @@ export function Modal({ open, onClose, title, children, footer, size = 'md' }: {
         <div className="px-5 py-4">{children}</div>
         {footer && <div className="flex justify-end gap-2 border-t border-slate-100 px-5 py-3 dark:border-slate-800">{footer}</div>}
       </div>
-    </div>
+    </div>,
+    document.body,
   );
 }
 

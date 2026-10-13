@@ -6,6 +6,7 @@ import { lessonRoutes } from './lessons';
 import { mediaRoutes } from './media';
 import { mockRoutes } from './mock';
 import { profileRoutes } from './profile';
+import { readerRoutes } from './reader';
 import { progressRoutes } from './progress';
 import { speakingRoutes } from './speaking';
 import { vocabRoutes } from './vocab';
@@ -23,4 +24,5 @@ export async function registerRoutes(app: FastifyInstance) {
   await app.register(speakingRoutes);
   await app.register(mockRoutes);
   await app.register(progressRoutes);
+  await app.register(readerRoutes);
 }

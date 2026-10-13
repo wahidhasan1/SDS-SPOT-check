@@ -35,6 +35,27 @@ export function App() {
         <Route element={<RequireOnboarded />}>
           <Route element={<AppLayout />}>
             <Route path="dashboard" element={page(() => import('./pages/Dashboard'))} />
+            <Route path="progress" element={page(() => import('./pages/Progress'))} />
+            <Route path="notifications" element={page(() => import('./pages/Notifications'))} />
+            <Route path="grammar" element={page(() => import('./pages/grammar/GrammarHome'))} />
+            <Route path="grammar/:slug" element={page(() => import('./pages/grammar/Lesson'))} />
+            <Route path="vocabulary" element={page(() => import('./pages/vocabulary/VocabHome'))} />
+            <Route path="vocabulary/my" element={page(() => import('./pages/vocabulary/MyWords'))} />
+            <Route path="vocabulary/review" element={page(() => import('./pages/vocabulary/Review'))} />
+            <Route path="vocabulary/quiz" element={page(() => import('./pages/vocabulary/Quiz'))} />
+            <Route path="reader" element={page(() => import('./pages/reader/ReaderHome'))} />
+            <Route path="reader/:id" element={page(() => import('./pages/reader/ReaderDoc'))} />
+            <Route path="ielts" element={page(() => import('./pages/ielts/IeltsHome'))} />
+            <Route path="ielts/reading" element={page(() => import('./pages/ielts/ReadingList'))} />
+            <Route path="ielts/listening" element={page(() => import('./pages/ielts/ListeningList'))} />
+            <Route path="ielts/attempts/:id" element={page(() => import('./pages/ielts/Practice'))} />
+            <Route path="ielts/writing" element={page(() => import('./pages/ielts/WritingHome'))} />
+            <Route path="ielts/writing/submissions/:id" element={page(() => import('./pages/ielts/WritingSubmission'))} />
+            <Route path="ielts/speaking" element={page(() => import('./pages/ielts/SpeakingHome'))} />
+            <Route path="ielts/speaking/attempts/:id" element={page(() => import('./pages/ielts/SpeakingAttempt'))} />
+            <Route path="ielts/speaking/:id" element={page(() => import('./pages/ielts/SpeakingPractice'))} />
+            <Route path="ielts/mock" element={page(() => import('./pages/ielts/MockList'))} />
+            <Route path="ielts/mock/:id" element={page(() => import('./pages/ielts/MockRunner'))} />
           </Route>
         </Route>
       </Route>

@@ -39,3 +39,23 @@
   .prose-lesson strong { @apply font-semibold text-slate-900 dark:text-white; }
   .prose-lesson code { @apply rounded bg-slate-100 px-1 py-0.5 text-[0.9em] dark:bg-slate-800; }
 }
+
+/* Data-viz roles (validated reference palette; dark steps are selected, not flipped) */
+:root {
+  --series-1: #2a78d6;
+  --series-2: #eb6834;
+  --series-3: #1baf7a;
+  --series-4: #eda100;
+  --series-5: #e87ba4;
+  --viz-grid: #e2e8f0;
+  --viz-surface: #ffffff;
+}
+.dark {
+  --series-1: #3987e5;
+  --series-2: #d95926;
+  --series-3: #199e70;
+  --series-4: #c98500;
+  --series-5: #d55181;
+  --viz-grid: #334155;
+  --viz-surface: #0f172a;
+}
