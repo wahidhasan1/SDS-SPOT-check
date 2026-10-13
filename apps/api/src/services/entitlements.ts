@@ -70,3 +70,12 @@ async function bump(userId: string, feature: string, day: string) {
 export async function requirePremium(userId: string, what: string) {
   if ((await getPlan(userId)) !== 'premium') throw limitReached(`${what} is a Premium feature.`, { premiumRequired: true });
 }
+
+/** Check (without consuming) whether a feature is still available today. */
+export async function canUse(userId: string, feature: Feature, tz = 'UTC') {
+  const plan = await getPlan(userId);
+  const limit = PLAN_LIMITS[plan][feature];
+  if (limit === null) return { allowed: true, plan, limit, used: 0 };
+  const used = (await getUsage(userId, tz))[feature] ?? 0;
+  return { allowed: used < limit, plan, limit, used };
+}

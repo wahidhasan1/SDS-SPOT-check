@@ -584,6 +584,8 @@ export const callSessions = pgTable(
 export const blocks = pgTable(
   'blocks',
   {
+    /** Opaque id used by the client to unblock, so the blocked user's account id is never exposed. */
+    id: uuid('id').notNull().defaultRandom(),
     blockerId: uuid('blocker_id')
       .notNull()
       .references(() => users.id, { onDelete: 'cascade' }),
@@ -595,7 +597,7 @@ export const blocks = pgTable(
     callSessionId: uuid('call_session_id'),
     createdAt: createdAt(),
   },
-  (t) => [primaryKey({ columns: [t.blockerId, t.blockedId] })],
+  (t) => [primaryKey({ columns: [t.blockerId, t.blockedId] }), uniqueIndex('blocks_id_uq').on(t.id)],
 );
 
 export const reports = pgTable(

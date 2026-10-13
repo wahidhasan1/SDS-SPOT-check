@@ -7,6 +7,10 @@ import { mediaRoutes } from './media';
 import { mockRoutes } from './mock';
 import { profileRoutes } from './profile';
 import { readerRoutes } from './reader';
+import { socialRoutes } from './social';
+import { realtimeRoutes } from '../realtime/hub';
+import { registerCallHandlers } from '../realtime/calls';
+import { registerBattleHandlers } from '../realtime/battles';
 import { progressRoutes } from './progress';
 import { speakingRoutes } from './speaking';
 import { vocabRoutes } from './vocab';
@@ -25,4 +29,15 @@ export async function registerRoutes(app: FastifyInstance) {
   await app.register(mockRoutes);
   await app.register(progressRoutes);
   await app.register(readerRoutes);
+  await app.register(socialRoutes);
+  await app.register(realtimeRoutes);
+  registerHandlersOnce();
+}
+
+let handlersRegistered = false;
+function registerHandlersOnce() {
+  if (handlersRegistered) return;
+  handlersRegistered = true;
+  registerCallHandlers();
+  registerBattleHandlers();
 }

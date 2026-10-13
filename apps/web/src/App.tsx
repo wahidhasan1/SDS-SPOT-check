@@ -56,6 +56,8 @@ export function App() {
             <Route path="ielts/speaking/:id" element={page(() => import('./pages/ielts/SpeakingPractice'))} />
             <Route path="ielts/mock" element={page(() => import('./pages/ielts/MockList'))} />
             <Route path="ielts/mock/:id" element={page(() => import('./pages/ielts/MockRunner'))} />
+            <Route path="speak" element={page(() => import('./pages/speak/Speak'))} />
+            <Route path="battles" element={page(() => import('./pages/speak/Battles'))} />
           </Route>
         </Route>
       </Route>
