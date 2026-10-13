@@ -46,7 +46,7 @@ export const api = {
   post: <T>(path: string, body?: Body) => request<T>('POST', path, body ?? {}),
   put: <T>(path: string, body?: Body) => request<T>('PUT', path, body ?? {}),
   patch: <T>(path: string, body?: Body) => request<T>('PATCH', path, body ?? {}),
-  del: <T>(path: string) => request<T>('DELETE', path),
+  del: <T>(path: string, body?: Body) => request<T>('DELETE', path, body),
 };
 
 export function errorMessage(err: unknown): string {

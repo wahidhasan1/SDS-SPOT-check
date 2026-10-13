@@ -58,6 +58,28 @@ export function App() {
             <Route path="ielts/mock/:id" element={page(() => import('./pages/ielts/MockRunner'))} />
             <Route path="speak" element={page(() => import('./pages/speak/Speak'))} />
             <Route path="battles" element={page(() => import('./pages/speak/Battles'))} />
+            <Route path="profile" element={page(() => import('./pages/account/Profile'))} />
+            <Route path="settings" element={page(() => import('./pages/account/Settings'))} />
+            <Route path="premium" element={page(() => import('./pages/account/Premium'))} />
+            <Route element={<RequireAdmin />}>
+              <Route path="admin" element={page(() => import('./pages/admin/AdminLayout'))}>
+                <Route index element={page(() => import('./pages/admin/Overview'))} />
+                <Route path="users" element={page(() => import('./pages/admin/Users'))} />
+                <Route path="reports" element={page(() => import('./pages/admin/Reports'))} />
+                <Route path="lessons" element={page(() => import('./pages/admin/Content').then((m) => ({ default: m.Lessons })))} />
+                <Route path="placement" element={page(() => import('./pages/admin/Content').then((m) => ({ default: m.Placement })))} />
+                <Route path="words" element={page(() => import('./pages/admin/Content').then((m) => ({ default: m.Words })))} />
+                <Route path="ielts-sets" element={page(() => import('./pages/admin/Content').then((m) => ({ default: m.IeltsSets })))} />
+                <Route path="audio" element={page(() => import('./pages/admin/Content').then((m) => ({ default: m.Audio })))} />
+                <Route path="writing-tasks" element={page(() => import('./pages/admin/Content').then((m) => ({ default: m.WritingTasks })))} />
+                <Route path="speaking-prompts" element={page(() => import('./pages/admin/Content').then((m) => ({ default: m.SpeakingPrompts })))} />
+                <Route path="mock-tests" element={page(() => import('./pages/admin/Content').then((m) => ({ default: m.MockTests })))} />
+                <Route path="categories" element={page(() => import('./pages/admin/Content').then((m) => ({ default: m.Categories })))} />
+                <Route path="subscriptions" element={page(() => import('./pages/admin/Content').then((m) => ({ default: m.Subscriptions })))} />
+                <Route path="outbox" element={page(() => import('./pages/admin/Content').then((m) => ({ default: m.Outbox })))} />
+                <Route path="audit" element={page(() => import('./pages/admin/Content').then((m) => ({ default: m.AuditLog })))} />
+              </Route>
+            </Route>
           </Route>
         </Route>
       </Route>

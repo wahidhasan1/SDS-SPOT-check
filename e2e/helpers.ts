@@ -17,3 +17,10 @@ export async function signUp(req: APIRequestContext, opts: { name: string; email
 export async function signUpInContext(ctx: BrowserContext, name: string) {
   return signUp(ctx.request, { name });
 }
+
+/** Promote an existing account to administrator using the documented CLI script. */
+export function promoteAdmin(email: string) {
+  // eslint-disable-next-line @typescript-eslint/no-require-imports
+  const { execFileSync } = require('node:child_process') as typeof import('node:child_process');
+  execFileSync('npm', ['run', '-s', 'admin:promote', '--', email], { cwd: `${__dirname}/..`, stdio: 'pipe' });
+}
