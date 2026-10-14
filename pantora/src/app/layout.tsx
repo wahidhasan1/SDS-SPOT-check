@@ -10,6 +10,7 @@ export const metadata: Metadata = {
   description:
     "Pantora is a voice-first English speaking practice platform: low-pressure conversations, speaking battles, AI-assisted feedback, and streaks that keep you motivated.",
   applicationName: "Pantora",
+  icons: { icon: "/icon.svg" },
 };
 
 export const viewport: Viewport = {

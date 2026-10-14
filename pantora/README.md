@@ -197,4 +197,5 @@ End-to-end coverage: landing and public pages, auth redirect, onboarding (valida
 | No captions / "Captions need an internet connection" | Live captions rely on the browser's speech service (Chrome, Edge). Firefox doesn't support it. You can still type what you said. |
 | Feedback says "Demo analyzer" even with a key | The provider request failed (bad key, timeout, rate limit). The notice above the feedback says why; check the server log for `[pantora] AI analysis failed`. |
 | Live calls connect on one network but not another | Add a TURN server to `PANTORA_ICE_SERVERS`. |
+| Dev server keeps reloading every page | This happens when `next build` or `npm run test:e2e` ran while `npm run dev` was running. Stop the dev server, delete `.next/`, and start it again. |
 | Playwright can't find a browser | Run `npx playwright install chromium`, or set `PLAYWRIGHT_CHROMIUM_PATH`. |
