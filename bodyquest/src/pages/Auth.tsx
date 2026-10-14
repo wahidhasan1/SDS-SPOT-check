@@ -171,6 +171,18 @@ export function SignIn() {
       >
         Continue as guest
       </Button>
+      <Button
+        className="mt-2"
+        variant="secondary"
+        block
+        icon="play"
+        onClick={async () => {
+          await auth.demo();
+          navigate('/app');
+        }}
+      >
+        Explore the demo account
+      </Button>
       <div className="mt-3 stack">
         <DemoAuthNote />
         <p className="muted text-center">

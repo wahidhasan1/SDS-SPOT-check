@@ -3,6 +3,7 @@ import type { User } from '../domain/types';
 import { ActionError, type ActionResult, type AppEvent, type Env } from './actions';
 import { DemoAuth } from './auth';
 import { nowMs, todayKey } from './selectors';
+import { toDateKey } from '../services/dates';
 import { LocalStorageAdapter, storageAvailable, type StorageAdapter } from './storage';
 import { runSync } from './sync';
 import { emptyUserData, loadUserData, saveUserData, type UserData } from './userData';
@@ -35,6 +36,8 @@ interface AppContextValue {
     signUp: (email: string, password: string, name: string) => Promise<User>;
     signIn: (email: string, password: string) => Promise<User>;
     guest: () => void;
+    /** Create a demo account pre-filled with ~3 weeks of sample history. */
+    demo: () => Promise<void>;
     signOut: () => void;
     deleteAccount: () => void;
     rename: (name: string) => void;
@@ -178,6 +181,13 @@ export function AppProvider({ children, adapter }: { children: ReactNode; adapte
         return u;
       },
       guest: () => loadFor(auth.continueAsGuest()),
+      demo: async () => {
+        const { buildDemoData } = await import('../demo/seed');
+        const u = auth.continueAsGuest('Ayaan (Demo)', true);
+        const now = new Date(Date.now() + (dataRef.current.settings?.devDayOffset ?? 0) * 86_400_000);
+        saveUserData(store, u.id, null, buildDemoData(u.id, toDateKey(now)));
+        loadFor(u);
+      },
       signOut: () => {
         auth.signOut();
         loadFor(null);

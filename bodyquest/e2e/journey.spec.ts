@@ -211,3 +211,17 @@ test('mobile: navigation works and pages never scroll horizontally', async ({ pa
   await page.getByRole('dialog').getByRole('link', { name: 'Achievements' }).click();
   await expect(page.getByRole('heading', { name: 'Achievements' })).toBeVisible();
 });
+
+test('live demo: one click opens an account with history and a workout waiting', async ({ page }) => {
+  await page.goto('/');
+  await page.getByRole('button', { name: /Try the live demo/ }).click();
+  await page.waitForURL('**/app');
+  await expect(page.getByText(/Demo account with ~3 weeks of sample history/)).toBeVisible();
+  await expect(page.getByRole('button', { name: /Start Today’s Workout/ })).toBeVisible();
+  await page.goto('/app/battles');
+  await page.getByRole('tab', { name: /History/ }).click();
+  await expect(page.getByRole('link', { name: 'Results' })).toBeVisible();
+  await page.reload();
+  await page.goto('/app/progress');
+  await expect(page.getByRole('heading', { name: 'Personal records' })).toBeVisible();
+});

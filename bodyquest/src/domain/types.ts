@@ -28,6 +28,8 @@ export interface User {
   passwordHash?: string;
   salt?: string;
   isGuest: boolean;
+  /** Demo account with generated sample history. */
+  isDemo?: boolean;
   createdAt: ISODateTime;
 }
 

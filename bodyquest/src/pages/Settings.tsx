@@ -7,6 +7,9 @@ import { needsMedicalClearance } from '../services/safety';
 import { updateProfile, updateSettings } from '../store/actions';
 import { useApp } from '../store/AppStore';
 
+/** Hosted single-file demo (memory router) runs in a sandbox that blocks file downloads. */
+const EMBEDDED = import.meta.env.VITE_ROUTER === 'memory';
+
 export default function SettingsPage() {
   const { data, user, today, run, auth } = useApp();
   const navigate = useNavigate();
@@ -93,9 +96,13 @@ export default function SettingsPage() {
           </p>
           <p className="small muted">All data is stored in this browser only. Export it as JSON, or delete everything permanently.</p>
           <div className="row">
-            <Button variant="secondary" icon="download" onClick={exportData}>
-              Export my data
-            </Button>
+            {EMBEDDED ? (
+              <span className="small muted">Data export isn’t available in the hosted demo. Run the app locally to export.</span>
+            ) : (
+              <Button variant="secondary" icon="download" onClick={exportData}>
+                Export my data
+              </Button>
+            )}
             <Button
               variant="secondary"
               icon="logout"

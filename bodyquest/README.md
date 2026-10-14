@@ -21,11 +21,18 @@ npm run dev          # http://localhost:5173
 | `npm run dev` | Vite dev server with hot reload |
 | `npm run build` | Typecheck + production build to `dist/` |
 | `npm run preview` | Serve the production build (http://localhost:4173) |
-| `npm test` | Unit and integration tests (Vitest), 100 tests |
+| `npm test` | Unit and integration tests (Vitest), 104 tests |
+| `npm run build:demo` | Single-file demo build in `dist-demo/` |
 | `npm run test:e2e` | Playwright end-to-end tests on desktop and mobile viewports (builds and serves automatically) |
 | `npm run typecheck` | TypeScript only |
 
 The production build is a static SPA. Any static host works if it rewrites unknown paths to `index.html` (client-side routing).
+
+### Demo
+
+* **Live demo account:** on the landing page (or sign-in page) tap **Try the live demo**. It creates a local account with ~3½ weeks of sample history built by replaying the app’s real actions: completed workouts, a missed session saved with a recovery token, a comeback session, meals, water, sleep, performance tests, a finished battle and a live one. Today’s workout is left for you to do. The account is labelled as a demo throughout.
+* **Single-file demo build:** `npm run build:demo` produces `dist-demo/index.html`, one self-contained 600 kB file with in-memory routing. Open it straight from disk, or host it anywhere. It also writes `dist-demo/bodyquest.html`, the same page without the `<html>/<head>/<body>` wrapper, for hosts that supply their own skeleton.
+* `npm run demo` builds and serves the normal production app at http://localhost:4173.
 
 **Trying time-based features quickly:** *Settings → Developer tools → Advance 1 day / 7 days* shifts the app clock on this device. You can use it to see missed-session recovery, streaks, recovery tokens and battle results without waiting.
 

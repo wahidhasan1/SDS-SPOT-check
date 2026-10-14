@@ -71,9 +71,9 @@ export default function StreaksPage() {
         </Card>
         <Card>
           <div className="stat">
-            <span className="value">{d.streak.weeklyCompletionPct}%</span>
+            <span className="value">{d.streak.weekScheduled === 0 ? '—' : `${d.streak.weeklyCompletionPct}%`}</span>
             <span className="label">
-              This week ({d.streak.weekKept}/{d.streak.weekScheduled} due kept)
+              {d.streak.weekScheduled === 0 ? 'This week (no sessions due yet)' : `This week (${d.streak.weekKept}/${d.streak.weekScheduled} due kept)`}
             </span>
           </div>
         </Card>

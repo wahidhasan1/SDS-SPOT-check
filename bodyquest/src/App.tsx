@@ -1,5 +1,5 @@
 import { lazy, Suspense, type ReactNode } from 'react';
-import { BrowserRouter, Navigate, Route, Routes, useLocation } from 'react-router-dom';
+import { BrowserRouter, HashRouter, MemoryRouter, Navigate, Route, Routes, useLocation } from 'react-router-dom';
 import { AppLayout } from './components/Layout';
 import { Toasts } from './components/Toasts';
 import { Spinner } from './components/ui';
@@ -61,10 +61,23 @@ function PublicPage({ children }: { children: ReactNode }) {
   );
 }
 
+/**
+ * Router mode: 'browser' (default, clean URLs), 'hash' (any static host) or 'memory'
+ * (embedded/sandboxed hosting such as the published single-file demo).
+ */
+const ROUTER = (import.meta.env.VITE_ROUTER as string | undefined) ?? 'browser';
+
+function AppRouter({ children }: { children: ReactNode }) {
+  const { user, data } = useApp();
+  if (ROUTER === 'hash') return <HashRouter>{children}</HashRouter>;
+  if (ROUTER === 'memory') return <MemoryRouter initialEntries={[user && data.plan ? '/app' : '/']}>{children}</MemoryRouter>;
+  return <BrowserRouter>{children}</BrowserRouter>;
+}
+
 export default function App() {
   return (
     <AppProvider>
-      <BrowserRouter>
+      <AppRouter>
         <Suspense fallback={<PageLoading />}>
         <Routes>
           <Route path="/" element={<PublicPage><Landing /></PublicPage>} />
@@ -124,7 +137,7 @@ export default function App() {
           <Route path="*" element={<PublicPage><NotFound /></PublicPage>} />
         </Routes>
         </Suspense>
-      </BrowserRouter>
+      </AppRouter>
     </AppProvider>
   );
 }

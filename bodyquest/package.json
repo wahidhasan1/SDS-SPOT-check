@@ -2,7 +2,7 @@
   "name": "bodyquest",
   "private": true,
   "version": "0.1.0",
-  "description": "BODYQUEST — Build Your Body. Beat Your Limits. Gamified home fitness platform (local demo build).",
+  "description": "BODYQUEST \u2014 Build Your Body. Beat Your Limits. Gamified home fitness platform (local demo build).",
   "type": "module",
   "scripts": {
     "dev": "vite",
@@ -11,7 +11,9 @@
     "typecheck": "tsc -b --noEmit",
     "test": "vitest run",
     "test:watch": "vitest",
-    "test:e2e": "playwright test"
+    "test:e2e": "playwright test",
+    "build:demo": "tsc -b && vite build --mode demo && node scripts/make-artifact.mjs",
+    "demo": "npm run build && vite preview"
   },
   "dependencies": {
     "react": "^18.3.1",
@@ -28,6 +30,7 @@
     "jsdom": "^25.0.1",
     "typescript": "^5.6.3",
     "vite": "^5.4.11",
+    "vite-plugin-singlefile": "^2.0.3",
     "vitest": "^2.1.8"
   }
 }

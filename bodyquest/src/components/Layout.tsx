@@ -78,9 +78,9 @@ export function AppLayout() {
   const profile = data.profile;
   return (
     <div className="shell">
-      <a href="#main" className="skip-link">
+      <button type="button" className="skip-link" onClick={() => document.getElementById('main')?.focus()}>
         Skip to content
-      </a>
+      </button>
       <aside className="sidebar" aria-label="Main navigation">
         <Link to="/app" className="brand">
           <BrandMark />
@@ -141,10 +141,16 @@ export function AppLayout() {
             {profile ? <Avatar emoji={profile.avatar.emoji} color={profile.avatar.color} size="sm" /> : <Icon name="user" />}
           </button>
         </header>
-        {user?.isGuest && (
+        {user?.isDemo ? (
           <div className="demo-banner" role="note">
-            <Icon name="info" size={15} /> Guest mode — data is saved only in this browser. <Link to="/signup">Create a local account</Link>
+            <Icon name="info" size={15} /> Demo account with ~3 weeks of sample history, generated on this device. Explore freely — today’s workout is waiting.
           </div>
+        ) : (
+          user?.isGuest && (
+            <div className="demo-banner" role="note">
+              <Icon name="info" size={15} /> Guest mode — data is saved only in this browser. <Link to="/signup">Create a local account</Link>
+            </div>
+          )
         )}
         <main id="main" className="content" tabIndex={-1}>
           <Suspense fallback={<div className="row" style={{ justifyContent: 'center', padding: 40 }}><Spinner label="Loading page" /></div>}>

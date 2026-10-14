@@ -1,4 +1,4 @@
-import { useEffect } from 'react';
+import { useEffect, useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { BrandMark, Icon } from '../components/Icon';
 import { ExerciseFrames } from '../components/visuals';
@@ -15,7 +15,8 @@ const FEATURES = [
 ];
 
 export default function Landing() {
-  const { user, data } = useApp();
+  const { user, data, auth } = useApp();
+  const [loadingDemo, setLoadingDemo] = useState(false);
   const navigate = useNavigate();
   useEffect(() => {
     document.title = 'BODYQUEST — Build Your Body. Beat Your Limits.';
@@ -61,12 +62,24 @@ export default function Landing() {
               <Link to={primary} className="btn btn-primary btn-lg">
                 {user ? 'Continue your quest' : 'Start your quest — free'} <Icon name="chevronRight" />
               </Link>
-              <a href="#how" className="btn btn-secondary btn-lg" style={{ background: 'transparent', color: 'var(--ink-text)', borderColor: '#2c374b' }}>
-                How it works
-              </a>
+              {!user?.isDemo && (
+                <button
+                  type="button"
+                  className="btn btn-secondary btn-lg"
+                  style={{ background: 'transparent', color: 'var(--ink-text)', borderColor: '#2c374b' }}
+                  disabled={loadingDemo}
+                  onClick={async () => {
+                    setLoadingDemo(true);
+                    await auth.demo();
+                    navigate('/app');
+                  }}
+                >
+                  <Icon name="play" /> {loadingDemo ? 'Building demo…' : 'Try the live demo'}
+                </button>
+              )}
             </div>
             <p className="small mt-3" style={{ color: 'var(--ink-muted)' }}>
-              Local demo build: accounts and data are stored in this browser only.
+              The live demo opens an account with ~3 weeks of sample history. Everything is stored in this browser only.
             </p>
           </div>
           <div className="hero-figures" aria-label="Example exercise illustrations">

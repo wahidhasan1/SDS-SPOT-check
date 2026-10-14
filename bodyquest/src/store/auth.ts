@@ -107,8 +107,8 @@ export class DemoAuth {
     return user;
   }
 
-  continueAsGuest(): User {
-    const user: User = { id: newId('guest'), email: '', displayName: 'Guest', isGuest: true, createdAt: new Date().toISOString() };
+  continueAsGuest(displayName = 'Guest', isDemo = false): User {
+    const user: User = { id: newId(isDemo ? 'demo' : 'guest'), email: '', displayName, isGuest: true, isDemo, createdAt: new Date().toISOString() };
     this.saveUsers([...this.users(), user]);
     this.store.set(SESSION_KEY, { userId: user.id });
     return user;
