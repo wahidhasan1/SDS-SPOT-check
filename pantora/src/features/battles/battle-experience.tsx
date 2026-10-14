@@ -38,6 +38,8 @@ import { SpokenAnswer, type SpokenAnswerValue } from "@/features/audio/spoken-an
 import { RewardsSummary } from "@/features/practice/rewards-summary";
 import { ScoreBreakdown } from "./score-breakdown";
 import { ConfirmDialog } from "@/components/ui/dialog";
+import { EngineHint, EngineToggle } from "@/features/hosted/engine-toggle";
+import { HOSTED_MIC_NOTICE, isHostedPreview } from "@/lib/runtime";
 
 type Stage = "home" | "finding" | "topic" | "prep" | "speaking" | "analyzing" | "result";
 
@@ -95,7 +97,7 @@ export function BattleExperience({
   const [category, setCategory] = useState<TopicCategory | "any">("any");
   const [prepSeconds, setPrepSeconds] = useState(30);
   const [speakSeconds, setSpeakSeconds] = useState(30);
-  const [inputMode, setInputMode] = useState<"spoken" | "typed">("spoken");
+  const [inputMode, setInputMode] = useState<"spoken" | "typed">(isHostedPreview ? "typed" : "spoken");
   const [selectedId, setSelectedId] = useState<string | null>(initialPromptId);
   const [prompt, setPrompt] = useState<BattlePrompt | null>(null);
   const [opponent, setOpponent] = useState<DemoPartner | null>(null);
@@ -294,16 +296,25 @@ export function BattleExperience({
                     value={inputMode}
                     onChange={setInputMode}
                     options={[
-                      { value: "spoken", label: <span className="inline-flex items-center gap-1.5"><Mic className="h-4 w-4" /> Record my voice</span> },
+                      ...(isHostedPreview ? [] : [{ value: "spoken" as const, label: <span className="inline-flex items-center gap-1.5"><Mic className="h-4 w-4" /> Record my voice</span> }]),
                       { value: "typed", label: <span className="inline-flex items-center gap-1.5"><Keyboard className="h-4 w-4" /> Type my answer</span> },
                     ]}
                   />
                   <FieldHint>
-                    {inputMode === "spoken"
+                    {isHostedPreview
+                      ? HOSTED_MIC_NOTICE
+                      : inputMode === "spoken"
                       ? "Your recording stays in your browser. Feedback uses a transcript (browser captions, typed, or server speech-to-text if configured)."
                       : "Typing works everywhere. Pronunciation and speaking speed are not measured for typed answers."}
                   </FieldHint>
                 </div>
+                {isHostedPreview && (
+                  <div className="space-y-2">
+                    <Label>Feedback by</Label>
+                    <EngineToggle compact />
+                    <EngineHint />
+                  </div>
+                )}
                 <p className="text-sm text-muted">
                   {filtered.length} challenge{filtered.length === 1 ? "" : "s"} match these filters.
                 </p>

@@ -34,6 +34,15 @@ npm start            # http://localhost:3000
 
 > Node prints `ExperimentalWarning: SQLite is an experimental feature` on start. That's expected for `node:sqlite` on Node 22 and is harmless.
 
+## Hosted demo (no install)
+
+`npm run build:demo` builds `dist/pantora-demo.html`: one self-contained page that runs the whole app in the browser for review and click-through testing. It is published privately as a claude.ai artifact.
+
+- **Same code as the app.** The pages, API route handlers, business rules, migrations, and seed data are the ones in `src/`. Next.js server pieces are swapped for small browser versions in `demo-web/`: an in-memory router, an in-page API dispatcher, and SQLite compiled to WebAssembly (sql.js) instead of `node:sqlite`.
+- **Data stays in your browser.** The database is saved to IndexedDB. Demo admin → Reset demo data starts over.
+- **AI feedback.** When opened on claude.ai, the Coach, Battles, and captioned Free Talks can ask Claude through the viewer's own Claude account (it asks for permission the first time), using the same prompt and validation as the server provider. A switch in the Coach and in Battle setup changes to the rule-based demo analyzer, which is also the fallback whenever Claude isn't available.
+- **Hosted limits.** The hosted page can't use the microphone or WebRTC, so voice recording, live captions, server speech-to-text, and live calls are hidden there and you type your answers instead. Run the app locally (`npm run dev`) to try those.
+
 ## Scripts
 
 | Command | What it does |
@@ -43,6 +52,7 @@ npm start            # http://localhost:3000
 | `npm run lint` | ESLint (Next.js core-web-vitals + TypeScript rules) |
 | `npm run typecheck` | TypeScript, no emit |
 | `npm test` | Unit tests (Vitest): analyzer, scoring, streaks, XP, achievements, matching, reward idempotency, seed consistency |
+| `npm run build:demo` | Builds the hosted single-page demo at `dist/pantora-demo.html` |
 | `npm run test:e2e` | Builds, starts a server on port 3200 with its own database (`.data/e2e.db`), and runs the Playwright browser tests |
 | `npm run db:migrate` | Apply schema migrations to the database |
 | `npm run db:seed` | Seed demo data if the database is empty |

@@ -15,6 +15,8 @@ import { FieldHint, Input, Label, Segmented, Select, Textarea } from "@/componen
 import { SpokenAnswer, type SpokenAnswerValue } from "@/features/audio/spoken-answer";
 import { AnalysisView } from "@/features/practice/analysis-view";
 import { RewardsSummary } from "@/features/practice/rewards-summary";
+import { EngineHint, EngineToggle } from "@/features/hosted/engine-toggle";
+import { isHostedPreview } from "@/lib/runtime";
 
 interface CoachResponse {
   sessionId: string;
@@ -100,7 +102,7 @@ export function CoachExperience({
           title="Practice with your coach"
           description="Answer a prompt by typing or speaking. You'll get an improved version, clear explanations, and one focused exercise."
           icon={<GraduationCap className="h-5 w-5" />}
-          action={<Badge tone={aiConfigured ? "brand" : "demo"}>{aiConfigured ? "AI provider connected" : "Demo analyzer"}</Badge>}
+          action={isHostedPreview ? <EngineToggle /> : <Badge tone={aiConfigured ? "brand" : "demo"}>{aiConfigured ? "AI provider connected" : "Demo analyzer"}</Badge>}
         />
         <CardBody className="space-y-5">
           <div>
@@ -138,15 +140,19 @@ export function CoachExperience({
 
           {!result && (
             <>
-              <Segmented
-                label="Answer method"
-                value={mode}
-                onChange={setMode}
-                options={[
-                  { value: "typed", label: <span className="inline-flex items-center gap-1.5"><Keyboard className="h-4 w-4" /> Type</span> },
-                  { value: "spoken", label: <span className="inline-flex items-center gap-1.5"><Mic className="h-4 w-4" /> Record</span> },
-                ]}
-              />
+              {isHostedPreview ? (
+                <EngineHint />
+              ) : (
+                <Segmented
+                  label="Answer method"
+                  value={mode}
+                  onChange={setMode}
+                  options={[
+                    { value: "typed", label: <span className="inline-flex items-center gap-1.5"><Keyboard className="h-4 w-4" /> Type</span> },
+                    { value: "spoken", label: <span className="inline-flex items-center gap-1.5"><Mic className="h-4 w-4" /> Record</span> },
+                  ]}
+                />
+              )}
               {mode === "typed" ? (
                 <div>
                   <div className="mb-1.5 flex items-center justify-between gap-2">

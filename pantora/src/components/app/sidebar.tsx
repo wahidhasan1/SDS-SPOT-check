@@ -6,6 +6,7 @@ import { CircleHelp, FlaskConical, ShieldCheck } from "lucide-react";
 import { PRIMARY_NAV } from "@/lib/nav";
 import { cn } from "@/lib/cn";
 import { Logo } from "@/components/ui/logo";
+import { isHostedPreview } from "@/lib/runtime";
 
 export function NavLinks({ onNavigate, compact }: { onNavigate?: () => void; compact?: boolean }) {
   const pathname = usePathname();
@@ -71,7 +72,10 @@ export function DemoModeCard({ isDemoAccount, onNavigate }: { isDemoAccount: boo
         Demo mode
       </div>
       <p className="mt-1.5 text-xs leading-relaxed text-white/65">
-        Partners are fictional and calls are simulated.{isDemoAccount ? " This account includes labeled sample history." : ""}
+        {isHostedPreview
+          ? "Hosted preview: partners are fictional, calls are simulated, and your data stays in this browser. Voice features need the local version."
+          : "Partners are fictional and calls are simulated."}
+        {isDemoAccount ? " This account includes labeled sample history." : ""}
       </p>
       <Link href="/help#demo-mode" onClick={onNavigate} className="mt-2 inline-block text-xs font-semibold text-brand-300 hover:text-white">
         What&apos;s real and what&apos;s simulated?

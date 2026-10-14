@@ -50,6 +50,7 @@ import { BlockDialog, ReportDialog } from "@/features/safety/safety-dialogs";
 import { RewardsSummary } from "@/features/practice/rewards-summary";
 import { GENERIC_TOPIC, buildPartnerScript } from "./script";
 import { LiveCall } from "./live-call";
+import { HOSTED_MIC_NOTICE, isHostedPreview } from "@/lib/runtime";
 
 type Phase = "setup" | "searching" | "found" | "connecting" | "active" | "saving" | "summary";
 type EndReason = "completed" | "ended_early" | "time_up" | "skipped" | "left" | "connection_lost" | "reported" | "blocked";
@@ -131,6 +132,7 @@ export function FreeTalkExperience({
   const elapsedRef = useRef(0);
   const linesRef = useRef<Line[]>([]);
   const captionsUsedRef = useRef(false);
+  const [reply, setReply] = useState("");
   const feedRef = useRef<HTMLDivElement>(null);
 
   const mic = useMicrophone();
@@ -199,7 +201,7 @@ export function FreeTalkExperience({
     if (!partner) return;
     setPhase("connecting");
     idemRef.current = crypto.randomUUID();
-    await mic.start();
+    if (!isHostedPreview) await mic.start();
     await new Promise((r) => setTimeout(r, 1200));
     const s = buildPartnerScript(partner.displayName, topic ?? GENERIC_TOPIC, partner.displayName.length);
     setScript(s);
@@ -214,7 +216,7 @@ export function FreeTalkExperience({
     setElapsed(0);
     startedAtRef.current = new Date();
     setPhase("active");
-    if (captionsWanted && speech.supported) speech.start();
+    if (captionsWanted && speech.supported && !isHostedPreview) speech.start();
     if (readAloud) say(`${s[0]} ${s[1]}`);
   }
 
@@ -284,7 +286,7 @@ export function FreeTalkExperience({
         plannedSeconds,
         activeSeconds: elapsedRef.current,
         endReason: reason,
-        captions: captionsUsedRef.current || hasUserLines ? { source: "browser_speech", lines: captured } : null,
+        captions: captionsUsedRef.current || hasUserLines ? { source: captionsUsedRef.current ? "browser_speech" : "typed", lines: captured } : null,
       };
       try {
         const res = await api<CompleteResponse>("/api/sessions/free-talk", { body });
@@ -444,6 +446,7 @@ export function FreeTalkExperience({
                   description="Both partners agree to speak only English, even if you share another language."
                 />
               </div>
+              {!isHostedPreview && (
               <div className="border-t border-line">
                 <Switch
                   checked={captionsWanted && speech.supported}
@@ -457,6 +460,7 @@ export function FreeTalkExperience({
                   }
                 />
               </div>
+              )}
               <div className="border-t border-line">
                 <Switch
                   checked={readAloud}
@@ -467,7 +471,14 @@ export function FreeTalkExperience({
               </div>
             </div>
 
-            <MicCheck mic={mic} />
+            {isHostedPreview ? (
+              <p className="rounded-2xl bg-surface-muted/60 p-4 text-sm text-ink-soft">
+                <span className="font-semibold text-ink">Hosted preview: </span>
+                {HOSTED_MIC_NOTICE}
+              </p>
+            ) : (
+              <MicCheck mic={mic} />
+            )}
 
             {matchError && (
               <p role="alert" className="rounded-xl bg-danger-50 px-4 py-3 text-sm font-medium text-danger-700">
@@ -659,7 +670,11 @@ export function FreeTalkExperience({
               <p className="text-sm text-muted">{PROFICIENCY_LABELS[partner.proficiency]}</p>
               <p className="mt-2 text-xs text-muted">Scripted demo partner — not a live person</p>
               <div className="mt-6 w-full rounded-2xl bg-surface p-3 text-left shadow-card">
-                <p className="text-xs font-semibold text-muted">Your microphone</p>
+                <p className="text-xs font-semibold text-muted">{isHostedPreview ? "Answer mode" : "Your microphone"}</p>
+                {isHostedPreview ? (
+                  <p className="mt-1.5 text-sm font-semibold text-brand-700">Typing</p>
+                ) : (
+                  <>
                 <div className="mt-1.5 flex items-center justify-between gap-2">
                   <span className={cn("text-sm font-semibold", mic.state === "ready" ? (mic.muted ? "text-streak-700" : "text-success-700") : "text-danger-700")}>
                     {mic.state === "ready" ? (mic.muted ? "Muted" : "Live") : mic.state === "denied" ? "Blocked" : "Unavailable"}
@@ -667,6 +682,8 @@ export function FreeTalkExperience({
                   <LevelMeter level={mic.level} bars={8} active={mic.state === "ready"} />
                 </div>
                 {mic.error && <p className="mt-1.5 text-xs text-danger-600">{mic.error} You can still practice out loud.</p>}
+                  </>
+                )}
               </div>
             </div>
 
@@ -700,11 +717,39 @@ export function FreeTalkExperience({
                 )}
                 {!speech.listening && lines.every((l) => l.speaker === "partner") && (
                   <p className="pt-2 text-center text-sm text-muted">
-                    Answer out loud{speech.supported ? ", or turn on captions to see a transcript of what you say" : ""}. Tap “Next question” when you&apos;re ready.
+                    {isHostedPreview
+                      ? "Type your answer below as if you were saying it. Tap “Next question” when you're ready."
+                      : `Answer out loud${speech.supported ? ", or turn on captions to see a transcript of what you say" : ""}. You can also type what you said below. Tap “Next question” when you're ready.`}
                   </p>
                 )}
               </div>
-              <div className="border-t border-line p-3 sm:px-6">
+              <div className="space-y-3 border-t border-line p-3 sm:px-6">
+                <form
+                  className="flex gap-2"
+                  onSubmit={(e) => {
+                    e.preventDefault();
+                    const text = reply.trim();
+                    if (!text) return;
+                    setLines((l) => [...l, { speaker: "user", text }]);
+                    setReply("");
+                  }}
+                >
+                  <label htmlFor="typed-reply" className="sr-only">
+                    Type what you said
+                  </label>
+                  <input
+                    id="typed-reply"
+                    value={reply}
+                    onChange={(e) => setReply(e.target.value)}
+                    maxLength={1000}
+                    disabled={phase === "saving"}
+                    placeholder={isHostedPreview ? "Type your answer…" : "Type what you said (optional)…"}
+                    className="h-11 min-w-0 flex-1 rounded-xl border border-line-strong bg-surface px-3.5 text-[15px] placeholder:text-subtle focus:border-brand-500 focus:ring-4 focus:ring-brand-100 focus:outline-none"
+                  />
+                  <Button type="submit" variant="outline" disabled={!reply.trim() || phase === "saving"}>
+                    Add
+                  </Button>
+                </form>
                 <Button variant="secondary" onClick={nextPrompt} disabled={scriptIndex >= script.length - 1 || phase === "saving"} className="w-full sm:w-auto">
                   <MessageCircleQuestion className="h-4.5 w-4.5" /> Next question from {partner.displayName}
                 </Button>
@@ -715,20 +760,24 @@ export function FreeTalkExperience({
 
           {/* Controls */}
           <div className="flex flex-wrap items-center justify-center gap-2 border-t border-line bg-surface-muted/40 px-4 py-4 sm:gap-3">
-            <ControlButton
-              label={mic.muted ? "Unmute" : "Mute"}
-              active={mic.muted}
-              disabled={mic.state !== "ready"}
-              onClick={() => mic.setMuted(!mic.muted)}
-              icon={mic.muted ? <MicOff className="h-6 w-6" /> : <Mic className="h-6 w-6" />}
-            />
-            <ControlButton
-              label={speech.listening ? "Captions on" : "Captions off"}
-              active={speech.listening}
-              disabled={!speech.supported}
-              onClick={() => (speech.listening ? speech.stop() : speech.start())}
-              icon={speech.listening ? <Captions className="h-6 w-6" /> : <CaptionsOff className="h-6 w-6" />}
-            />
+            {!isHostedPreview && (
+              <>
+              <ControlButton
+                label={mic.muted ? "Unmute" : "Mute"}
+                active={mic.muted}
+                disabled={mic.state !== "ready"}
+                onClick={() => mic.setMuted(!mic.muted)}
+                icon={mic.muted ? <MicOff className="h-6 w-6" /> : <Mic className="h-6 w-6" />}
+              />
+              <ControlButton
+                label={speech.listening ? "Captions on" : "Captions off"}
+                active={speech.listening}
+                disabled={!speech.supported}
+                onClick={() => (speech.listening ? speech.stop() : speech.start())}
+                icon={speech.listening ? <Captions className="h-6 w-6" /> : <CaptionsOff className="h-6 w-6" />}
+              />
+              </>
+            )}
             <ControlButton
               label={readAloud ? "Voice on" : "Voice off"}
               active={readAloud}
