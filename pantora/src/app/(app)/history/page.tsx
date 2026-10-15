@@ -10,6 +10,7 @@ import { EmptyState } from "@/components/ui/empty-state";
 import { SessionRow } from "@/components/app/session-row";
 import { HistoryFiltersBar } from "@/features/history/history-filters";
 import { cn } from "@/lib/cn";
+import { HistoryArt } from "@/components/art/scene-art";
 
 export const metadata: Metadata = { title: "Conversation History" };
 
@@ -38,7 +39,7 @@ export default async function HistoryPage({ searchParams }: { searchParams: Prom
 
   return (
     <div>
-      <PageHeader title="Conversation History" description="Every Free Talk, Speaking Battle, and AI practice session. Open a session to review its transcript and feedback." />
+      <PageHeader title="Conversation History" description="Every Free Talk, Speaking Battle, and AI practice session. Open a session to review its transcript and feedback." tone="navy" art={<HistoryArt />} />
       <HistoryFiltersBar
         initial={{ type: filters.type!, status: filters.status!, from: filters.from ?? "", to: filters.to ?? "", sort: filters.sort!, feedback: filters.withFeedback! }}
       />

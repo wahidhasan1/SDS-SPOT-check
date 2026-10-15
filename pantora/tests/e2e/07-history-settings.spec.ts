@@ -18,7 +18,8 @@ test("history filters, sorts, and opens a session review with transcript actions
   await page.getByLabel("Status").selectOption("all");
 
   await page.goto("/history?type=free_talk");
-  await page.getByRole("link", { name: /My Ideal Weekend/ }).first().click();
+  // Other tests may add their own "My Ideal Weekend" sessions; open the preloaded sample one.
+  await page.locator('main a[href^="/history/"]').filter({ hasText: "My Ideal Weekend" }).filter({ hasText: "Sample" }).first().click();
   await expect(page.getByText("Sample transcript", { exact: true })).toBeVisible();
   await expect(page.getByText("scripted demo line").first()).toBeVisible();
   const markButtons = page.getByRole("button", { name: "Mark reviewed" });

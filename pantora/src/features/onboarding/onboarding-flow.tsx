@@ -15,19 +15,19 @@ import {
   Languages,
   MessagesSquare,
   Mic,
-  PartyPopper,
   ShieldCheck,
   Sparkles,
   Swords,
   Target,
   TrendingUp,
 } from "lucide-react";
-import { AVATARS, AVATAR_KEYS } from "@/lib/avatars";
+import { AvatarPicker } from "@/components/app/avatar-picker";
+import { Mascot, type MascotAccessory, type MascotMood } from "@/components/art/mascot";
+import { Confetti } from "@/components/game/celebration";
 import { GOAL_LABELS, PROFICIENCY_DESCRIPTIONS, PROFICIENCY_LABELS } from "@/lib/labels";
 import { CONVERSATION_PREFS, DAILY_GOALS, LEARNING_GOALS, PROFICIENCY_LEVELS, type ConversationPref, type LearningGoal, type Proficiency } from "@/lib/types";
 import { displayNameSchema } from "@/lib/schemas";
 import { api, errorMessage } from "@/lib/api-client";
-import { cn } from "@/lib/cn";
 import { Button, ButtonLink } from "@/components/ui/button";
 import { ChoiceCard, FieldHint, Input, Label } from "@/components/ui/form";
 import { Logo } from "@/components/ui/logo";
@@ -139,8 +139,9 @@ export function OnboardingFlow({ signedInAs, demoMode }: { signedInAs: string | 
     return (
       <Shell>
         <div className="animate-pop-in py-6 text-center">
-          <div className="mx-auto flex h-20 w-20 items-center justify-center rounded-3xl bg-brand-50 text-brand-600">
-            <PartyPopper className="h-10 w-10" />
+          <div className="relative mx-auto h-32 w-full max-w-sm">
+            <Confetti pieces={50} />
+            <Mascot mood="cheer" color="#ff6fb5" className="relative mx-auto h-32 w-32 animate-bob" />
           </div>
           <h1 className="mt-6 text-3xl font-extrabold tracking-tight">Welcome to Pantora, {created}!</h1>
           <p className="mx-auto mt-3 max-w-md text-muted">
@@ -189,9 +190,7 @@ export function OnboardingFlow({ signedInAs, demoMode }: { signedInAs: string | 
       <div key={step} className="animate-fade-in">
         {step === 0 && (
           <div>
-            <div className="flex h-14 w-14 items-center justify-center rounded-2xl bg-brand-50 text-brand-600">
-              <Mic className="h-7 w-7" />
-            </div>
+            <Mascot mood="wave" className="h-24 w-24 animate-bob" />
             <h1 className="mt-6 text-3xl font-extrabold tracking-tight">Speak English without the fear of being judged</h1>
             <p className="mt-3 text-lg leading-relaxed text-muted">
               Pantora connects you with other learners for relaxed voice conversations, short speaking challenges, and friendly feedback. Let&apos;s set
@@ -250,22 +249,9 @@ export function OnboardingFlow({ signedInAs, demoMode }: { signedInAs: string | 
                 </button>
               ))}
             </div>
-            <p className="mt-6 mb-2 text-sm font-semibold">Avatar color</p>
-            <div className="flex flex-wrap gap-2.5" role="radiogroup" aria-label="Avatar color">
-              {AVATAR_KEYS.map((key) => (
-                <button
-                  key={key}
-                  type="button"
-                  role="radio"
-                  aria-checked={draft.avatar === key}
-                  aria-label={AVATARS[key].label}
-                  onClick={() => update({ avatar: key })}
-                  className={cn("rounded-full p-0.5 transition-all", draft.avatar === key ? "ring-3 ring-brand-500 ring-offset-2" : "hover:scale-105")}
-                >
-                  <Avatar name={draft.displayName || "?"} avatar={key} size="md" />
-                </button>
-              ))}
-            </div>
+            <p className="mt-6 mb-2 text-sm font-semibold">Pick your Pantora Pal</p>
+            <AvatarPicker value={draft.avatar} onChange={(avatar) => update({ avatar })} name={draft.displayName} levelIndex={1} />
+            <p className="mt-2 text-xs text-muted">Locked avatars are rewards you unlock by leveling up.</p>
           </div>
         )}
 
@@ -421,11 +407,24 @@ export function OnboardingFlow({ signedInAs, demoMode }: { signedInAs: string | 
   );
 }
 
+const STEP_MASCOTS: Record<string, { mood: MascotMood; color: string; accessory?: MascotAccessory }> = {
+  "Choose a display name": { mood: "happy", color: "#8c7cfb" },
+  "How comfortable are you speaking English?": { mood: "think", color: "#4cc3ff" },
+  "What do you want to work on?": { mood: "wow", color: "#ff6fb5", accessory: "cap" },
+  "How would you like to practice?": { mood: "happy", color: "#3ee6a8", accessory: "headset" },
+  "Set a daily practice target": { mood: "cheer", color: "#ffd23f" },
+  "You're all set": { mood: "cheer", color: "#8c7cfb", accessory: "crown" },
+};
+
 function StepTitle({ title, subtitle }: { title: string; subtitle: string }) {
+  const m = STEP_MASCOTS[title] ?? { mood: "happy" as const, color: "#8c7cfb" };
   return (
-    <div className="mb-6">
-      <h1 className="text-2xl font-extrabold tracking-tight sm:text-3xl">{title}</h1>
-      <p className="mt-2 text-muted">{subtitle}</p>
+    <div className="mb-6 flex items-start gap-4">
+      <div className="min-w-0 flex-1">
+        <h1 className="text-2xl font-extrabold tracking-tight sm:text-3xl">{title}</h1>
+        <p className="mt-2 text-muted">{subtitle}</p>
+      </div>
+      <Mascot key={title} mood={m.mood} color={m.color} accessory={m.accessory} className="hidden h-20 w-20 shrink-0 animate-pop-in sm:block" />
     </div>
   );
 }

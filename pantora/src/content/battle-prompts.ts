@@ -1,7 +1,10 @@
 import type { Difficulty, TopicCategory } from "@/lib/types";
+import { getBattleMode, type BattleMode, type BattleModeId, type PromptModeId } from "./battle-modes";
 
 export interface BattlePrompt {
   id: string;
+  /** The battle type this prompt belongs to. */
+  mode: PromptModeId;
   topicId: string | null;
   category: TopicCategory;
   difficulty: Difficulty;
@@ -15,6 +18,7 @@ export interface BattlePrompt {
 export const BATTLE_PROMPTS: BattlePrompt[] = [
   {
     id: "bp-ideal-weekend",
+    mode: "quick-fire",
     topicId: "ideal-weekend",
     category: "everyday-life",
     difficulty: "easy",
@@ -27,6 +31,7 @@ export const BATTLE_PROMPTS: BattlePrompt[] = [
   },
   {
     id: "bp-best-advice",
+    mode: "story-sprint",
     topicId: "life-advice",
     category: "personal-development",
     difficulty: "medium",
@@ -39,6 +44,7 @@ export const BATTLE_PROMPTS: BattlePrompt[] = [
   },
   {
     id: "bp-city-country",
+    mode: "opinion-clash",
     topicId: "city-vs-country",
     category: "opinions-debate",
     difficulty: "medium",
@@ -51,6 +57,7 @@ export const BATTLE_PROMPTS: BattlePrompt[] = [
   },
   {
     id: "bp-favorite-place",
+    mode: "describe-it",
     topicId: "neighborhood",
     category: "everyday-life",
     difficulty: "easy",
@@ -63,6 +70,7 @@ export const BATTLE_PROMPTS: BattlePrompt[] = [
   },
   {
     id: "bp-technology-change",
+    mode: "big-question",
     topicId: "ai-everyday",
     category: "technology",
     difficulty: "medium",
@@ -75,6 +83,7 @@ export const BATTLE_PROMPTS: BattlePrompt[] = [
   },
   {
     id: "bp-teacher",
+    mode: "story-sprint",
     topicId: "favorite-teacher",
     category: "education",
     difficulty: "easy",
@@ -87,6 +96,7 @@ export const BATTLE_PROMPTS: BattlePrompt[] = [
   },
   {
     id: "bp-four-day-week",
+    mode: "opinion-clash",
     topicId: "four-day-week",
     category: "opinions-debate",
     difficulty: "challenging",
@@ -99,6 +109,7 @@ export const BATTLE_PROMPTS: BattlePrompt[] = [
   },
   {
     id: "bp-memorable-meal",
+    mode: "describe-it",
     topicId: "favorite-dish",
     category: "food-lifestyle",
     difficulty: "easy",
@@ -111,6 +122,7 @@ export const BATTLE_PROMPTS: BattlePrompt[] = [
   },
   {
     id: "bp-trip-problem",
+    mode: "story-sprint",
     topicId: "memorable-trip",
     category: "travel-culture",
     difficulty: "medium",
@@ -123,6 +135,7 @@ export const BATTLE_PROMPTS: BattlePrompt[] = [
   },
   {
     id: "bp-new-skill",
+    mode: "quick-fire",
     topicId: "new-hobby",
     category: "hobbies",
     difficulty: "easy",
@@ -135,6 +148,7 @@ export const BATTLE_PROMPTS: BattlePrompt[] = [
   },
   {
     id: "bp-social-media-age",
+    mode: "opinion-clash",
     topicId: "social-media",
     category: "technology",
     difficulty: "challenging",
@@ -147,6 +161,7 @@ export const BATTLE_PROMPTS: BattlePrompt[] = [
   },
   {
     id: "bp-success",
+    mode: "big-question",
     topicId: "success-meaning",
     category: "personal-development",
     difficulty: "challenging",
@@ -155,6 +170,110 @@ export const BATTLE_PROMPTS: BattlePrompt[] = [
     sampleResponse: {
       partnerId: "demo-daniel",
       text: "To me, success means having enough freedom to spend my time on things that matter. Money is part of that, but it is not the goal itself. For instance, my uncle earns less than his former colleagues, yet he coaches a youth team every evening and seems genuinely content. That balance between purpose and stability is what I would call success.",
+    },
+  },
+  {
+    id: "bp-morning-person",
+    mode: "quick-fire",
+    topicId: "morning-routine",
+    category: "everyday-life",
+    difficulty: "easy",
+    prompt: "Morning person or night owl? Tell us which one you are.",
+    guidance: "Pick one, give a reason, and describe a typical moment from your day.",
+    sampleResponse: {
+      partnerId: "demo-sofia",
+      text: "I am a night owl. In the morning I am very slow and I need two coffee. But in the night I have many energy. I like to read and listen music when everybody is sleeping. Sometimes I go to bed at two o'clock, and it is not good for my work.",
+    },
+  },
+  {
+    id: "bp-superpower",
+    mode: "quick-fire",
+    topicId: "superpower",
+    category: "storytelling",
+    difficulty: "easy",
+    prompt: "You get one superpower for a day. What do you choose?",
+    guidance: "Name the power, say what you would do with it, and why.",
+    sampleResponse: {
+      partnerId: "demo-omar",
+      text: "I would choose teleportation, for sure. In the morning I would visit my family in another country and have breakfast with them. After that I would go to see the pyramids and then swim in a beach in Thailand. I choose it because I hate long flights and I miss my family a lot.",
+    },
+  },
+  {
+    id: "bp-dream-destination",
+    mode: "describe-it",
+    topicId: "dream-destination",
+    category: "travel-culture",
+    difficulty: "easy",
+    prompt: "Describe a place you dream of visiting.",
+    guidance: "Describe what you would see, hear, and do there.",
+    sampleResponse: {
+      partnerId: "demo-priya",
+      text: "I dream of visiting Iceland in winter. I imagine black beaches, huge waterfalls and snowy mountains everywhere. At night the sky would be full of green northern lights. I would stay in a small wooden cabin, drink hot chocolate and listen to the wind outside. It sounds peaceful and a little bit magical.",
+    },
+  },
+  {
+    id: "bp-phone-screen",
+    mode: "describe-it",
+    topicId: "phone-habits",
+    category: "technology",
+    difficulty: "easy",
+    prompt: "Describe your phone's home screen. What does it say about you?",
+    guidance: "Describe the background, the apps you see first, and what they show about your life.",
+    sampleResponse: {
+      partnerId: "demo-hana",
+      text: "My home screen have a picture of my cat. She is white and very fat. I have music app, a dictionary and a game with candies. I think it say that I like animals and I am learning English. And maybe I play too much games.",
+    },
+  },
+  {
+    id: "bp-homework",
+    mode: "opinion-clash",
+    topicId: "homework-debate",
+    category: "opinions-debate",
+    difficulty: "medium",
+    prompt: "Should homework be banned? Pick a side.",
+    guidance: "Choose yes or no, give two reasons, and answer one argument from the other side.",
+    sampleResponse: {
+      partnerId: "demo-priya",
+      text: "I don't think homework should be banned, but there should be much less of it. Short practice at home helps students remember what they learned. Also, it teaches them to organize their time. Some people say homework causes stress, and that's true when teachers give too much. So my answer is: keep it, but limit it to around thirty minutes a day.",
+    },
+  },
+  {
+    id: "bp-nervous-moment",
+    mode: "story-sprint",
+    topicId: "overcoming-fear",
+    category: "personal-development",
+    difficulty: "medium",
+    prompt: "Tell the story of a time you felt really nervous.",
+    guidance: "Set the scene, explain why you were nervous, and say how it turned out.",
+    sampleResponse: {
+      partnerId: "demo-kenji",
+      text: "The most nervous I've ever felt was before my first presentation in English at work. My hands were shaking and I had practiced the first sentence about fifty times. When I started, my voice was very quiet, but then a colleague smiled and nodded. That small gesture calmed me down. In the end, the presentation went well, and my manager asked me to present again the next month.",
+    },
+  },
+  {
+    id: "bp-future-life",
+    mode: "big-question",
+    topicId: "future-tech",
+    category: "technology",
+    difficulty: "challenging",
+    prompt: "How will technology change everyday life by 2050?",
+    guidance: "Make one clear prediction, explain why, and mention one risk.",
+    sampleResponse: {
+      partnerId: "demo-daniel",
+      text: "By 2050, I expect most routine tasks, like shopping, driving, and paperwork, to be handled by automated assistants. That would free up a lot of time, which people could spend on relationships or creative work. The main risk, in my view, is dependency: if systems fail or are controlled by a few companies, ordinary people could lose both skills and independence. So the technology itself is promising, but regulation will matter enormously.",
+    },
+  },
+  {
+    id: "bp-time-travel",
+    mode: "big-question",
+    topicId: "time-travel",
+    category: "storytelling",
+    difficulty: "challenging",
+    prompt: "If you could witness any moment in history, which would you choose and why?",
+    guidance: "Choose the moment, explain why it matters, and say what you would hope to learn.",
+    sampleResponse: {
+      partnerId: "demo-mateo",
+      text: "I would choose the moment when the first people landed on the moon in 1969. I think it was one of the few times when the whole world was watching the same thing together. I would like to see how people reacted in the streets, because today we are so divided. I hope I would learn what makes humans cooperate on something so difficult.",
     },
   },
 ];
@@ -169,4 +288,18 @@ export function dailyChallengeFor(dateKey: string): BattlePrompt {
   let hash = 0;
   for (const ch of dateKey) hash = (hash * 31 + ch.charCodeAt(0)) >>> 0;
   return BATTLE_PROMPTS[hash % BATTLE_PROMPTS.length];
+}
+
+export function promptsForMode(mode: BattleModeId): BattlePrompt[] {
+  return mode === "free-play" ? BATTLE_PROMPTS : BATTLE_PROMPTS.filter((p) => p.mode === mode);
+}
+
+/** The battle type that owns a prompt (used for XP and per-type stats). */
+export function modeOfPrompt(prompt: Pick<BattlePrompt, "mode">): BattleMode {
+  return getBattleMode(prompt.mode)!;
+}
+
+export function modeOfPromptId(promptId: string): BattleMode | undefined {
+  const prompt = getBattlePrompt(promptId);
+  return prompt ? modeOfPrompt(prompt) : undefined;
 }

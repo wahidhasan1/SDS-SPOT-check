@@ -14,6 +14,7 @@ import * as battles from "@/app/api/battles/route";
 import * as freeTalk from "@/app/api/sessions/free-talk/route";
 import * as topicFavorite from "@/app/api/topics/[id]/favorite/route";
 import * as feedbackReview from "@/app/api/feedback/[id]/review/route";
+import * as questClaim from "@/app/api/quests/[id]/claim/route";
 import * as entryReview from "@/app/api/transcript-entries/[id]/review/route";
 import * as savedSentences from "@/app/api/saved-sentences/route";
 import * as savedSentence from "@/app/api/saved-sentences/[id]/route";
@@ -42,6 +43,7 @@ const ROUTES: [RegExp, RouteModule, string[]][] = [
   [/^\/api\/sessions\/free-talk$/, freeTalk, []],
   [/^\/api\/topics\/([^/]+)\/favorite$/, topicFavorite, ["id"]],
   [/^\/api\/feedback\/([^/]+)\/review$/, feedbackReview, ["id"]],
+  [/^\/api\/quests\/([^/]+)\/claim$/, questClaim, ["id"]],
   [/^\/api\/transcript-entries\/([^/]+)\/review$/, entryReview, ["id"]],
   [/^\/api\/saved-sentences$/, savedSentences, []],
   [/^\/api\/saved-sentences\/([^/]+)$/, savedSentence, ["id"]],

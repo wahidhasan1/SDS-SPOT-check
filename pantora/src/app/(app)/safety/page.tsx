@@ -11,6 +11,7 @@ import { Card, CardBody, CardHeader } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { EmptyState } from "@/components/ui/empty-state";
 import { BlockedList } from "@/features/safety/blocked-list";
+import { ShieldArt } from "@/components/art/scene-art";
 
 export const metadata: Metadata = { title: "Safety Center" };
 
@@ -20,7 +21,7 @@ export default async function SafetyPage() {
   const reports = listMyReports(profile.id);
   return (
     <div className="space-y-6">
-      <PageHeader title="Privacy & Safety" description="Tools that keep conversations comfortable, and how Pantora handles your reports and data." />
+      <PageHeader title="Privacy & Safety" description="Tools that keep conversations comfortable, and how Pantora handles your reports and data." tone="mint" art={<ShieldArt />} />
 
       <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-4">
         {[

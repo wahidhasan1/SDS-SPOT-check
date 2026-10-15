@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import Link from "next/link";
-import { Bookmark, ChartColumn, ChevronRight, Dumbbell, History } from "lucide-react";
+import { Bookmark, ChartColumn, Check, ChevronRight, Dumbbell, History } from "lucide-react";
+import { CoachArt } from "@/components/art/scene-art";
 import { requireUser } from "@/server/auth";
 import { listFeedback, listSavedSentences, listTopics, mistakePatterns } from "@/server/queries";
 import { sttConfigured } from "@/server/stt";
@@ -38,6 +39,27 @@ export default async function CoachPage({ searchParams }: { searchParams: Promis
   const maxCount = Math.max(1, ...patterns.map((p) => p.count));
 
   return (
+    <div className="space-y-6">
+    <section className="relative overflow-hidden rounded-[2rem] bg-gradient-to-br from-mint-300 via-mint-400 to-sky-400 p-6 text-ink shadow-card sm:p-7">
+      <div className="pointer-events-none absolute inset-0 bg-dots-light" aria-hidden />
+      <div className="relative flex flex-col gap-4 sm:flex-row sm:items-center">
+        <div className="min-w-0 flex-1">
+          <h1 className="text-3xl font-extrabold tracking-tight sm:text-4xl">AI Speaking Coach</h1>
+          <p className="mt-2 max-w-xl text-ink-soft">Answer a prompt and get an improved version, clear explanations, and one focused exercise.</p>
+          <ul className="mt-3 flex flex-wrap gap-2 text-xs font-bold">
+            {["Feedback on every answer", "Grammar fixes explained", "Natural English phrasing", "Vocabulary upgrades"].map((t) => (
+              <li key={t} className="flex items-center gap-1 rounded-full bg-white/80 px-2.5 py-1">
+                <Check className="h-3.5 w-3.5 text-mint-600" strokeWidth={3} /> {t}
+              </li>
+            ))}
+            <li className="rounded-full border-2 border-dashed border-ink/20 px-2.5 py-0.5 text-ink-soft" title="Pronunciation needs a speech-analysis service, which isn't configured.">
+              Pronunciation: not scored in the demo
+            </li>
+          </ul>
+        </div>
+        <CoachArt className="hidden h-32 w-44 shrink-0 animate-bob sm:block" />
+      </div>
+    </section>
     <div className="grid grid-cols-1 gap-6 xl:grid-cols-[minmax(0,1fr)_22rem]">
       <CoachExperience
         prompts={COACH_PROMPTS}
@@ -123,6 +145,8 @@ export default async function CoachPage({ searchParams }: { searchParams: Promis
           </CardBody>
         </Card>
       </div>
+    </div>
+
     </div>
   );
 }

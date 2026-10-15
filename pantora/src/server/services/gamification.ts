@@ -16,6 +16,7 @@ import {
 import { dateKeyInZone } from "@/lib/dates";
 import type { SessionOrigin, SessionStatus, SessionType } from "@/lib/types";
 import { getProfile, getSettings } from "./users";
+import { modeOfPromptId } from "@/content/battle-prompts";
 
 // Records completed practice and applies every reward rule in one transaction.
 // Rewards are keyed by `source_key`, so replaying the same request (page
@@ -25,6 +26,8 @@ export interface XpItem {
   key: string;
   amount: number;
   reason: string;
+  /** Keys are scoped to the session unless global (e.g. once-per-day bonuses). */
+  global?: boolean;
 }
 
 export interface RecordSessionInput {
@@ -311,7 +314,8 @@ export function recordSession(db: DB, input: RecordSessionInput, opts: { silent?
         practiceSeconds,
       );
       for (const item of input.xp ?? []) {
-        const keyed = { ...item, key: `session:${sessionId}:${item.key}` };
+        const { global, ...rest } = item;
+        const keyed = global ? rest : { ...rest, key: `session:${sessionId}:${item.key}` };
         if (awardXp(db, input.userId, keyed, activityDate, input.endedAt)) items.push(keyed);
       }
       daily = applyDailyRewards(db, input.userId, activityDate, input.endedAt, !!opts.silent);
@@ -361,9 +365,21 @@ export function recordReview(db: DB, userId: string, kind: "feedback" | "entry" 
   });
 }
 
-/** XP items for a finished battle, including a personal-best bonus when the score beats the previous best. */
-export function battleXpItems(db: DB, userId: string, userScore: number | null): XpItem[] {
-  const items: XpItem[] = [{ key: "battle", amount: XP_RULES.battle, reason: "Finished a Speaking Battle" }];
+/**
+ * XP items for a finished battle: the battle type's XP, a personal-best bonus
+ * when the score beats the previous best, and a once-per-day bonus for
+ * finishing that day's Daily Challenge.
+ */
+export function battleXpItems(db: DB, userId: string, userScore: number | null, promptId?: string, opts: { dailyChallengeDate?: string | null } = {}): XpItem[] {
+  const mode = promptId ? modeOfPromptId(promptId) : undefined;
+  const items: XpItem[] = [
+    mode
+      ? { key: "battle", amount: mode.xp, reason: `Finished a ${mode.name} battle` }
+      : { key: "battle", amount: XP_RULES.battle, reason: "Finished a Speaking Battle" },
+  ];
+  if (opts.dailyChallengeDate) {
+    items.push({ key: `daily-challenge:${opts.dailyChallengeDate}`, amount: XP_RULES.dailyChallenge, reason: "Completed the Daily Challenge", global: true });
+  }
   if (userScore != null) {
     const best = get<{ best: number | null }>(db, "SELECT MAX(user_score) AS best FROM battles WHERE user_id = ?", userId)?.best;
     if (best != null && userScore > best) {

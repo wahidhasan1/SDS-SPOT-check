@@ -41,7 +41,9 @@ test("onboarding validates input, keeps selections, and creates a profile", asyn
   await page.getByRole("button", { name: "Go to my dashboard" }).click();
 
   await expect(page.getByRole("heading", { name: "Welcome back, Brave Owl!" })).toBeVisible();
-  await expect(page.getByText("No sessions yet")).toBeVisible();
-  await expect(page.getByText("0 of 10 min").or(page.getByText("of 10 min"))).toBeVisible();
+  await expect(page.getByText("Start today's 10-minute goal")).toBeVisible();
+  await expect(page.getByText("of 10 min today")).toBeVisible();
+  await expect(page.getByRole("heading", { name: "Speaking Battles" })).toBeVisible();
+  await expect(page.locator("[data-mode]")).toHaveCount(6);
   expect(errors).toEqual([]);
 });

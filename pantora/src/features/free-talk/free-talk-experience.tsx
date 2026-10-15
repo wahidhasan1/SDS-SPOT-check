@@ -48,6 +48,10 @@ import { speakText, stopSpeaking } from "@/features/audio/speak";
 import { LevelMeter } from "@/features/audio/level-meter";
 import { BlockDialog, ReportDialog } from "@/features/safety/safety-dialogs";
 import { RewardsSummary } from "@/features/practice/rewards-summary";
+import { FreeTalkArt } from "@/components/art/scene-art";
+import { XP_RULES } from "@/lib/game-rules";
+import { Mascot } from "@/components/art/mascot";
+import { Confetti } from "@/components/game/celebration";
 import { GENERIC_TOPIC, buildPartnerScript } from "./script";
 import { LiveCall } from "./live-call";
 import { HOSTED_MIC_NOTICE, isHostedPreview } from "@/lib/runtime";
@@ -347,13 +351,25 @@ export function FreeTalkExperience({
 
   if (phase === "setup") {
     return (
+      <div className="space-y-6">
+      <section className="relative overflow-hidden rounded-[2rem] bg-gradient-to-br from-sky-400 via-sky-500 to-brand-500 p-6 text-white shadow-card sm:p-7">
+        <div className="pointer-events-none absolute inset-0 bg-dots-light" aria-hidden />
+        <div className="relative flex flex-col gap-4 sm:flex-row sm:items-center">
+          <div className="min-w-0 flex-1">
+            <h1 className="text-3xl font-extrabold tracking-tight sm:text-4xl">Free Talk</h1>
+            <p className="mt-2 max-w-xl text-white/90">Relaxed voice conversations with another learner. No scores, no pressure — just speaking. Corrections come after, never during.</p>
+            <div className="mt-3 flex flex-wrap gap-2 text-xs font-bold">
+              <span className="rounded-full bg-white/20 px-2.5 py-1">+{XP_RULES.conversationBase} XP and up</span>
+              <span className="rounded-full bg-white/20 px-2.5 py-1">Counts toward your streak</span>
+              <span className="rounded-full bg-white/20 px-2.5 py-1">Demo partners are fictional</span>
+            </div>
+          </div>
+          <FreeTalkArt className="hidden h-36 w-48 shrink-0 animate-bob sm:block" />
+        </div>
+      </section>
       <div className="grid grid-cols-1 gap-6 lg:grid-cols-[minmax(0,1fr)_22rem]">
         <Card>
-          <CardHeader
-            title="Free Talk"
-            description="Relaxed voice conversations with another learner. No scores, no pressure — just speaking."
-            icon={<Users className="h-5 w-5" />}
-          />
+          <CardHeader title="Set up your conversation" description="Pick a length and who you'd like to talk with." icon={<Users className="h-5 w-5" />} />
           <CardBody className="space-y-6">
             {liveEnabled && (
               <div>
@@ -498,9 +514,9 @@ export function FreeTalkExperience({
         </Card>
 
         <div className="space-y-6">
-          <Card className="border-streak-100 bg-streak-50/60">
+          <Card className="border-sun-300 bg-sun-50">
             <CardBody>
-              <p className="flex items-center gap-2 text-sm font-bold text-streak-700">
+              <p className="flex items-center gap-2 text-sm font-bold text-sun-700">
                 <Lightbulb className="h-4.5 w-4.5" /> How demo mode works
               </p>
               <ul className="mt-3 space-y-2 text-sm text-ink-soft">
@@ -526,19 +542,18 @@ export function FreeTalkExperience({
           </Card>
         </div>
       </div>
+      </div>
     );
   }
 
   if (phase === "searching") {
     return (
-      <Card className="mx-auto max-w-xl">
-        <CardBody className="flex flex-col items-center py-14 text-center">
-          <div className="relative flex h-32 w-32 items-center justify-center" aria-hidden>
-            <span className="absolute inset-0 animate-ping-slow rounded-full bg-brand-200" />
-            <span className="absolute inset-4 animate-ping-slow rounded-full bg-brand-300 [animation-delay:0.6s]" />
-            <span className="relative flex h-20 w-20 items-center justify-center rounded-full bg-brand-600 text-white shadow-glow">
-              <Users className="h-9 w-9" />
-            </span>
+      <Card className="mx-auto max-w-xl overflow-hidden">
+        <CardBody className="flex flex-col items-center bg-gradient-to-b from-sky-50 to-surface py-14 text-center">
+          <div className="relative flex h-36 w-36 items-center justify-center" aria-hidden>
+            <span className="absolute inset-0 animate-ping-slow rounded-full bg-sky-200" />
+            <span className="absolute inset-4 animate-ping-slow rounded-full bg-sky-300 [animation-delay:0.6s]" />
+            <Mascot mood="think" color="#4cc3ff" className="relative h-28 w-28 animate-bob" />
           </div>
           <h2 className="mt-8 text-xl font-bold">Searching for a partner</h2>
           <p className="mt-2 text-muted" aria-live="polite">
@@ -558,8 +573,9 @@ export function FreeTalkExperience({
   if (phase === "found" && partner) {
     return (
       <Card className="mx-auto max-w-2xl animate-pop-in overflow-hidden">
-        <div className="bg-gradient-to-br from-brand-600 to-navy-800 px-6 py-8 text-center text-white">
-          <p className="text-sm font-semibold text-white/75">Partner found</p>
+        <div className="relative overflow-hidden bg-gradient-to-br from-sky-500 via-brand-500 to-pink-500 px-6 py-8 text-center text-white">
+          <Confetti pieces={36} />
+          <p className="relative animate-stamp font-display text-sm font-extrabold tracking-[0.2em] text-sun-300 uppercase">It&apos;s a match!</p>
           <Avatar name={partner.displayName} avatar={partner.avatar} size="xl" className="mx-auto mt-4" />
           <h2 className="mt-4 text-2xl font-extrabold">{partner.displayName}</h2>
           <p className="mt-1 text-white/75">Estimated level: {PROFICIENCY_LABELS[partner.proficiency]}</p>
@@ -896,8 +912,9 @@ export function FreeTalkExperience({
       ) : result ? (
         <>
           <Card className="overflow-hidden">
-            <div className={cn("px-6 py-7 text-center", result.status === "completed" ? "bg-gradient-to-br from-success-50 to-surface" : "bg-surface-muted/60")}>
-              <h2 className="text-2xl font-extrabold">{result.status === "completed" ? "Conversation complete" : "Conversation ended early"}</h2>
+            <div className={cn("relative overflow-hidden px-6 py-7 text-center", result.status === "completed" ? "bg-gradient-to-br from-mint-100 via-sky-50 to-surface" : "bg-surface-muted/60")}>
+              <Mascot mood={result.status === "completed" ? "cheer" : "happy"} color={result.status === "completed" ? "#3ee6a8" : "#8c7cfb"} className="mx-auto h-24 w-24 animate-bob" />
+              <h2 className="text-3xl font-extrabold">{result.status === "completed" ? "Conversation complete!" : "Conversation ended early"}</h2>
               <p className="mt-1 text-muted">
                 {result.status === "completed"
                   ? `Nice work${partner ? ` talking with ${partner.displayName}` : ""}. Every minute builds confidence.`

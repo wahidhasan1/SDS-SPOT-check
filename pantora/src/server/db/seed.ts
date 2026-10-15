@@ -214,7 +214,7 @@ export function seedDemoData(db: DatabaseSync, now = new Date()) {
             endReason: "completed",
             origin: "seed",
             idempotencyKey: `seed-battle-${b.daysAgo}-${b.promptId}`,
-            xp: battleXpItems(db, DEMO_USER_ID, evaluation.user.score.total),
+            xp: battleXpItems(db, DEMO_USER_ID, evaluation.user.score.total, prompt.id),
           },
           { silent: true },
         );

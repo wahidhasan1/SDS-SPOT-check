@@ -25,6 +25,8 @@ import { ButtonLink } from "@/components/ui/button";
 import { Logo } from "@/components/ui/logo";
 import { DemoStartButton } from "@/components/marketing/demo-start-button";
 import { ProductPreview } from "@/components/marketing/product-preview";
+import { BATTLE_MODES, MODE_COLOR_CLASSES } from "@/content/battle-modes";
+import { BattleModeArt } from "@/components/art/battle-art";
 
 export const dynamic = "force-dynamic";
 
@@ -179,6 +181,20 @@ export default async function LandingPage() {
           points={["Fluency, grammar, vocabulary, relevance, and development", "Every score comes with an explanation", "Rewards for participation and personal bests"]}
           visual={<BattleVisual />}
         />
+        <section aria-labelledby="modes-title" className="mx-auto max-w-6xl px-4 pb-16 sm:px-6">
+          <h3 id="modes-title" className="text-center text-2xl font-extrabold tracking-tight">Six ways to battle</h3>
+          <ul className="mt-6 grid grid-cols-2 gap-3 sm:grid-cols-3 lg:grid-cols-6">
+            {BATTLE_MODES.map((m) => (
+              <li key={m.id} className={`lift flex flex-col items-center rounded-[1.5rem] bg-gradient-to-br p-3 text-center ${MODE_COLOR_CLASSES[m.color].card}`}>
+                <BattleModeArt mode={m.id} className="h-20 w-auto" />
+                <span className="mt-2 w-full rounded-xl bg-white px-2 py-1.5">
+                  <span className="block font-display font-extrabold">{m.name}</span>
+                  <span className="block text-xs text-muted">{m.tagline}</span>
+                </span>
+              </li>
+            ))}
+          </ul>
+        </section>
         <FeatureRow
           eyebrow="AI Speaking Coach"
           icon={GraduationCap}

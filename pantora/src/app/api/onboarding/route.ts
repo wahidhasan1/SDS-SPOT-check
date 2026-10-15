@@ -1,7 +1,8 @@
 import { cookies } from "next/headers";
 import { getDb } from "@/server/db";
 import { USER_COOKIE, userCookieOptions } from "@/server/auth";
-import { handler, ok, parseBody } from "@/server/http";
+import { HttpError, handler, ok, parseBody } from "@/server/http";
+import { isAvatarUnlocked } from "@/lib/avatars";
 import { createUser } from "@/server/services/users";
 import { notify } from "@/server/services/gamification";
 import { onboardingSchema } from "@/lib/schemas";
@@ -9,6 +10,7 @@ import { isValidTimeZone } from "@/lib/dates";
 
 export const POST = handler(async (request: Request) => {
   const body = await parseBody(request, onboardingSchema);
+  if (!isAvatarUnlocked(body.avatar, 1)) throw new HttpError(400, "That avatar unlocks later as a reward.");
   const db = getDb();
   const profile = createUser(db, {
     displayName: body.displayName,

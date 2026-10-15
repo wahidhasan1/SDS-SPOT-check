@@ -11,8 +11,10 @@ export const XP_RULES = {
   conversationBase: 30,
   conversationPerMinute: 2,
   conversationMinuteCap: 30,
+  /** Fallback battle XP; each battle type sets its own amount (30–50). */
   battle: 35,
   battlePersonalBest: 15,
+  dailyChallenge: 20,
   coachTyped: 15,
   coachRecorded: 20,
   dailyGoal: 25,

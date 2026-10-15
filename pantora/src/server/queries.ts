@@ -9,6 +9,7 @@ import {
   levelForXp,
 } from "@/lib/game-rules";
 import { dateKeyInZone } from "@/lib/dates";
+import { modeOfPromptId } from "@/content/battle-prompts";
 import { achievementStats, notify, qualifyingDays, totalXp } from "./services/gamification";
 import type {
   AnalysisResult,
@@ -103,6 +104,9 @@ export interface UserStats {
   battles: { total: number; wins: number; draws: number; losses: number; best: number | null; average: number | null };
 }
 
+/** Days of daily activity returned by getUserStats (enough for 30-day comparisons). */
+const HISTORY_DAYS = 60;
+
 export function getUserStats(profile: UserProfile, now = new Date()): UserStats {
   const db = getDb();
   const today = todayFor(profile, now);
@@ -119,14 +123,14 @@ export function getUserStats(profile: UserProfile, now = new Date()): UserStats 
     db,
     "SELECT activity_date, practice_seconds, session_count, xp_earned FROM user_activity WHERE user_id = ? AND activity_date >= ? ORDER BY activity_date",
     uid,
-    addDays(today, -41),
+    addDays(today, -(HISTORY_DAYS - 1)),
   );
   const sampleDays = new Set(
     all<{ d: string }>(db, "SELECT DISTINCT activity_date AS d FROM sessions WHERE user_id = ? AND origin = 'seed'", uid).map((r) => r.d),
   );
   const byDate = new Map(activity.map((a) => [a.activity_date, a]));
   const days: DayPoint[] = [];
-  for (let i = 41; i >= 0; i--) {
+  for (let i = HISTORY_DAYS - 1; i >= 0; i--) {
     const date = addDays(today, -i);
     const a = byDate.get(date);
     days.push({
@@ -191,9 +195,19 @@ export function getHeaderData(profile: UserProfile) {
     "SELECT id, kind, title, body, href, read_at, created_at FROM notifications WHERE user_id = ? ORDER BY created_at DESC LIMIT 15",
     profile.id,
   );
+  const xp = totalXp(db, profile.id);
+  const level = levelForXp(xp);
   return {
     streak: streak.current,
     practicedToday: streak.practicedToday,
+    player: {
+      xp,
+      levelIndex: level.current.index,
+      levelName: level.current.name,
+      progress: level.progress,
+      xpToNext: level.xpToNext,
+      nextLevelName: level.next?.name ?? null,
+    },
     notifications: notifications.map((n) => ({
       id: n.id,
       kind: n.kind,
@@ -460,6 +474,35 @@ export function listBattles(userId: string, limit = 6): BattleRecord[] {
   return all<Record<string, unknown>>(getDb(), "SELECT * FROM battles WHERE user_id = ? ORDER BY created_at DESC LIMIT ?", userId, limit).map(mapBattle);
 }
 
+export interface BattleModeStat {
+  modeId: string;
+  played: number;
+  wins: number;
+  best: number | null;
+  /** True when every battle of this type is preloaded sample history. */
+  sampleOnly: boolean;
+}
+
+/** Per-battle-type record, derived from each battle's prompt. */
+export function getBattleModeStats(userId: string): Record<string, BattleModeStat> {
+  const rows = all<{ prompt_id: string; result: string; user_score: number | null; origin: SessionOrigin }>(
+    getDb(),
+    "SELECT prompt_id, result, user_score, origin FROM battles WHERE user_id = ?",
+    userId,
+  );
+  const stats: Record<string, BattleModeStat> = {};
+  for (const r of rows) {
+    const mode = modeOfPromptId(r.prompt_id);
+    if (!mode) continue;
+    const cur = (stats[mode.id] ??= { modeId: mode.id, played: 0, wins: 0, best: null, sampleOnly: true });
+    cur.played += 1;
+    if (r.result === "win") cur.wins += 1;
+    if (r.user_score != null) cur.best = Math.max(cur.best ?? 0, r.user_score);
+    if (r.origin !== "seed") cur.sampleOnly = false;
+  }
+  return stats;
+}
+
 export function getBattleDimensionAverages(userId: string) {
   const battles = listBattles(userId, 50).filter((b) => b.evaluation);
   const sums = new Map<string, { label: string; max: number; total: number; best: number; count: number }>();
@@ -633,4 +676,77 @@ export function listMyReports(userId: string) {
 /** Removes transcripts whose retention period has ended. */
 export function purgeExpiredTranscripts(now = new Date()) {
   run(getDb(), "DELETE FROM transcripts WHERE expires_at IS NOT NULL AND expires_at < ?", now.toISOString());
+}
+
+// ---------- Progress trends ----------
+
+export interface ScorePoint {
+  id: string;
+  sessionId: string;
+  date: string;
+  total: number;
+  modeId: string | null;
+  prompt: string;
+  sample: boolean;
+  dimensions: { key: string; label: string; score: number; max: number }[];
+}
+
+/** Scored battles in chronological order, oldest first. */
+export function getScoreHistory(userId: string, limit = 40): ScorePoint[] {
+  return listBattles(userId, limit)
+    .filter((b) => b.evaluation && b.userScore != null)
+    .reverse()
+    .map((b) => ({
+      id: b.id,
+      sessionId: b.sessionId,
+      date: b.createdAt,
+      total: b.userScore!,
+      modeId: modeOfPromptId(b.promptId)?.id ?? null,
+      prompt: b.promptText,
+      sample: b.origin === "seed",
+      dimensions: b.evaluation!.user.score.dimensions.map((d) => ({ key: d.key, label: d.label, score: d.score, max: d.max })),
+    }));
+}
+
+export interface WeekBucket {
+  weekStart: string;
+  freeTalk: number;
+  battles: number;
+  coach: number;
+  minutes: number;
+  hasSample: boolean;
+}
+
+/** Completed sessions per Monday-starting week, oldest first. */
+export function getWeeklyBreakdown(userId: string, today: string, weeks = 8): WeekBucket[] {
+  const day = new Date(`${today}T00:00:00Z`).getUTCDay();
+  const thisMonday = addDays(today, -((day + 6) % 7));
+  const first = addDays(thisMonday, -7 * (weeks - 1));
+  const rows = all<{ activity_date: string; type: string; practice_seconds: number; origin: string }>(
+    getDb(),
+    "SELECT activity_date, type, practice_seconds, origin FROM sessions WHERE user_id = ? AND status = 'completed' AND activity_date >= ?",
+    userId,
+    first,
+  );
+  const buckets: WeekBucket[] = Array.from({ length: weeks }, (_, i) => ({ weekStart: addDays(first, i * 7), freeTalk: 0, battles: 0, coach: 0, minutes: 0, hasSample: false }));
+  for (const r of rows) {
+    const idx = Math.floor((Date.parse(`${r.activity_date}T00:00:00Z`) - Date.parse(`${first}T00:00:00Z`)) / (7 * 86_400_000));
+    const b = buckets[idx];
+    if (!b) continue;
+    if (r.type === "free_talk") b.freeTalk += 1;
+    else if (r.type === "battle") b.battles += 1;
+    else b.coach += 1;
+    b.minutes += r.practice_seconds / 60;
+    if (r.origin === "seed") b.hasSample = true;
+  }
+  return buckets;
+}
+
+/** Daily challenges completed and weekly quests claimed. */
+export function getChallengeCounts(userId: string) {
+  const one = (sql: string, ...params: string[]) => get<{ n: number }>(getDb(), sql, ...params)?.n ?? 0;
+  return {
+    dailyChallenges: one("SELECT COUNT(*) AS n FROM xp_events WHERE user_id = ? AND source_key LIKE 'daily-challenge:%'", userId),
+    questsClaimed: one("SELECT COUNT(*) AS n FROM xp_events WHERE user_id = ? AND source_key LIKE 'quest:%'", userId),
+  };
 }

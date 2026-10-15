@@ -27,7 +27,7 @@ test("demo admin shows records, updates reports, and resets demo data", async ({
   await expect(page.getByText("Demo data restored")).toBeVisible({ timeout: 20_000 });
 
   await page.goto("/dashboard");
-  await expect(page.getByLabel(/6-day streak/)).toBeVisible();
+  await expect(page.getByLabel(/6-day streak/).first()).toBeVisible();
   await page.goto("/history");
   await expect(page.getByText("20 sessions")).toBeVisible();
 });

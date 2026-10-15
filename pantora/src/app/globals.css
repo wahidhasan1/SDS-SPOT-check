@@ -3,22 +3,23 @@
 /* Pantora design tokens. Use these semantic names instead of raw colors. */
 @theme {
   --font-sans: "Plus Jakarta Sans Variable", ui-sans-serif, system-ui, -apple-system, "Segoe UI", sans-serif;
+  --font-display: "Bricolage Grotesque Variable", "Plus Jakarta Sans Variable", ui-sans-serif, system-ui, sans-serif;
 
-  --color-canvas: #f6f7fb;
+  --color-canvas: #f6f4ff;
   --color-surface: #ffffff;
-  --color-surface-muted: #f1f2f8;
-  --color-line: #e4e6ef;
-  --color-line-strong: #d3d6e3;
-  --color-ink: #12152b;
-  --color-ink-soft: #3b4060;
-  --color-muted: #5f6582;
-  --color-subtle: #868ba6;
+  --color-surface-muted: #f2effb;
+  --color-line: #e8e4f6;
+  --color-line-strong: #d5cfea;
+  --color-ink: #17132f;
+  --color-ink-soft: #3d3760;
+  --color-muted: #625c80;
+  --color-subtle: #8b86a6;
 
-  --color-navy-950: #0a0d24;
-  --color-navy-900: #11153a;
-  --color-navy-800: #1a1f4d;
-  --color-navy-700: #272d66;
-  --color-navy-600: #3a4185;
+  --color-navy-950: #0d0a24;
+  --color-navy-900: #17123d;
+  --color-navy-800: #221a57;
+  --color-navy-700: #2f2574;
+  --color-navy-600: #40358f;
 
   --color-brand-50: #f3f1ff;
   --color-brand-100: #e7e3ff;
@@ -31,47 +32,102 @@
   --color-brand-800: #3a2c9f;
   --color-brand-900: #2d2578;
 
-  --color-lavender: #eef0ff;
+  --color-lavender: #efecff;
 
-  --color-success-50: #eaf8f0;
-  --color-success-100: #d0f0dd;
-  --color-success-500: #16a34a;
-  --color-success-600: #15803d;
-  --color-success-700: #166534;
+  /* Pop accents: used for battle types, rewards, and celebrations. */
+  --color-pink-50: #fff0f7;
+  --color-pink-100: #ffd9ec;
+  --color-pink-300: #ff9fcf;
+  --color-pink-400: #ff6fb5;
+  --color-pink-500: #ff3d9a;
+  --color-pink-600: #e0207d;
+  --color-pink-700: #b3125f;
+
+  --color-sun-50: #fffbe6;
+  --color-sun-100: #fff1b8;
+  --color-sun-300: #ffe066;
+  --color-sun-400: #ffd23f;
+  --color-sun-500: #f5b700;
+  --color-sun-700: #8a6400;
+
+  --color-mint-50: #e9fff6;
+  --color-mint-100: #c6f9e4;
+  --color-mint-300: #7ff0c6;
+  --color-mint-400: #3ee6a8;
+  --color-mint-500: #10c98a;
+  --color-mint-600: #0a9e6c;
+  --color-mint-700: #067a53;
+
+  --color-sky-50: #eaf7ff;
+  --color-sky-100: #cdeeff;
+  --color-sky-300: #8dd8ff;
+  --color-sky-400: #4cc3ff;
+  --color-sky-500: #1aa7f5;
+  --color-sky-600: #0b86d0;
+  --color-sky-700: #0a6aa3;
+
+  --color-orange-50: #fff3eb;
+  --color-orange-100: #ffe0cc;
+  --color-orange-300: #ffbb8a;
+  --color-orange-400: #ff9a52;
+  --color-orange-500: #ff7a1a;
+  --color-orange-600: #e85f00;
+  --color-orange-700: #b34700;
+
+  --color-success-50: #e9fbf2;
+  --color-success-100: #c9f4de;
+  --color-success-500: #12b76a;
+  --color-success-600: #0e9a58;
+  --color-success-700: #08774a;
 
   --color-streak-50: #fff6e5;
   --color-streak-100: #ffebc2;
-  --color-streak-400: #fbbf24;
-  --color-streak-500: #f59e0b;
-  --color-streak-600: #d97706;
-  --color-streak-700: #b45309;
+  --color-streak-400: #ffb733;
+  --color-streak-500: #ff9500;
+  --color-streak-600: #e57c00;
+  --color-streak-700: #b35c00;
 
-  --color-danger-50: #fef1f1;
-  --color-danger-100: #fde0e0;
-  --color-danger-500: #e5484d;
-  --color-danger-600: #dc2626;
-  --color-danger-700: #b91c1c;
+  --color-danger-50: #fff0f1;
+  --color-danger-100: #ffdfe1;
+  --color-danger-500: #f0435a;
+  --color-danger-600: #dc2645;
+  --color-danger-700: #b01735;
 
-  --color-info-50: #eaf5fe;
-  --color-info-500: #0ea5e9;
-  --color-info-700: #0369a1;
+  --color-info-50: #eaf7ff;
+  --color-info-500: #1aa7f5;
+  --color-info-700: #0a6aa3;
 
-  --radius-card: 1.25rem;
-  --shadow-card: 0 1px 2px rgb(18 21 43 / 0.04), 0 6px 20px -6px rgb(18 21 43 / 0.08);
-  --shadow-pop: 0 18px 48px -12px rgb(18 21 43 / 0.28);
+  --radius-card: 1.5rem;
+  --shadow-card: 0 1px 0 rgb(23 19 47 / 0.03), 0 10px 28px -14px rgb(23 19 47 / 0.16);
+  --shadow-lift: 0 2px 0 rgb(23 19 47 / 0.04), 0 22px 40px -18px rgb(23 19 47 / 0.3);
+  --shadow-pop: 0 18px 48px -12px rgb(23 19 47 / 0.3);
   --shadow-glow: 0 10px 30px -10px rgb(90 69 232 / 0.55);
 
   --animate-fade-in: fade-in 0.25s ease-out both;
-  --animate-pop-in: pop-in 0.3s cubic-bezier(0.2, 0.9, 0.3, 1.2) both;
+  --animate-pop-in: pop-in 0.35s cubic-bezier(0.2, 0.9, 0.3, 1.25) both;
+  --animate-slide-up: slide-up 0.45s cubic-bezier(0.2, 0.9, 0.3, 1.1) both;
   --animate-ping-slow: ping-slow 2.2s cubic-bezier(0, 0, 0.2, 1) infinite;
   --animate-float: float 6s ease-in-out infinite;
+  --animate-bob: bob 3s ease-in-out infinite;
+  --animate-wiggle: wiggle 2.4s ease-in-out infinite;
+  --animate-flame: flame 1.6s ease-in-out infinite;
+  --animate-shine: shine 2.8s ease-in-out infinite;
+  --animate-spin-slow: spin 12s linear infinite;
+  --animate-stamp: stamp 0.6s cubic-bezier(0.2, 0.9, 0.3, 1.4) both;
+  --animate-shake: shake 0.5s ease-in-out both;
+  --animate-confetti: confetti 2.6s cubic-bezier(0.25, 0.6, 0.4, 1) forwards;
+  --animate-rise: rise 1.4s ease-out forwards;
 
   @keyframes fade-in {
     from { opacity: 0; transform: translateY(4px); }
     to { opacity: 1; transform: none; }
   }
   @keyframes pop-in {
-    from { opacity: 0; transform: scale(0.94); }
+    from { opacity: 0; transform: scale(0.9); }
+    to { opacity: 1; transform: none; }
+  }
+  @keyframes slide-up {
+    from { opacity: 0; transform: translateY(18px); }
     to { opacity: 1; transform: none; }
   }
   @keyframes ping-slow {
@@ -81,6 +137,43 @@
   @keyframes float {
     0%, 100% { transform: translateY(0); }
     50% { transform: translateY(-6px); }
+  }
+  @keyframes bob {
+    0%, 100% { transform: translateY(0) rotate(-2deg); }
+    50% { transform: translateY(-5px) rotate(2deg); }
+  }
+  @keyframes wiggle {
+    0%, 70%, 100% { transform: rotate(0); }
+    75% { transform: rotate(-8deg); }
+    85% { transform: rotate(8deg); }
+    92% { transform: rotate(-4deg); }
+  }
+  @keyframes flame {
+    0%, 100% { transform: scale(1) rotate(-3deg); }
+    50% { transform: scale(1.12) rotate(3deg); }
+  }
+  @keyframes shine {
+    0%, 60% { transform: translateX(-120%) skewX(-20deg); }
+    100% { transform: translateX(220%) skewX(-20deg); }
+  }
+  @keyframes stamp {
+    0% { opacity: 0; transform: scale(2.2) rotate(-12deg); }
+    100% { opacity: 1; transform: scale(1) rotate(0); }
+  }
+  @keyframes shake {
+    0%, 100% { transform: translateX(0); }
+    20%, 60% { transform: translateX(-4px); }
+    40%, 80% { transform: translateX(4px); }
+  }
+  @keyframes confetti {
+    0% { opacity: 1; transform: translate3d(0, 0, 0) rotate(0); }
+    100% { opacity: 0; transform: translate3d(var(--dx, 0px), var(--dy, 420px), 0) rotate(var(--rot, 540deg)); }
+  }
+  @keyframes rise {
+    0% { opacity: 0; transform: translateY(10px) scale(0.9); }
+    20% { opacity: 1; transform: translateY(0) scale(1.05); }
+    80% { opacity: 1; }
+    100% { opacity: 0; transform: translateY(-28px); }
   }
 }
 
@@ -93,11 +186,17 @@
     font-size: 112.5%;
   }
   body {
-    background: var(--color-canvas);
+    background-color: var(--color-canvas);
     color: var(--color-ink);
     font-family: var(--font-sans);
     -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale;
+  }
+  h1,
+  h2,
+  h3 {
+    font-family: var(--font-display);
+    font-optical-sizing: auto;
   }
   :focus-visible {
     outline: 2px solid var(--color-brand-500);
@@ -140,5 +239,33 @@ html[data-reduced-motion="true"] *::after {
   scrollbar-width: none;
   &::-webkit-scrollbar {
     display: none;
+  }
+}
+
+/* Soft dotted backdrop used behind hero areas. */
+@utility bg-dots {
+  background-image: radial-gradient(rgb(23 19 47 / 0.07) 1.2px, transparent 1.2px);
+  background-size: 18px 18px;
+}
+@utility bg-dots-light {
+  background-image: radial-gradient(rgb(255 255 255 / 0.14) 1.2px, transparent 1.2px);
+  background-size: 18px 18px;
+}
+/* Chunky "pressable" 3D edge for game-style buttons and tiles. */
+@utility press {
+  transition: transform 0.12s ease, box-shadow 0.12s ease, background-color 0.15s ease, color 0.15s ease;
+  &:hover:not(:disabled) {
+    transform: translateY(-1px);
+  }
+  &:active:not(:disabled) {
+    transform: translateY(3px);
+    box-shadow: 0 1px 0 0 var(--edge, rgb(23 19 47 / 0.2));
+  }
+}
+@utility lift {
+  transition: transform 0.2s cubic-bezier(0.2, 0.9, 0.3, 1.2), box-shadow 0.2s ease;
+  &:hover {
+    transform: translateY(-3px);
+    box-shadow: var(--shadow-lift);
   }
 }

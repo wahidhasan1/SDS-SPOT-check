@@ -7,20 +7,19 @@ import { Accessibility, Bell, Lock, LogOut, SlidersHorizontal, Trash2, UserRound
 import type { UserProfile, UserSettings } from "@/lib/types";
 import { CONVERSATION_PREFS, DAILY_GOALS, LEARNING_GOALS, PROFICIENCY_LEVELS, TOPIC_CATEGORIES } from "@/lib/types";
 import { CATEGORY_LABELS, CONVERSATION_PREF_LABELS, GOAL_LABELS, PROFICIENCY_LABELS } from "@/lib/labels";
-import { AVATARS, AVATAR_KEYS } from "@/lib/avatars";
+import { AvatarPicker } from "@/components/app/avatar-picker";
 import { displayNameSchema } from "@/lib/schemas";
 import { api, errorMessage } from "@/lib/api-client";
 import { cn } from "@/lib/cn";
 import { Card, CardBody, CardHeader } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { FieldHint, Input, Label, Segmented, Select, Switch } from "@/components/ui/form";
-import { Avatar } from "@/components/ui/avatar";
 import { Dialog } from "@/components/ui/dialog";
 import { useToast } from "@/components/ui/toast";
 
 type SectionKey = "profile" | "matching" | "notifications" | "privacy" | "accessibility";
 
-export function SettingsForm({ profile, settings }: { profile: UserProfile; settings: UserSettings }) {
+export function SettingsForm({ profile, settings, levelIndex }: { profile: UserProfile; settings: UserSettings; levelIndex: number }) {
   const router = useRouter();
   const toast = useToast();
   const initialProfile = {
@@ -128,21 +127,8 @@ export function SettingsForm({ profile, settings }: { profile: UserProfile; sett
           </div>
           <div>
             <p className="mb-2 text-sm font-semibold">Avatar</p>
-            <div className="flex flex-wrap gap-2.5" role="radiogroup" aria-label="Avatar color">
-              {AVATAR_KEYS.map((key) => (
-                <button
-                  key={key}
-                  type="button"
-                  role="radio"
-                  aria-checked={p.avatar === key}
-                  aria-label={AVATARS[key].label}
-                  onClick={() => setP({ ...p, avatar: key })}
-                  className={cn("rounded-full p-0.5", p.avatar === key ? "ring-3 ring-brand-500 ring-offset-2" : "hover:scale-105")}
-                >
-                  <Avatar name={p.displayName || "?"} avatar={key} size="sm" />
-                </button>
-              ))}
-            </div>
+            <AvatarPicker value={p.avatar} onChange={(avatar) => setP({ ...p, avatar })} name={p.displayName} levelIndex={levelIndex} size="sm" />
+            <FieldHint>Reward avatars unlock as you level up.</FieldHint>
           </div>
           <div>
             <p className="mb-2 text-sm font-semibold">Learning goals</p>

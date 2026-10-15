@@ -12,6 +12,7 @@ import { Badge } from "@/components/ui/badge";
 import { ButtonLink, Button } from "@/components/ui/button";
 import { Input, Select } from "@/components/ui/form";
 import { EmptyState } from "@/components/ui/empty-state";
+import { CategoryTile } from "@/components/art/category-tile";
 import { useToast } from "@/components/ui/toast";
 
 const DIFF_TONE: Record<Difficulty, "success" | "brand" | "streak"> = { easy: "success", medium: "brand", challenging: "streak" };
@@ -120,28 +121,29 @@ export function TopicsLibrary({
       {filtered.length === 0 ? (
         <EmptyState icon={<Search className="h-6 w-6" />} title="No topics found" description={onlyFavorites && favorites.size === 0 ? "You haven't added any favorites yet. Tap the heart on a topic to save it." : "Try a different search or clear the filters."} />
       ) : (
-        <div className="grid grid-cols-1 gap-4 md:grid-cols-2 2xl:grid-cols-3">
+        <div className="grid grid-cols-1 gap-4 md:grid-cols-2 xl:grid-cols-3">
           {filtered.map((t) => {
             const isOpen = open === t.id;
             const fav = favorites.has(t.id);
             return (
-              <Card key={t.id} className="flex flex-col p-5" data-testid="topic-card">
+              <Card key={t.id} className="lift flex flex-col p-5" data-testid="topic-card">
                 <div className="flex items-start justify-between gap-3">
-                  <div className="min-w-0">
+                  <CategoryTile category={t.category} />
+                  <div className="min-w-0 flex-1">
                     <div className="flex flex-wrap gap-1.5">
                       <Badge tone="neutral">{CATEGORY_LABELS[t.category]}</Badge>
                       <Badge tone={DIFF_TONE[t.difficulty]}>{DIFFICULTY_LABELS[t.difficulty]}</Badge>
                     </div>
-                    <h2 className="mt-2.5 text-lg font-bold text-ink">{t.title}</h2>
+                    <h2 className="mt-1.5 text-lg leading-snug font-bold text-ink">{t.title}</h2>
                   </div>
                   <button
                     onClick={() => toggleFavorite(t)}
                     disabled={pending === t.id}
                     aria-pressed={fav}
                     aria-label={fav ? `Remove ${t.title} from favorites` : `Add ${t.title} to favorites`}
-                    className={cn("rounded-xl p-2 transition-colors disabled:opacity-50", fav ? "bg-brand-50 text-brand-600" : "text-subtle hover:bg-surface-muted hover:text-ink")}
+                    className={cn("rounded-xl p-2 transition-colors disabled:opacity-50", fav ? "bg-pink-50 text-pink-600" : "text-subtle hover:bg-surface-muted hover:text-ink")}
                   >
-                    <Heart className={cn("h-5 w-5", fav && "fill-brand-500")} />
+                    <Heart className={cn("h-5 w-5", fav && "animate-pop-in fill-pink-500 text-pink-500")} />
                   </button>
                 </div>
                 <p className="mt-1 text-sm text-muted">{t.description}</p>

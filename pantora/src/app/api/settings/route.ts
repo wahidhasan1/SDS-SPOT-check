@@ -1,7 +1,9 @@
 import { getDb, run, tx } from "@/server/db";
-import { apiUser, handler, ok, parseBody } from "@/server/http";
+import { HttpError, apiUser, handler, ok, parseBody } from "@/server/http";
 import { getProfile, getSettings } from "@/server/services/users";
-import { evaluateAchievements } from "@/server/services/gamification";
+import { evaluateAchievements, totalXp } from "@/server/services/gamification";
+import { isAvatarUnlocked } from "@/lib/avatars";
+import { levelForXp } from "@/lib/game-rules";
 import { settingsSchema } from "@/lib/schemas";
 
 export const PATCH = handler(async (request: Request) => {
@@ -9,6 +11,9 @@ export const PATCH = handler(async (request: Request) => {
   const body = await parseBody(request, settingsSchema);
   const db = getDb();
   const now = new Date().toISOString();
+  if (body.profile && body.profile.avatar !== user.avatar && !isAvatarUnlocked(body.profile.avatar, levelForXp(totalXp(db, user.id)).current.index)) {
+    throw new HttpError(400, "That avatar is a reward you haven't unlocked yet.");
+  }
   tx(db, () => {
     if (body.profile) {
       const p = body.profile;

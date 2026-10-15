@@ -6,6 +6,7 @@ import { PageHeader } from "@/components/app/page-header";
 import { Card, CardBody, CardHeader } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { FeedbackForm } from "@/features/help/feedback-form";
+import { Mascot } from "@/components/art/mascot";
 
 export const metadata: Metadata = { title: "Help & Feedback" };
 
@@ -23,7 +24,7 @@ export default async function HelpPage() {
   const integrations = integrationStatus();
   return (
     <div className="space-y-6">
-      <PageHeader title="Help & Feedback" description="Answers to common questions, what this demo simulates, and a way to tell us what you think." />
+      <PageHeader title="Help & Feedback" description="Answers to common questions, what this demo simulates, and a way to tell us what you think." tone="sky" art={<Mascot mood="think" />} />
       <div className="grid grid-cols-1 gap-6 lg:grid-cols-[minmax(0,1fr)_24rem]">
         <Card>
           <CardHeader title="Frequently asked" icon={<CircleHelp className="h-5 w-5" />} />

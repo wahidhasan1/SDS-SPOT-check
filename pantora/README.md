@@ -85,17 +85,17 @@ Secrets are read only on the server. The browser receives only derived status fl
 
 | Route | Feature |
 | --- | --- |
-| `/` | Landing page: hero, product preview, how it works, Free Talk, Battles, Coach, progress, safety, FAQ |
-| `/onboarding` | 7-step onboarding with validation, back/forward, draft restore, and a personalized welcome |
-| `/dashboard` | Welcome, daily goal ring, key stats, quick actions, daily challenge, streak week view, recent activity, weekly trend, latest feedback |
+| `/` | Landing page: hero, product preview, how it works, Free Talk, Battles (with the six battle types), Coach, progress, safety, FAQ |
+| `/onboarding` | 7-step onboarding with the mascot, validation, back/forward, draft restore, avatar picker, and a celebratory welcome |
+| `/dashboard` | Quick overview only: compact streak / level / XP / daily goal, Daily Challenge, Continue Practicing (unfinished session, claimable quest, goal, review, or an untried battle type), battle-type cards with Start buttons, Free Talk, AI Coach, weekly quest teaser |
 | `/free-talk` | Setup → matching → partner preview → connecting → active call → summary |
-| `/battles` | Today's challenge, practice battle setup, recent results, statistics, personal bests, rules → full battle flow |
+| `/battles` | Battle-type gallery (Quick Fire, Describe It, Opinion Clash, Story Sprint, Big Question, Free Play), Daily Challenge banner, record, recent results, scoring rules. `?mode=` opens a type's detail view (how it works, rewards, prompt picker); the battle itself runs as a mini-game: match → topic reveal → prep timer → speaking timer → scoring → victory/draw/"good fight" screen with round-by-round scores, XP, and feedback. `?prompt=`/`?topic=` preselect a prompt; `&go=1` starts immediately |
 | `/coach` | Prompt picker, typed or recorded answer, feedback (improved version, explanations, grammar, vocabulary, fluency when measured, exercise), mistake patterns |
 | `/coach/saved` | My Learning: saved sentences with review, copy, and delete |
 | `/topics` | 40 topics in 10 categories: search, category/difficulty filters, favorites, start Free Talk / challenge / exercise |
 | `/history`, `/history/[id]` | Filter by type, status, and date; sort; pagination; session review with transcript corrections, feedback, battle scores, report/block |
-| `/progress` | Totals, streaks, 14-day chart, 6-week calendar, skill averages, feedback history, how everything is calculated |
-| `/achievements` | Levels, XP, 14 badges with progress |
+| `/progress` | Level, streak, win rate, completed challenges; 7- and 30-day summaries vs. the previous period; sessions per week by type; streak calendar; daily minutes; battle score trend and per-skill sparklines (improvement is only claimed from 4+ of your own battles; pronunciation shown as not measured); battle record by type; areas to improve; milestones; recent feedback |
+| `/achievements` | Player card and level road; daily goals and claimable weekly quests; weekly demo league; 14 badges (medals); unlockable avatars you can equip; ways to earn XP |
 | `/settings` | Profile, matching, notifications, privacy, accessibility, sign out, account deletion |
 | `/safety` | Safety tools, blocked partners (unblock), your reports and their status, community guidelines |
 | `/help` | FAQ, product feedback form, and a "what's real vs. simulated" table generated from the live configuration |
@@ -106,7 +106,12 @@ Secrets are read only on the server. The browser receives only derived status fl
 
 - **Practice time** = time in a completed conversation (at least 1 minute) plus the length of recorded battle and coach answers. Typed answers earn XP but not speaking minutes. Opening a page never changes progress.
 - **Streak**: a calendar day (in the user's time zone) counts when it has at least **2 minutes** of practice. The current streak stays alive until the end of the next day.
-- **XP**: conversation 30 + 2/min (capped), battle 35 (+15 personal best), coach 15 typed / 20 recorded, daily goal 25, streak day 5 × streak (max 50), each review 5.
+- **XP**: conversation 30 + 2/min (capped); battle by type (Quick Fire 30, Describe It 35, Opinion Clash 40, Story Sprint 40, Big Question 50; Free Play earns the prompt's type) +15 for a personal best; Daily Challenge +20 once per day; coach 15 typed / 20 recorded; daily goal 25; streak day 5 × streak (max 50); each review 5; weekly quests 30–60, claimed once per week.
+- **Battle types**: each of the 20 prompts belongs to one type, which sets its preparation and speaking timers and its XP (`src/content/battle-modes.ts`). Per-type records are derived from each battle's prompt.
+- **Weekly quests** (`src/lib/quests.ts`, `src/server/services/quests.ts`): six goals that reset every Monday. Progress counts only the player's own completed sessions, never sample history. Claiming is a server call that re-checks completion and awards XP under a once-per-week key.
+- **Weekly league** (`src/server/services/league.ts`): the player's real weekly XP ranked against the 8 fictional demo partners, whose weekly XP is simulated deterministically. It is labeled as a demo league; nobody is demoted.
+- **Unlockable avatars**: four reward avatars unlock at levels 2–5. Locked avatars can't be chosen in onboarding or settings (the server checks too) and can be equipped from Achievements once unlocked.
+- **Celebrations**: level ups and new achievements open a celebration dialog with confetti; wins get a victory screen. All motion respects the OS setting and the in-app "Reduce motion" preference.
 - **Idempotency**: every reward has a unique source key and every session has an idempotency key, so refreshing or double-submitting never awards anything twice.
 - **Levels**: First Words (0), Brave Speaker (250), Consistent Talker (750), Confident Communicator (1,750), Global Speaker (3,500). These are motivational levels, not language certifications.
 
@@ -139,6 +144,7 @@ A 100-point product rubric: fluency and continuity 25, grammar and sentence cons
 - **Demo partners and opponents** are 8 fictional profiles. Matching uses the real matching rules, but nobody is on the other end.
 - **Demo call content**: partner lines are scripted prompts shown as text (optionally read by the browser's voice). The "Connected (simulated)" status is labeled.
 - **Battle opponent answers** are pre-written samples, so battle results are labeled "Simulated result".
+- **Weekly league players** are the fictional demo partners with simulated XP; only your own XP is real.
 - **Demo account history** (Alex) is preloaded sample data: sessions, sample transcripts, feedback, battles, and two fictional reports. Every sample item carries a "Sample" badge, and sample days are hatched or outlined in charts.
 - **Demo analyzer**: without `ANTHROPIC_API_KEY`, feedback comes from pattern rules and is labeled "Demo analyzer (rule-based)". It never claims to be AI.
 
@@ -156,7 +162,7 @@ A 100-point product rubric: fluency and continuity 25, grammar and sentence cons
 
 ## Architecture
 
-- **Next.js 16 (App Router) + React 19 + TypeScript**, Tailwind CSS v4 design tokens (`src/app/globals.css`), lucide icons, Plus Jakarta Sans (self-hosted via Fontsource).
+- **Next.js 16 (App Router) + React 19 + TypeScript**, Tailwind CSS v4 design tokens (`src/app/globals.css`), lucide icons, Plus Jakarta Sans for text and Bricolage Grotesque for headings (both self-hosted via Fontsource). Illustrations are inline SVG components in `src/components/art/` (mascot, battle types, scenes, medals, level badges) that share one palette and outline style.
 - **Server components** read data directly; **client components** handle interaction and call **route handlers** under `src/app/api/*`. All inputs are validated with Zod (`src/lib/schemas.ts`), and every query is scoped to the signed-in user.
 - **Database**: SQLite through Node's built-in `node:sqlite` (no native build step). Ordered migrations live in `src/server/db/migrations.ts` and are applied automatically. Writes that span tables run in savepoint transactions.
 

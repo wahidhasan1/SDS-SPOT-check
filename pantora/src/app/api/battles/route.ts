@@ -4,7 +4,8 @@ import { battleXpItems, recordSession } from "@/server/services/gamification";
 import { saveBattle, saveFeedback } from "@/server/services/practice";
 import { analyzeResponse } from "@/server/ai";
 import { blockedIds, getBattleBySession } from "@/server/queries";
-import { getBattlePrompt } from "@/content/battle-prompts";
+import { dailyChallengeFor, getBattlePrompt, modeOfPrompt } from "@/content/battle-prompts";
+import { dateKeyInZone } from "@/lib/dates";
 import { getDemoPartner } from "@/content/partners";
 import { getTopic } from "@/content/topics";
 import { buildBattleEvaluation } from "@/lib/analysis/battle";
@@ -38,6 +39,8 @@ export const POST = handler(async (request: Request) => {
   const startedAt = new Date(Math.min(new Date(body.startedAt).getTime(), endedAt.getTime()));
   const durationSeconds = Math.min(600, Math.round((endedAt.getTime() - startedAt.getTime()) / 1000));
   const practiceSeconds = body.inputMode === "spoken" ? Math.min(body.recordedSeconds, body.speakSeconds + 5) : 0;
+  const today = dateKeyInZone(endedAt, user.timezone);
+  const isDailyChallenge = dailyChallengeFor(today).id === prompt.id;
 
   const result = tx(db, () => {
     const recorded = recordSession(db, {
@@ -55,7 +58,7 @@ export const POST = handler(async (request: Request) => {
       endReason: "completed",
       origin: "demo",
       idempotencyKey: body.idempotencyKey,
-      xp: battleXpItems(db, user.id, evaluation.user.score.total),
+      xp: battleXpItems(db, user.id, evaluation.user.score.total, prompt.id, { dailyChallengeDate: isDailyChallenge ? today : null }),
     });
     if (recorded.created) {
       saveBattle(db, {
@@ -99,6 +102,7 @@ export const POST = handler(async (request: Request) => {
     evaluation: stored?.evaluation ?? evaluation,
     rewards: result.rewards,
     providerNotice,
-    xpRules: { battle: XP_RULES.battle, personalBest: XP_RULES.battlePersonalBest },
+    xpRules: { battle: modeOfPrompt(prompt).xp, personalBest: XP_RULES.battlePersonalBest, dailyChallenge: XP_RULES.dailyChallenge },
+    isDailyChallenge,
   });
 });

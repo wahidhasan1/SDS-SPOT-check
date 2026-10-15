@@ -72,13 +72,16 @@ execFileSync(path.join(root, "node_modules/.bin/tailwindcss"), ["-i", path.join(
   stdio: ["ignore", "ignore", "inherit"],
 });
 const font = fs.readFileSync(path.join(root, "node_modules/@fontsource-variable/plus-jakarta-sans/files/plus-jakarta-sans-latin-wght-normal.woff2"));
-const fontFace = `@font-face{font-family:"Plus Jakarta Sans Variable";font-style:normal;font-display:swap;font-weight:200 800;src:url(data:font/woff2;base64,${font.toString("base64")}) format("woff2")}`;
+const displayFont = fs.readFileSync(path.join(root, "node_modules/@fontsource-variable/bricolage-grotesque/files/bricolage-grotesque-latin-wght-normal.woff2"));
+const fontFace =
+  `@font-face{font-family:"Plus Jakarta Sans Variable";font-style:normal;font-display:swap;font-weight:200 800;src:url(data:font/woff2;base64,${font.toString("base64")}) format("woff2")}` +
+  `@font-face{font-family:"Bricolage Grotesque Variable";font-style:normal;font-display:swap;font-weight:200 800;src:url(data:font/woff2;base64,${displayFont.toString("base64")}) format("woff2")}`;
 const css = fontFace + fs.readFileSync(cssOut, "utf8");
 
 const html = `<title>Pantora Demo</title>
 <meta name="description" content="Interactive demo of Pantora, a voice-first English speaking practice platform.">
 <style>${css}
-#pantora-boot{min-height:100vh;display:flex;align-items:center;justify-content:center;flex-direction:column;gap:12px;background:#f6f7fb;color:#5f6582;font:15px/1.5 "Plus Jakarta Sans Variable",system-ui,sans-serif}
+#pantora-boot{min-height:100vh;display:flex;align-items:center;justify-content:center;flex-direction:column;gap:12px;background:#f6f4ff;color:#625c80;font:15px/1.5 "Plus Jakarta Sans Variable",system-ui,sans-serif}
 #pantora-boot span{width:40px;height:40px;border-radius:12px;background:#11153a;animation:pboot 1.2s ease-in-out infinite}
 @keyframes pboot{50%{opacity:.4}}
 @media (prefers-reduced-motion:reduce){#pantora-boot span{animation:none}}

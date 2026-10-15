@@ -5,6 +5,7 @@ import { usePathname, useRouter } from "next/navigation";
 import { useEffect, useRef, useState, type ReactNode } from "react";
 import {
   Bell,
+  ChartColumn,
   CircleHelp,
   Flame,
   GraduationCap,
@@ -24,7 +25,8 @@ import { api, errorMessage } from "@/lib/api-client";
 import { Avatar } from "@/components/ui/avatar";
 import { Logo } from "@/components/ui/logo";
 import { useToast } from "@/components/ui/toast";
-import { DemoModeCard, NavLinks, SecondaryLinks } from "./sidebar";
+import { DemoModeCard, NavLinks, PlayerCard, SecondaryLinks, type PlayerSummary } from "./sidebar";
+import { LevelBadge } from "@/components/art/medal";
 
 export interface HeaderNotification {
   id: string;
@@ -38,8 +40,7 @@ export interface HeaderNotification {
 
 interface TopBarProps {
   user: { displayName: string; avatar: string; isDemoAccount: boolean };
-  streak: number;
-  practicedToday: boolean;
+  player: PlayerSummary;
   notifications: HeaderNotification[];
   demoMode: boolean;
 }
@@ -74,7 +75,8 @@ function timeAgo(iso: string) {
   return `${d}d ago`;
 }
 
-export function TopBar({ user, streak, practicedToday, notifications, demoMode }: TopBarProps) {
+export function TopBar({ user, player, notifications, demoMode }: TopBarProps) {
+  const { streak, practicedToday } = player;
   const pathname = usePathname();
   const router = useRouter();
   const toast = useToast();
@@ -133,24 +135,33 @@ export function TopBar({ user, streak, practicedToday, notifications, demoMode }
           <Link href="/dashboard" className="lg:hidden" aria-label="Pantora dashboard">
             <Logo className="[&_span:last-child]:hidden sm:[&_span:last-child]:inline" />
           </Link>
-          <h1 className="hidden truncate text-lg font-bold tracking-tight text-ink lg:block">{titleForPath(pathname)}</h1>
+          <p className="hidden truncate font-display text-xl font-extrabold tracking-tight text-ink lg:block">{titleForPath(pathname)}</p>
           {demoMode && (
-            <span className="hidden items-center rounded-full bg-streak-100 px-2.5 py-0.5 text-xs font-bold text-streak-700 md:inline-flex" title="Partners, calls, and sample data are simulated">
+            <span className="hidden items-center rounded-full bg-sun-100 px-2.5 py-0.5 text-xs font-bold text-sun-700 md:inline-flex" title="Partners, calls, and sample data are simulated">
               Demo mode
             </span>
           )}
 
           <div className="ml-auto flex items-center gap-1.5 sm:gap-2">
             <Link
+              href="/achievements"
+              className="hidden items-center gap-1.5 rounded-2xl bg-brand-50 py-1 pr-3 pl-1.5 text-sm font-extrabold text-brand-700 transition-colors hover:bg-brand-100 sm:flex"
+              title={`Level ${player.levelIndex}: ${player.levelName}`}
+              aria-label={`Level ${player.levelIndex}, ${player.xp} XP`}
+            >
+              <LevelBadge level={player.levelIndex} className="h-7 w-7" />
+              {player.xp.toLocaleString("en-US")} XP
+            </Link>
+            <Link
               href="/progress"
               className={cn(
-                "flex items-center gap-1.5 rounded-xl px-2.5 py-1.5 text-sm font-bold transition-colors",
-                practicedToday ? "bg-streak-50 text-streak-700 hover:bg-streak-100" : "bg-surface-muted text-muted hover:bg-line",
+                "flex items-center gap-1.5 rounded-2xl px-2.5 py-1.5 text-sm font-extrabold transition-colors",
+                practicedToday ? "bg-orange-50 text-orange-700 hover:bg-orange-100" : "bg-surface-muted text-muted hover:bg-line",
               )}
               title={practicedToday ? "You practiced today" : "Practice today to keep your streak"}
               aria-label={`${streak}-day streak${practicedToday ? ", practiced today" : ", not practiced yet today"}`}
             >
-              <Flame className={cn("h-4.5 w-4.5", practicedToday ? "fill-streak-400 text-streak-600" : "text-subtle")} aria-hidden />
+              <Flame className={cn("h-4.5 w-4.5", practicedToday ? "animate-flame fill-sun-400 text-orange-500" : "text-subtle")} aria-hidden />
               {streak}
             </Link>
 
@@ -256,7 +267,7 @@ export function TopBar({ user, streak, practicedToday, notifications, demoMode }
       {drawer && (
         <div className="fixed inset-0 z-50 lg:hidden" role="dialog" aria-modal="true" aria-label="Navigation menu">
           <div className="absolute inset-0 animate-fade-in bg-navy-950/60" onClick={() => setDrawer(false)} />
-          <div className="absolute inset-y-0 left-0 flex w-[min(20rem,85vw)] animate-fade-in flex-col bg-navy-900 px-4 py-5 shadow-pop">
+          <div className="absolute inset-y-0 left-0 flex w-[min(20rem,85vw)] animate-fade-in flex-col bg-navy-900 bg-dots-light px-4 py-5 shadow-pop">
             <div className="mb-6 flex items-center justify-between px-2">
               <Logo tone="light" />
               <button onClick={() => setDrawer(false)} className="rounded-xl p-2 text-white/70 hover:bg-white/10 hover:text-white" aria-label="Close navigation menu">
@@ -264,6 +275,9 @@ export function TopBar({ user, streak, practicedToday, notifications, demoMode }
               </button>
             </div>
             <div className="flex-1 overflow-y-auto">
+              <div className="mb-4">
+                <PlayerCard player={{ ...player, displayName: user.displayName, avatar: user.avatar }} onNavigate={() => setDrawer(false)} />
+              </div>
               <NavLinks compact onNavigate={() => setDrawer(false)} />
               <div className="my-4 h-px bg-white/10" />
               <SecondaryLinks onNavigate={() => setDrawer(false)} />
@@ -298,17 +312,18 @@ function MenuLink({ href, icon, children, onClick }: { href: string; icon: React
 }
 
 const TABS = [
-  { href: "/dashboard", label: "Home", icon: LayoutDashboard },
-  { href: "/free-talk", label: "Free Talk", icon: MessagesSquare },
-  { href: "/battles", label: "Battles", icon: Swords },
-  { href: "/coach", label: "Coach", icon: GraduationCap },
+  { href: "/dashboard", label: "Home", icon: LayoutDashboard, active: "bg-brand-500 text-white" },
+  { href: "/battles", label: "Battles", icon: Swords, active: "bg-pink-500 text-white" },
+  { href: "/free-talk", label: "Free Talk", icon: MessagesSquare, active: "bg-sky-500 text-white" },
+  { href: "/coach", label: "Coach", icon: GraduationCap, active: "bg-mint-500 text-white" },
+  { href: "/progress", label: "Progress", icon: ChartColumn, active: "bg-orange-500 text-white" },
 ];
 
 export function MobileTabBar() {
   const pathname = usePathname();
   return (
     <nav aria-label="Quick navigation" className="fixed inset-x-0 bottom-0 z-30 border-t border-line bg-surface/95 pb-[env(safe-area-inset-bottom)] backdrop-blur-md lg:hidden">
-      <div className="mx-auto grid max-w-lg grid-cols-4">
+      <div className="mx-auto grid max-w-lg grid-cols-5 px-1">
         {TABS.map((t) => {
           const active = pathname === t.href || pathname.startsWith(`${t.href}/`);
           return (
@@ -316,9 +331,11 @@ export function MobileTabBar() {
               key={t.href}
               href={t.href}
               aria-current={active ? "page" : undefined}
-              className={cn("flex flex-col items-center gap-1 py-2.5 text-[11px] font-semibold", active ? "text-brand-600" : "text-muted")}
+              className={cn("flex flex-col items-center gap-0.5 py-2 text-[11px] font-bold", active ? "text-ink" : "text-muted")}
             >
-              <t.icon className="h-5.5 w-5.5" aria-hidden />
+              <span className={cn("flex h-8 w-11 items-center justify-center rounded-full transition-colors", active && t.active)}>
+                <t.icon className="h-5 w-5" aria-hidden strokeWidth={2.4} />
+              </span>
               {t.label}
             </Link>
           );

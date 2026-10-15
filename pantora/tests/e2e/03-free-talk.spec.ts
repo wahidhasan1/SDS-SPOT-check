@@ -7,18 +7,18 @@ test("demo account: full Free Talk flow extends the streak and unlocks an achiev
   await page.clock.install();
   await signInDemo(page);
   await page.goto("/dashboard");
-  await expect(page.getByLabel(/6-day streak/)).toBeVisible();
+  await expect(page.getByLabel(/6-day streak/).first()).toBeVisible();
 
   await page.goto("/free-talk");
   await page.getByRole("button", { name: "Start Matching" }).click();
   await expect(page.getByText("Searching for a partner")).toBeVisible();
-  await expect(page.getByText("Partner found")).toBeVisible({ timeout: 15_000 });
+  await expect(page.getByText("It's a match!")).toBeVisible({ timeout: 15_000 });
   await expect(page.getByText("Fictional demo partner")).toBeVisible();
 
   // Skip to another partner
   const firstName = await page.getByRole("heading", { level: 2 }).first().textContent();
   await page.getByRole("button", { name: "Skip partner" }).click();
-  await expect(page.getByText("Partner found")).toBeVisible({ timeout: 15_000 });
+  await expect(page.getByText("It's a match!")).toBeVisible({ timeout: 15_000 });
   expect(await page.getByRole("heading", { level: 2 }).first().textContent()).not.toBe(firstName);
 
   await page.getByRole("button", { name: "Start conversation" }).click();
@@ -42,8 +42,10 @@ test("demo account: full Free Talk flow extends the streak and unlocks an achiev
   await page.getByRole("dialog").getByRole("button", { name: "End call" }).click();
 
   await expect(page.getByRole("heading", { name: "Conversation complete" })).toBeVisible({ timeout: 15_000 });
-  await expect(page.getByText("Streak: 7 days")).toBeVisible();
+  await expect(page.getByText("7 days", { exact: true })).toBeVisible();
   await expect(page.getByText("Achievement unlocked: Seven-Day Streak")).toBeVisible();
+  // Big moments get a celebration that the player dismisses.
+  await page.getByRole("button", { name: "Awesome!" }).click();
   await expect(page.getByText("Not transcribed")).toBeVisible();
 
   await page.getByRole("link", { name: "Review session" }).click();
@@ -67,7 +69,7 @@ test("ending a call within a minute saves an incomplete session without rewards"
   await page.goto("/history");
   await expect(page.locator('main a[href^="/history/"]').first()).toContainText("Incomplete");
   await page.goto("/dashboard");
-  await expect(page.getByLabel(/0-day streak/)).toBeVisible();
+  await expect(page.getByLabel(/0-day streak/).first()).toBeVisible();
 });
 
 test("reporting and blocking a partner records both and excludes them from matching", async ({ page }) => {

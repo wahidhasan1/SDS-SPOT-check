@@ -7,14 +7,14 @@ import { Badge, SampleBadge } from "@/components/ui/badge";
 import { cn } from "@/lib/cn";
 
 const ICONS = { free_talk: MessagesSquare, battle: Swords, coach: GraduationCap };
-const ICON_TONES = { free_talk: "bg-brand-50 text-brand-600", battle: "bg-streak-50 text-streak-600", coach: "bg-info-50 text-info-700" };
+const ICON_TONES = { free_talk: "bg-sky-500 text-white", battle: "bg-pink-500 text-white", coach: "bg-mint-500 text-white" };
 
 export function SessionRow({ s, timeZone, showPartner = true }: { s: SessionListItem; timeZone: string; showPartner?: boolean }) {
   const Icon = ICONS[s.type];
   const title = s.topicTitle ?? s.promptText ?? SESSION_TYPE_LABELS[s.type];
   return (
     <Link href={`/history/${s.id}`} className="group flex items-center gap-3 rounded-2xl px-3 py-3 transition-colors hover:bg-surface-muted/70 sm:gap-4">
-      <span className={cn("flex h-10 w-10 shrink-0 items-center justify-center rounded-xl", ICON_TONES[s.type])}>
+      <span className={cn("flex h-10 w-10 shrink-0 -rotate-3 items-center justify-center rounded-xl", ICON_TONES[s.type])}>
         <Icon className="h-5 w-5" aria-hidden />
       </span>
       <span className="min-w-0 flex-1">

@@ -1,7 +1,7 @@
 import type { ComponentProps } from "react";
 import { cn } from "@/lib/cn";
 
-type Tone = "neutral" | "brand" | "success" | "streak" | "danger" | "info" | "sample" | "demo" | "dark";
+type Tone = "neutral" | "brand" | "success" | "streak" | "danger" | "info" | "sample" | "demo" | "dark" | "pink" | "sun" | "mint" | "sky";
 
 const tones: Record<Tone, string> = {
   neutral: "bg-surface-muted text-ink-soft",
@@ -12,13 +12,17 @@ const tones: Record<Tone, string> = {
   info: "bg-info-50 text-info-700",
   sample: "border border-dashed border-line-strong bg-surface text-muted",
   demo: "bg-streak-100 text-streak-700",
-  dark: "bg-white/10 text-white",
+  dark: "bg-white/15 text-white",
+  pink: "bg-pink-50 text-pink-700",
+  sun: "bg-sun-100 text-sun-700",
+  mint: "bg-mint-50 text-mint-700",
+  sky: "bg-sky-50 text-sky-700",
 };
 
 export function Badge({ tone = "neutral", className, ...props }: ComponentProps<"span"> & { tone?: Tone }) {
   return (
     <span
-      className={cn("inline-flex items-center gap-1 rounded-full px-2.5 py-0.5 text-xs font-semibold whitespace-nowrap", tones[tone], className)}
+      className={cn("inline-flex items-center gap-1 rounded-full px-2.5 py-0.5 text-xs font-bold whitespace-nowrap", tones[tone], className)}
       {...props}
     />
   );
