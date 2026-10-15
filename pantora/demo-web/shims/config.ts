@@ -8,6 +8,7 @@ function claudeReady() {
 export const config = {
   demoMode: true,
   adminToken: null as string | null,
+  openAdmin: true,
   ai: {
     /** Non-null when feedback should come from Claude (through the page's Claude access). */
     get anthropicKey(): string | null {

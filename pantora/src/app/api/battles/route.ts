@@ -3,6 +3,7 @@ import { HttpError, apiUser, handler, ok, parseBody } from "@/server/http";
 import { battleXpItems, recordSession } from "@/server/services/gamification";
 import { saveBattle, saveFeedback } from "@/server/services/practice";
 import { analyzeResponse } from "@/server/ai";
+import { config } from "@/server/config";
 import { blockedIds, getBattleBySession } from "@/server/queries";
 import { dailyChallengeFor, getBattlePrompt, modeOfPrompt } from "@/content/battle-prompts";
 import { dateKeyInZone } from "@/lib/dates";
@@ -11,6 +12,20 @@ import { getTopic } from "@/content/topics";
 import { buildBattleEvaluation } from "@/lib/analysis/battle";
 import { battleCompleteSchema } from "@/lib/schemas";
 import { XP_RULES } from "@/lib/game-rules";
+
+// The demo opponent's answer is the same pre-written sample every time, so its
+// analysis is cached per prompt, timer, and engine. With Claude configured this
+// halves the cost of a battle. Fallback results are never cached.
+type Outcome = Awaited<ReturnType<typeof analyzeResponse>>;
+const sampleCache = new Map<string, Outcome>();
+
+async function analyzeSample(key: string, run: () => Promise<Outcome>): Promise<Outcome> {
+  const hit = sampleCache.get(key);
+  if (hit) return hit;
+  const outcome = await run();
+  if (!outcome.providerNotice) sampleCache.set(key, outcome);
+  return outcome;
+}
 
 export const POST = handler(async (request: Request) => {
   const user = await apiUser();
@@ -24,7 +39,9 @@ export const POST = handler(async (request: Request) => {
   const ctx = { prompt: prompt.prompt, guidance: prompt.guidance, keywords: getTopic(prompt.topicId)?.tags, targetSeconds: body.speakSeconds };
   const [mine, theirs] = await Promise.all([
     analyzeResponse({ text: body.response, prompt: prompt.prompt, inputMode: body.inputMode, score: ctx }),
-    analyzeResponse({ text: prompt.sampleResponse.text, prompt: prompt.prompt, inputMode: "typed", score: ctx }),
+    analyzeSample(`${prompt.id}:${body.speakSeconds}:${config.ai.anthropicKey ? config.ai.model : "rules"}`, () =>
+      analyzeResponse({ text: prompt.sampleResponse.text, prompt: prompt.prompt, inputMode: "typed", score: ctx }),
+    ),
   ]);
   if (!mine.score || !theirs.score) throw new HttpError(500, "Scoring failed. Please try again.");
   const evaluation = buildBattleEvaluation(

@@ -43,6 +43,15 @@ npm start            # http://localhost:3000
 - **AI feedback.** When opened on claude.ai, the Coach, Battles, and captioned Free Talks can ask Claude through the viewer's own Claude account (it asks for permission the first time), using the same prompt and validation as the server provider. A switch in the Coach and in Battle setup changes to the rule-based demo analyzer, which is also the fallback whenever Claude isn't available.
 - **Hosted limits.** The hosted page can't use the microphone or WebRTC, so voice recording, live captions, server speech-to-text, and live calls are hidden there and you type your answers instead. Run the app locally (`npm run dev`) to try those.
 
+## Private online test
+
+To put Pantora online for a private test (Render, HTTPS, a persistent SQLite disk, and an access code in front of every page), follow [DEPLOY.md](DEPLOY.md). The deploy settings are in `render.yaml` at the repository root. Related settings:
+
+- `PANTORA_ACCESS_CODE`: turns on the access-code gate (`src/proxy.ts`). Pages redirect to `/access`, API calls return 401, and every response carries `X-Robots-Tag: noindex`.
+- `PANTORA_DB_PATH`: point it at the persistent disk (for example `/var/data/pantora.db`).
+- `PANTORA_ADMIN_TOKEN`: required for `/admin` on a production server. Without it the admin area stays closed, unless `PANTORA_OPEN_ADMIN=true`, which only the automated tests use.
+- `GET /api/health` reports whether the server can open the database.
+
 ## Scripts
 
 | Command | What it does |

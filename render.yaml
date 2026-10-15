@@ -1,0 +1,42 @@
+# Render Blueprint for a PRIVATE online test of Pantora (pantora/ folder).
+#
+# Nothing is created until you choose "New > Blueprint" in the Render dashboard
+# and approve it. Approving starts a paid Starter web service with a 1 GB
+# persistent disk (see pantora/DEPLOY.md for costs and step-by-step setup).
+services:
+  - type: web
+    name: pantora-test
+    runtime: node
+    rootDir: pantora
+    plan: starter
+    # Pick the region closest to your testers. It can't be changed later.
+    region: oregon
+    buildCommand: npm ci && npm run build
+    startCommand: npm start
+    healthCheckPath: /api/health
+    # Deploy only when you click "Manual Deploy", not on every git push.
+    autoDeploy: false
+    disk:
+      name: pantora-data
+      mountPath: /var/data
+      sizeGB: 1
+    envVars:
+      - key: NODE_VERSION
+        value: "22"
+      # The SQLite database lives on the persistent disk so it survives deploys and restarts.
+      - key: PANTORA_DB_PATH
+        value: /var/data/pantora.db
+      - key: PANTORA_DEMO_MODE
+        value: "true"
+      # Secret values: Render asks for these when you create the Blueprint.
+      # Testers must enter PANTORA_ACCESS_CODE before they can see anything.
+      - key: PANTORA_ACCESS_CODE
+        sync: false
+      # Optional. Leave empty to use the free rule-based demo analyzer.
+      - key: ANTHROPIC_API_KEY
+        sync: false
+      - key: PANTORA_AI_MODEL
+        value: claude-opus-5-5
+      # Random token Render generates for you; needed to open /admin.
+      - key: PANTORA_ADMIN_TOKEN
+        generateValue: true

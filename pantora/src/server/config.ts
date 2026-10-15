@@ -11,6 +11,11 @@ function bool(value: string | undefined, fallback: boolean) {
 export const config = {
   demoMode: bool(process.env.PANTORA_DEMO_MODE, true),
   adminToken: process.env.PANTORA_ADMIN_TOKEN || null,
+  /**
+   * Admin without a token is convenient locally, but on a deployed server anyone
+   * could reset the data. It is only allowed outside production unless explicitly enabled.
+   */
+  openAdmin: process.env.NODE_ENV !== "production" || bool(process.env.PANTORA_OPEN_ADMIN, false),
   ai: {
     anthropicKey: process.env.ANTHROPIC_API_KEY || null,
     model: process.env.PANTORA_AI_MODEL || "claude-opus-5-5",

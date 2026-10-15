@@ -27,6 +27,6 @@ export default defineConfig({
     url: `http://localhost:${PORT}`,
     reuseExistingServer: false,
     timeout: 120_000,
-    env: { PANTORA_DB_PATH: ".data/e2e.db", PANTORA_DEMO_MODE: "true", PANTORA_LIVE_MATCHING: "true" },
+    env: { PANTORA_DB_PATH: ".data/e2e.db", PANTORA_DEMO_MODE: "true", PANTORA_LIVE_MATCHING: "true", PANTORA_OPEN_ADMIN: "true" },
   },
 });

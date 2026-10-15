@@ -6,7 +6,8 @@ import { config } from "./config";
 import { HttpError } from "./http";
 
 // Admin access for the demo. With PANTORA_ADMIN_TOKEN set, the token is
-// required; without it, the admin area is only available in demo mode.
+// required; without it, the admin area is only available in demo mode and,
+// in production, only when PANTORA_OPEN_ADMIN is explicitly turned on.
 
 function digest(value: string) {
   return createHash("sha256").update(`pantora-admin:${value}`).digest("hex");
@@ -14,7 +15,7 @@ function digest(value: string) {
 
 export function adminAccessMode(): "token" | "demo" | "disabled" {
   if (config.adminToken) return "token";
-  return config.demoMode ? "demo" : "disabled";
+  return config.demoMode && config.openAdmin ? "demo" : "disabled";
 }
 
 export function expectedAdminCookie(): string | null {
